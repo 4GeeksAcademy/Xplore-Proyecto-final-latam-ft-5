@@ -11,6 +11,7 @@ import { Single } from "./pages/Single";
 import { Demo } from "./pages/Demo";
 import NotFound from "./pages/NotFound";
 import TermsAndConditions from "./pages/TermsAndConditions";
+import SignUp from "./pages/auth/SignUp";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -28,6 +29,10 @@ export const router = createBrowserRouter(
       <Route path="/single/:theId" element={<Single />} />  {/* Dynamic route for single items */}
       <Route path="/demo" element={<Demo />} />
       <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+
+      {/* AUTH ROUTES: */}
+      <Route path="/signup" element={<SignUp />} />
+
     </Route>
   )
 );
