@@ -12,6 +12,8 @@ import { Demo } from "./pages/Demo";
 import NotFound from "./pages/NotFound";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import SignUp from "./pages/auth/SignUp";
+import Login from "./pages/auth/Login";
+import RecoverPassword from "./pages/auth/RecoverPassword";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -31,7 +33,9 @@ export const router = createBrowserRouter(
       <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
 
       {/* AUTH ROUTES: */}
-      <Route path="/signup" element={<SignUp />} />
+      <Route path="/crear-cuenta" element={<SignUp />} />
+      <Route path="/acceder" element={<Login />} />
+      <Route path="/recuperar-contraseña" element={<RecoverPassword />} />
 
     </Route>
   )
