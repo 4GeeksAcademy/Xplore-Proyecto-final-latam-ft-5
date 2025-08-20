@@ -1,0 +1,74 @@
+.footer {
+  background-color: #e1f3f0; /* Fondo general */
+  color: #333;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Fondo azul para la parte superior */
+.footer-top {
+  background-color: #98cecb; /* Azul (ajústalo según tu imagen) */
+  color: white;
+}
+
+.footer-top .footer-title {
+  color: white;
+}
+
+.footer-logo {
+  color: white; /* Logo en blanco sobre azul */
+}
+
+.footer-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.footer-input {
+  border-radius: 20px 0 0 20px;
+  border: 1px solid #ccc;
+  max-width: 200px;
+}
+
+.btn-register {
+  background-color: #b9e4c9;
+  border: none;
+  border-radius: 0 20px 20px 0;
+  padding: 0 15px;
+  font-weight: bold;
+  color: #333;
+}
+
+.footer-heading {
+  font-size: 1.1rem;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.list-unstyled {
+  text-align: center;
+  color: #333;
+}
+
+.footer a {
+  color: #333;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  color: #4a8c83;
+  text-decoration: underline;
+}
+
+.footer-bottom {
+  background-color: #357e71; /* Franja verde inferior */
+  color: white;
+  font-size: 0.9rem;
+}
+
+/* Colorear 800 en azul marino */
+.highlight-800 {
+  color: #054c92; 
+}
+
