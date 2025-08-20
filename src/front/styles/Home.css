@@ -1,0 +1,43 @@
+/* --- ESTILOS GENERALES --- */
+.section-title {
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.section-subtitle {
+  color: #6c757d;
+  margin-bottom: 3rem;
+}
+
+/* --- SECCIÓN TESTIMONIOS --- */
+.testimonial-section {
+  background-color: #e0f2f1;
+  padding: 4rem 0;
+}
+
+.testimonial-section .section-title,
+.testimonial-section .section-subtitle {
+  color: #1a535c;
+}
+
+.testimonial-card {
+  background-color: white;
+  border-radius: 20px;
+  border: none;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.testimonial-text {
+  font-style: italic;
+  color: #555;
+  font-size: 1.1rem;
+}
+
+.stars svg {
+  margin-right: 5px;
+  color: #ffc107;
+  fill: #ffc107;
+}
+
+/* --- SECCIÓN WHY US --- */
