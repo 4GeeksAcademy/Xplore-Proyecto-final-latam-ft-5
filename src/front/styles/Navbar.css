@@ -1,0 +1,21 @@
+.btn-experto {
+  background-color: #2d7360;
+  border-color: #2d7360;
+  color: white;
+}
+.btn-experto:hover {
+  background-color: #265d4e;
+  border-color: #265d4e;
+  color: white;
+}
+
+.btn-login {
+  background-color: #b9e3e1;
+  border-color: #b9e3e1;
+  color: #2d7360;
+}
+.btn-login:hover {
+  background-color: #a0cfcd;
+  border-color: #a0cfcd;
+  color: #214f4d;
+}
