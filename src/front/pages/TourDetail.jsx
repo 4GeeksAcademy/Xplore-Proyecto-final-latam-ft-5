@@ -5,7 +5,7 @@ export const TourDetail = () => {
     const { tourId } = useParams();
 
     // --- LÓGICA FUTURA: COMENTADA ---
-    // En un proyecto real, usarías el tourId para buscar los datos del tour en tu API.
+    // , usar el tourId para buscar los datos del tour en tu API.
     // const [tourData, setTourData] = useState(null);
     // useEffect(() => {
     //     fetch(`/api/tours/${tourId}`)
