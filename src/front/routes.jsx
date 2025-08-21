@@ -31,9 +31,9 @@ export const router = createBrowserRouter(
       <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
 
       {/* Rutas de Autenticación que ya tenía tu compañero */}
-      <Route path="/crear-cuenta" element={<SignUp />} />
-      <Route path="/acceder" element={<Login />} />
-      <Route path="/recuperar-contraseña" element={<RecoverPassword />} />
+      <Route path="/signup" element={<SignUp />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/recover-password" element={<RecoverPassword />} />
 
       {/* --- RUTAS QUE TÚ CREASTE (AÑADIDAS AQUÍ) --- */}
       <Route path="/panel" element={<Panel />} />

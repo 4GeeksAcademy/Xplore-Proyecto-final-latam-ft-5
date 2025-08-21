@@ -28,7 +28,7 @@ export default function RecoverPassword() {
                     <input className="rounded p-2 m-2 col-12" placeholder="E-mail" name="email" type="text" value={inputValue.email} onChange={handleOnChange} />
                     <button className=" p-2 m-2 col-12 btn bg-success text-white" type="submit">Enviar enlace</button>
                 </form>
-                <div className="m-2"><Link to="/acceder" >Regresar a inicio de sesion</Link></div>
+                <div className="m-2"><Link to="/login" >Regresar a inicio de sesion</Link></div>
 
             </div>
         </div>

@@ -25,13 +25,13 @@ export default function Login() {
                 <form onSubmit={handleSubmit}>
                     <div className="m-2">
                         <h3 >Iniciar sesión</h3>
-                        <div>No tienes cuenta? <Link to="/crear-cuenta" >crear cuenta</Link> </div>
+                        <div>No tienes cuenta? <Link to="/signup" >crear cuenta</Link> </div>
                     </div>
                     <input className="rounded p-2 m-2 col-12" placeholder="E-mail" name="email" type="text" value={inputValue.email} onChange={handleOnChange} />
                     <input className="rounded p-2 m-2 col-12" placeholder="Contraseña" type="password" value={inputValue.password} onChange={handleOnChange} />
                     <button className=" p-2 m-2 col-12 btn bg-success text-white" type="submit">Iniciar sesion</button>
                 </form>
-                <div className="m-2"><Link to="/recuperar-contraseña">Olvide mi contraseña</Link></div>
+                <div className="m-2"><Link to="/recover-password">Olvide mi contraseña</Link></div>
                 <button className="btn border border-danger text-danger p-2 m-2 col-12">Iniciar con Google</button>
             </div>
         </div>
