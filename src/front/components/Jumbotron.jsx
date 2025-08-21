@@ -5,9 +5,10 @@ export const Jumbotron = () => {
   return (
     <section className="jumbotron">
       <div className="overlay">
+          {/* Título y subtitulo */}
         <div className="title">Ve más allá del destino</div>
         <h4>Reserva tu lugar</h4>
-
+        {/* Barra Reservas*/}
         <form className="search-form">
           <div className="input-group">
             <label>Destino</label>

@@ -1,22 +1,31 @@
-"""
-This module takes care of starting the API Server, Loading the DB and Adding the endpoints
-"""
-from flask import Flask, request, jsonify, url_for, Blueprint
-from api.models import db, User
-from api.utils import generate_sitemap, APIException
-from flask_cors import CORS
 
+from flask import request, jsonify, Blueprint
+from api.models import db, User, UserRole
+from flask_jwt_extended import create_access_token
 api = Blueprint('api', __name__)
 
-# Allow CORS requests to this API
-CORS(api)
+@api.route('/signup', methods=['POST'])
+def create_user():
+    body = request.get_json()
+    email = body.get("email")
+    password = body.get("password")
+    role_str = body.get("role")
+    if not email or not password or not role_str:
+        return jsonify({"msg": "Email, contraseña y rol son requeridos"}), 400
 
+    try:
+        role = UserRole(role_str)
+    except ValueError:
+        return jsonify({"msg": "El rol debe ser 'traveler' o 'provider'"}), 400
 
-@api.route('/hello', methods=['POST', 'GET'])
-def handle_hello():
+    existing_user = User.query.filter_by(email=email).first()
+    if existing_user:
+        return jsonify({"msg": "Este email ya está registrado"}), 409
 
-    response_body = {
-        "message": "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
-    }
+    new_user = User(email=email, role=role)
+    new_user.set_password(password)
 
-    return jsonify(response_body), 200
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({"msg": "Usuario creado exitosamente", "user": new_user.serialize()}), 201
