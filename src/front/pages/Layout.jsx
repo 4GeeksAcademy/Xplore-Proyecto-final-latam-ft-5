@@ -9,7 +9,6 @@ export const Layout = () => {
     return (
         <div>
             <Navbar />
-            <Jumbotron />
             <main>
                 {/* El <Outlet /> es un espacio que será reemplazado por el 
                     componente de la ruta actual (Home, Panel, etc.) */}
