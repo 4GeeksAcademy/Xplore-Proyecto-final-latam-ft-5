@@ -17,7 +17,7 @@ import TermsAndConditions from "./pages/TermsAndConditions.jsx";
 import SignUp from "./pages/auth/SignUp.jsx";
 import Login from "./pages/auth/Login.jsx";
 import RecoverPassword from "./pages/auth/RecoverPassword.jsx";
-
+import ProveedorSignUp from "./pages/auth/ProveedorSignUp.jsx";
 // Creamos UNA SOLA configuración para el router
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -38,7 +38,7 @@ export const router = createBrowserRouter(
       {/* --- RUTAS QUE TÚ CREASTE (AÑADIDAS AQUÍ) --- */}
       <Route path="/panel" element={<Panel />} />
       <Route path="/tour/:tourId" element={<TourDetail />} />
-
+      <Route path="/convierte-experto" element={<ProveedorSignUp />} />
     </Route>
   )
 );
