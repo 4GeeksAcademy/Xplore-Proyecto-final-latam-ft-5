@@ -1,5 +1,3 @@
-
-
 .custom-box {
     background-color: #B9E3E1;
     border-radius: 12px; 
@@ -31,7 +29,7 @@
     max-height: 80%;
     z-index: 10;
 }
-}
+
 
 /* Estilo base del botón del acordeón */
 .accordion-button {
