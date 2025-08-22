@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import '../../styles/ProveedorSignUp.css';
+import '../../styles/ProveedorSignUp.css'; // Asegúrate de tener este CSS para estilos
 
 export default function ProveedorSignUp() {
     const [opcion, setOpcion] = useState("");
@@ -84,7 +84,7 @@ export default function ProveedorSignUp() {
                         <>
                             <div className="m-2">
                                 <h3>Completa la información</h3>
-                                <p>Llena los siguientes campos:</p>
+                                <p>Llena los siguientes campos:</p>d
                             </div>
 
                             <form className="m-2">

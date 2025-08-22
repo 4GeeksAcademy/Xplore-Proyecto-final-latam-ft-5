@@ -1,21 +1,41 @@
-.btn-experto {
-  background-color: #2d7360;
-  border-color: #2d7360;
-  color: white;
-}
-.btn-experto:hover {
-  background-color: #265d4e;
-  border-color: #265d4e;
-  color: white;
+/* contenedor de la tarjeta */
+.proveedor-sign {
+  background: #ffffff;
+  border: 1px solid #e6eef5;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
 }
 
-.btn-login {
-  background-color: #b9e3e1;
-  border-color: #b9e3e1;
-  color: #2d7360;
+/* títulos */
+.proveedor-sign h3 {
+  font-weight: 700;
 }
-.btn-login:hover {
+
+/* botones de opciones */
+.btn.btn-opcion {
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  transition: 0.2s ease;
+}
+
+/* cuando usas btn-opcion junto con outline-primary de Bootstrap */
+.proveedor-sign .btn.btn-opcion.btn-outline-primary {
+  background-color: #b9e3e1 !important;
+  border-color: #b9e3e1 !important;
+  color: #2d7360 !important;
+}
+.proveedor-sign .btn.btn-opcion.btn-outline-primary:hover {
   background-color: #a0cfcd;
   border-color: #a0cfcd;
   color: #214f4d;
+}
+
+/* botón Continuar / Finalizar (si quieres que no sea el verde de bootstrap) */
+.proveedor-sign .btn.btn-success {
+  background-color: #2d7360 !important;
+  border-color: #2d7360 !important;
+}
+.proveedor-sign .btn.btn-success:hover {
+  background-color: #265d4e !important;
+  border-color: #265d4e !important;
 }

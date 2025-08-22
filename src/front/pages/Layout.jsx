@@ -2,8 +2,8 @@ import ScrollToTop from "../components/ScrollToTop"
 import { Jumbotron } from "../components/Jumbotron"
 import React from "react";
 import { Outlet } from "react-router-dom";
-import { Navbar } from "../components/Navbar.jsx"; // Asumiendo que tienes un Navbar
-import { Footer } from "../components/Footer.jsx"; // Asumiendo que tienes un Footer
+import Navbar from "../components/Navbar.jsx";
+import { Footer } from "../components/Footer.jsx";
 
 export const Layout = () => {
     return (

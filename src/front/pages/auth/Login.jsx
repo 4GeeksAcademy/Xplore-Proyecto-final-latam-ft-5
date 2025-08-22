@@ -59,13 +59,13 @@ export default function Login() {
                         />
                     </div>
 
-                    <button className="btn btn-primary w-100" type="submit">
+                    <button className="-2 mb-3 col-12 btn bg-success text-white" type="submit">
                         Entrar
                     </button>
 
                     {/* Botón placeholder por si luego conectan OAuth */}
                     <button
-                        className="btn border border-2 mt-2 w-100"
+                        className="btn border border-danger text-danger p-2 mb-2 col-12"
                         type="button"
                         onClick={() => alert("OAuth pendiente")}
                     >

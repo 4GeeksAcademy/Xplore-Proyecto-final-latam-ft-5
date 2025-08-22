@@ -19,6 +19,7 @@ import SignUp from "./pages/auth/SignUp.jsx";
 import Login from "./pages/auth/Login.jsx";
 import RecoverPassword from "./pages/auth/RecoverPassword.jsx";
 import ResetPassword from "./pages/auth/ResetPassword.jsx";
+import ProveedorSignUp from "./pages/auth/ProveedorSignUp.jsx";
 
 // Panel (páginas)
 import Panel from "./pages/Panel.jsx";               // dashboard del panel
@@ -64,6 +65,7 @@ export const router = createBrowserRouter(
       <Route path="login" element={<Login />} />
       <Route path="recover-password" element={<RecoverPassword />} />
       <Route path="reset-password" element={<ResetPassword />} />
+      <Route path="/convierte-experto" element={<ProveedorSignUp />} />
 
       {/* ===== PANEL (PROTEGIDO) ===== */}
       <Route
