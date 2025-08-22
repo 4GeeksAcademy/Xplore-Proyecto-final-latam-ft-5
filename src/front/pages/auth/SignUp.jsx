@@ -1,6 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function SignUp() {
     const [inputValue, setInputValue] = useState({
@@ -9,39 +8,100 @@ export default function SignUp() {
         email: "",
         password: "",
         confirmPassword: ""
-    })
+    });
+    const [error, setError] = useState("");
+    const navigate = useNavigate();
+
+    const handleOnChange = (e) => {
+        setInputValue({ ...inputValue, [e.target.name]: e.target.value });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("valores del input", inputValue)
-    }
+        setError("");
 
-    const handleOnChange = (e) => {
-        setInputValue({ ...inputValue, [e.target.name]: e.target.value })
+        if (inputValue.password !== inputValue.confirmPassword) {
+            setError("Las contraseñas no coinciden.");
+            return;
+        }
 
-    }
+        try {
+            // --- CORRECCIÓN CLAVE AQUÍ ---
+            // Usamos la variable de entorno para construir la URL correcta
+            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/signup`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: inputValue.email,
+                    password: inputValue.password,
+                    name: inputValue.name,       // <-- Asegúrate de que esta línea esté
+                    lastName: inputValue.lastName
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.msg || "Error al crear la cuenta.");
+            }
+
+            navigate('/acceder');
+
+        } catch (err) {
+            setError(err.message);
+        }
+    };
 
     return (
-        <div className="d-flex justify-content-center align-items-center ">
-            <div className="border col-7 rounded p-4">
+        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
+            <div className="card shadow-lg p-4" style={{ width: '100%', maxWidth: '500px' }}>
                 <form onSubmit={handleSubmit}>
-                    <div className="m-2">
-                        <h3 >Crear cuenta</h3>
-                        <div>Ya tienes cuenta? <Link to="/acceder" >Iniciar sesion</Link></div>
+                    <div className="text-center mb-4">
+                        <h3>Crear cuenta</h3>
+                        <div>Ya tienes cuenta? <Link to="/acceder">Iniciar sesión</Link></div>
                     </div>
 
-                    <div className="d-flex m-2">
-                        <input className="rounded p-2  col-6" placeholder="Nombre" name="name" type="text" value={inputValue.name} onChange={handleOnChange} />
-                        <input className="rounded p-2 ms-3 col-6" placeholder="Apellido(s)" name="lastName" type="text" value={inputValue.lastName} onChange={handleOnChange} />
+                    <div className="row g-2 mb-3">
+                        <div className="col-md">
+                            <div className="form-floating">
+                                <input id="nameInput" className="form-control" placeholder="Nombre" name="name" type="text" value={inputValue.name} onChange={handleOnChange} required />
+                                <label htmlFor="nameInput">Nombre</label>
+                            </div>
+                        </div>
+                        <div className="col-md">
+                            <div className="form-floating">
+                                <input id="lastNameInput" className="form-control" placeholder="Apellido(s)" name="lastName" type="text" value={inputValue.lastName} onChange={handleOnChange} required />
+                                <label htmlFor="lastNameInput">Apellido(s)</label>
+                            </div>
+                        </div>
                     </div>
-                    <input className="rounded p-2 m-2 col-12" placeholder="E-mail" name="email" type="text" value={inputValue.email} onChange={handleOnChange} />
-                    <input className="rounded p-2 m-2 col-12" placeholder="Contraseña" type="password" value={inputValue.password} onChange={handleOnChange} />
-                    <input className="rounded p-2 m-2 col-12" placeholder="Confirmar contraseña" type="password" value={inputValue.confirmPassword} onChange={handleOnChange} />
-                    <button className=" p-2 m-2 col-12 btn bg-success text-white" type="submit">Registrarse</button>
+
+                    <div className="form-floating mb-3">
+                        <input id="emailInput" className="form-control" placeholder="E-mail" name="email" type="email" value={inputValue.email} onChange={handleOnChange} required />
+                        <label htmlFor="emailInput">Correo Electrónico</label>
+                    </div>
+
+                    <div className="form-floating mb-3">
+                        <input id="passwordInput" className="form-control" placeholder="Contraseña" name="password" type="password" value={inputValue.password} onChange={handleOnChange} required />
+                        <label htmlFor="passwordInput">Contraseña</label>
+                    </div>
+
+                    <div className="form-floating mb-3">
+                        <input id="confirmPasswordInput" className="form-control" placeholder="Confirmar contraseña" name="confirmPassword" type="password" value={inputValue.confirmPassword} onChange={handleOnChange} required />
+                        <label htmlFor="confirmPasswordInput">Confirmar contraseña</label>
+                    </div>
+
+                    {error && <div className="alert alert-danger">{error}</div>}
+
+                    <button className="btn btn-success w-100 py-2" type="submit">Registrarse</button>
                 </form>
-                <button className="btn border border-danger text-danger p-2 m-2 col-12">Iniciar con Google</button>
+
+                <hr className="my-4" />
+
+                <button className="btn btn-danger w-100 py-2" type="button">
+                    <i className="fab fa-google me-2"></i> Iniciar con Google
+                </button>
             </div>
         </div>
-
-    )
+    );
 }

@@ -7,7 +7,7 @@ export const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg bg-white shadow-sm px-4">
       <div className="container-fluid">
-   
+
         <Link className="navbar-brand d-flex align-items-center" to="/">
           <img src={logo} alt="Logo_Xplora" width="110px" height="40px" />
         </Link>
@@ -32,13 +32,18 @@ export const Navbar = () => {
             </li>
           </ul>
 
-          <div className="d-flex flex-column flex-sm-row  gap-2 mt-3 mt-lg-0 ms-lg-auto">
+          <div className="d-flex flex-column flex-sm-row gap-2 mt-3 mt-lg-0 ms-lg-auto">
             <button className="btn btn-experto rounded-pill px-3">
               Conviértete en Experto
             </button>
-            <button className="btn btn-login rounded-pill px-3">
+
+            {/* === CAMBIO REALIZADO AQUÍ === */}
+            {/* Se reemplazó <button> por <Link> y se añadió to="/acceder" */}
+            <Link to="/acceder" className="btn btn-login rounded-pill px-3">
               Iniciar sesión / Registrarse
-            </button>
+            </Link>
+            {/* ============================== */}
+
           </div>
         </div>
       </div>

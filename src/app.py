@@ -6,16 +6,10 @@ from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS # <-- 1. Importa CORS
 
-# --- IMPORTS CORREGIDOS ---
-# Todos los módulos locales (config, api) ahora usan un punto (.)
-# para indicar que son parte del mismo paquete 'src'.
-from .config import (
-    SQLALCHEMY_DATABASE_URI,
-    SQLALCHEMY_TRACK_MODIFICATIONS,
-    SECRET_KEY,
-    JWT_SECRET_KEY,
-)
+# --- Tus otros imports ---
+from .config import SQLALCHEMY_DATABASE_URI, SQLALCHEMY_TRACK_MODIFICATIONS, SECRET_KEY, JWT_SECRET_KEY
 from .api.utils import APIException, generate_sitemap
 from .api.models import db, bcrypt
 from .api.routes import api
@@ -29,6 +23,10 @@ static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
+# --- 2. Habilita CORS para toda la aplicación ---
+# Esta línea le da permiso a tu frontend para comunicarse con el backend.
+CORS(app)
+
 # ---- Configuración de Flask/DB/JWT ----
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config['JWT_SECRET_KEY'] = JWT_SECRET_KEY
@@ -41,7 +39,7 @@ bcrypt.init_app(app)
 jwt = JWTManager(app)
 MIGRATE = Migrate(app, db, compare_type=True)
 
-# ---- Registro de Componentes (Admin, Comandos, API Blueprint) ----
+# ---- Registro de Componentes ----
 setup_admin(app)
 setup_commands(app)
 app.register_blueprint(api, url_prefix='/api')
@@ -62,10 +60,10 @@ def serve_any_other_file(path):
     if not os.path.isfile(os.path.join(static_file_dir, path)):
         path = 'index.html'
     response = send_from_directory(static_file_dir, path)
-    response.cache_control.max_age = 0  # avoid cache memory
+    response.cache_control.max_age = 0
     return response
 
-# ---- Creación de Tablas (Contexto de Aplicación) ----
+# ---- Creación de Tablas ----
 with app.app_context():
     try:
         db.create_all()
