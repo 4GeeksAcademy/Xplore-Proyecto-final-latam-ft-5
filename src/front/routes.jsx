@@ -31,10 +31,10 @@ import PanelProfile from "./pages/PanelProfile.jsx";
 // Protegida
 import ProtectedRoute from "./utils/auth/ProtectedRoute.jsx";
 
-// Navbar del panel (componente)
+// Navbar del panel (tu componente)
 import PanelNavbar from "./components/PanelNavbar.jsx";
 
-// Shell/layout del panel (usa tu navbar y un <Outlet/> para subrutas)
+// Shell del panel
 function PanelShell() {
   return (
     <div className="min-vh-100 d-flex flex-column">
@@ -56,6 +56,8 @@ export const router = createBrowserRouter(
       {/* Públicas */}
       <Route path="demo" element={<Demo />} />
       <Route path="terms-and-conditions" element={<TermsAndConditions />} />
+      {/* Si tienes página de ayuda, crea el componente y añade la ruta real */}
+      {/* <Route path="ayuda" element={<Ayuda />} /> */}
 
       {/* Auth */}
       <Route path="signup" element={<SignUp />} />
@@ -72,14 +74,9 @@ export const router = createBrowserRouter(
           </ProtectedRoute>
         }
       >
-        {/* dashboard */}
         <Route index element={<Panel />} />
-
-        {/* flujo reserva */}
         <Route path="booking/:tourId/date" element={<BookingDate />} />
         <Route path="booking/:tourId/payment" element={<Payment />} />
-
-        {/* otras páginas */}
         <Route path="favorites" element={<PanelFavorites />} />
         <Route path="settings" element={<PanelSettings />} />
         <Route path="profile" element={<PanelProfile />} />

@@ -20,7 +20,10 @@ sqlalchemy = "*"
 flask-swagger = "*"
 flask = "*"
 flask-bcrypt = "*"
+<<<<<<< HEAD
 flask-cors = "*"
+=======
+>>>>>>> Dev
 
 [requires]
 python_version = "3.13"
