@@ -17,12 +17,9 @@ import TermsAndConditions from "./pages/TermsAndConditions.jsx";
 import SignUp from "./pages/auth/SignUp.jsx";
 import Login from "./pages/auth/Login.jsx";
 import RecoverPassword from "./pages/auth/RecoverPassword.jsx";
-<<<<<<< HEAD
 import ProveedorSignUp from "./pages/auth/ProveedorSignUp.jsx";
-=======
 import ResetPassword from "./pages/auth/ResetPassword.jsx";
 
->>>>>>> Dev
 // Creamos UNA SOLA configuración para el router
 export const router = createBrowserRouter(
   createRoutesFromElements(
