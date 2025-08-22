@@ -7,7 +7,7 @@ export const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg bg-white shadow-sm px-4">
       <div className="container-fluid">
-   
+
         <Link className="navbar-brand d-flex align-items-center" to="/">
           <img src={logo} alt="Logo_Xplora" width="110px" height="40px" />
         </Link>
@@ -37,7 +37,9 @@ export const Navbar = () => {
               Conviértete en Experto
             </button>
             <button className="btn btn-login rounded-pill px-3">
-              Iniciar sesión / Registrarse
+              <Link to='/login' className="btn-login text-decoration-none">
+                Iniciar sesión / Registrarse
+              </Link>
             </button>
           </div>
         </div>
