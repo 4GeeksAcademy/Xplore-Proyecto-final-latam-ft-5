@@ -1,11 +1,12 @@
 import React from 'react';
-import imagen1 from "/workspaces/Xplore-Proyecto-final-latam-ft-5/docs/assets/pexels-fukajaz-9762762.jpg"
-import imagenTelefono from "/workspaces/Xplore-Proyecto-final-latam-ft-5/docs/assets/Telefono-02.png"
-import imagen2 from "/workspaces/Xplore-Proyecto-final-latam-ft-5/docs/assets/pexels-david-kooijman-1969435-3591326.jpg"
-import imagen3 from "/workspaces/Xplore-Proyecto-final-latam-ft-5/docs/assets/pexels-marc-coenen-298185-3675393.jpg"
-import imagen4 from "/workspaces/Xplore-Proyecto-final-latam-ft-5/docs/assets/pexels-mikhail-nilov-8322906.jpg"
-import imagen5 from "/workspaces/Xplore-Proyecto-final-latam-ft-5/docs/assets/pexels-oscar-steiner-982093-33510678.jpg"
-import './styles.css';
+
+/*import imagen1 from "../../assets/pexels-fukajaz-9762762.jpg"
+import imagenTelefono from "../../assets/Telefono-02.png"
+import imagen2 from "../../assets/pexels-david-kooijman-1969435-3591326.jpg"
+import imagen3 from "../../assets/pexels-marc-coenen-298185-3675393.jpg"
+import imagen4 from "../../assets/pexels-mikhail-nilov-8322906.jpg"
+import imagen5 from "../../assets/pexels-oscar-steiner-982093-33510678.jpg"
+import './styles.css';*/
 
 const Landing = () => {
     return (
@@ -58,8 +59,8 @@ const Landing = () => {
                     <div className="col-md-6 text-center position-relative">
                         <div className="rounded-box"></div>
                         <img
-                            src={imagenTelefono}
-                            alt="App en celular"
+                            src="https://unsplash.com/es/fotos/camion-de-helados-estacionado-al-aire-libre-durante-el-dia-ODXOROjPeds"
+                            alt="Imagen de un celular"
                             className="img-fluid image-on-top"
                         />
                     </div>

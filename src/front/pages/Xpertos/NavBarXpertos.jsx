@@ -1,7 +1,6 @@
 import React from 'react';
-import logo from "/workspaces/Xplore-Proyecto-final-latam-ft-5/docs/assets/Xplora logo png.png"
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import logo from '../../assets/img/Xplora_logo.png';
+
 
 
 
@@ -38,14 +37,14 @@ const NavBar = () => {
                         <button
                             className="btn"
                             type="button"
-                            style={{backgroundColor: "#ffffff", padding: "10px 24px",}}
+                            style={{ backgroundColor: "#ffffff", padding: "10px 24px", }}
                         >
                             Iniciar sesión
                         </button>
                         <button
                             className="btn"
                             type="button"
-                            style={{backgroundColor: "#B9E3E1", color: "#2D7363", padding: "10px 24px"}}
+                            style={{ backgroundColor: "#B9E3E1", color: "#2D7363", padding: "10px 24px" }}
                         >
                             Empezar
                         </button>
