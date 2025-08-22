@@ -28,3 +28,12 @@ btn-opcion:active,
   background-color: #2d7366 !important;  
   box-shadow: none !important;           
 }
+@media (max-width: 576px) {
+    .form-control {
+        width: 100%;
+    }
+  .btn {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
