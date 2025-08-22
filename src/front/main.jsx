@@ -1,47 +1,33 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import './index.css'  // Global styles for your application
+import { RouterProvider } from "react-router-dom";  // Import RouterProvider to use the router
+import { router } from "./routes";  // Import the router configuration
+import { StoreProvider } from './hooks/useGlobalReducer';  // Import the StoreProvider for global state management
+import { BackendURL } from './components/BackendURL';
 
-import Home from "./pages/Home.jsx";
-import Login from "./pages/Login.jsx";
-import Profile from "./pages/Profile.jsx";
-import Panel from "./pages/Panel.jsx";
-import ProtectedRoute from "./utils/ProtectedRoute.jsx";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-    <React.StrictMode>
-        <BrowserRouter>
-            <Routes>
-                {/* Home como landing */}
-                <Route path="/" element={<Home />} />
-                <Route path="/Home" element={<Navigate to="/" replace />} />
 
-                {/* Acceso */}
-                <Route path="/acceder" element={<Login />} />
-                {/* Alias por si alguien usa /login */}
-                <Route path="/login" element={<Navigate to="/acceder" replace />} />
+const Main = () => {
 
-                {/* Rutas protegidas */}
-                <Route
-                    path="/panel"
-                    element={
-                        <ProtectedRoute>
-                            <Panel />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path="/profile"
-                    element={
-                        <ProtectedRoute>
-                            <Profile />
-                        </ProtectedRoute>
-                    }
-                />
+    if (! import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_BACKEND_URL == "") return (
+        <React.StrictMode>
+            <BackendURL />
+        </React.StrictMode>
+    );
+    return (
+        <React.StrictMode>
+            {/* Provide global state to all components */}
+            <StoreProvider>
+                {/* Set up routing for the application */}
+                <RouterProvider router={router}>
+                </RouterProvider>
+            </StoreProvider>
+        </React.StrictMode>
+    );
+}
 
-                {/* 404 -> Home */}
-                <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-        </BrowserRouter>
-    </React.StrictMode>
-);
+// Render the Main component into the root DOM element.
+ReactDOM.createRoot(document.getElementById('root')).render(<Main />)

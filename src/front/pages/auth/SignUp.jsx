@@ -1,107 +1,64 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { apiSignup, apiLogin } from "../../utils/api";
+import { saveToken } from "../../utils/auth";
 
 export default function SignUp() {
-    const [inputValue, setInputValue] = useState({
+    const nav = useNavigate();
+    const [input, setInput] = useState({
         name: "",
-        lastName: "",
+        last_name: "",     // <- el backend espera last_name
         email: "",
         password: "",
-        confirmPassword: ""
+        confirmPassword: "",
     });
-    const [error, setError] = useState("");
-    const navigate = useNavigate();
+    const [msg, setMsg] = useState("");
 
-    const handleOnChange = (e) => {
-        setInputValue({ ...inputValue, [e.target.name]: e.target.value });
-    };
+    function onChange(e) {
+        setInput({ ...input, [e.target.name]: e.target.value });
+    }
 
-    const handleSubmit = async (e) => {
+    async function onSubmit(e) {
         e.preventDefault();
-        setError("");
+        setMsg("");
 
-        if (inputValue.password !== inputValue.confirmPassword) {
-            setError("Las contraseñas no coinciden.");
+        if (input.password !== input.confirmPassword) {
+            setMsg("Las contraseñas no coinciden");
             return;
         }
-
         try {
-            // --- CORRECCIÓN CLAVE AQUÍ ---
-            // Usamos la variable de entorno para construir la URL correcta
-            const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/signup`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: inputValue.email,
-                    password: inputValue.password,
-                    name: inputValue.name,       // <-- Asegúrate de que esta línea esté
-                    lastName: inputValue.lastName
-                })
+            // 1) signup
+            await apiSignup({
+                name: input.name,
+                last_name: input.last_name,
+                email: input.email,
+                password: input.password,
+                role: "traveler",
             });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.msg || "Error al crear la cuenta.");
-            }
-
-            navigate('/acceder');
-
+            // 2) auto-login
+            const { access_token } = await apiLogin(input.email, input.password);
+            saveToken(access_token);
+            // 3) redirigir al panel
+            nav("/panel", { replace: true });
         } catch (err) {
-            setError(err.message);
+            setMsg(err.message || "Error al crear la cuenta");
         }
-    };
+    }
 
     return (
-        <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
-            <div className="card shadow-lg p-4" style={{ width: '100%', maxWidth: '500px' }}>
-                <form onSubmit={handleSubmit}>
-                    <div className="text-center mb-4">
-                        <h3>Crear cuenta</h3>
-                        <div>Ya tienes cuenta? <Link to="/acceder">Iniciar sesión</Link></div>
-                    </div>
+        <div className="container" style={{ maxWidth: 520, margin: "2rem auto" }}>
+            <h3>Crear cuenta</h3>
+            <p>¿Ya tienes cuenta? <Link to="/login">Iniciar sesión</Link></p>
 
-                    <div className="row g-2 mb-3">
-                        <div className="col-md">
-                            <div className="form-floating">
-                                <input id="nameInput" className="form-control" placeholder="Nombre" name="name" type="text" value={inputValue.name} onChange={handleOnChange} required />
-                                <label htmlFor="nameInput">Nombre</label>
-                            </div>
-                        </div>
-                        <div className="col-md">
-                            <div className="form-floating">
-                                <input id="lastNameInput" className="form-control" placeholder="Apellido(s)" name="lastName" type="text" value={inputValue.lastName} onChange={handleOnChange} required />
-                                <label htmlFor="lastNameInput">Apellido(s)</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="form-floating mb-3">
-                        <input id="emailInput" className="form-control" placeholder="E-mail" name="email" type="email" value={inputValue.email} onChange={handleOnChange} required />
-                        <label htmlFor="emailInput">Correo Electrónico</label>
-                    </div>
-
-                    <div className="form-floating mb-3">
-                        <input id="passwordInput" className="form-control" placeholder="Contraseña" name="password" type="password" value={inputValue.password} onChange={handleOnChange} required />
-                        <label htmlFor="passwordInput">Contraseña</label>
-                    </div>
-
-                    <div className="form-floating mb-3">
-                        <input id="confirmPasswordInput" className="form-control" placeholder="Confirmar contraseña" name="confirmPassword" type="password" value={inputValue.confirmPassword} onChange={handleOnChange} required />
-                        <label htmlFor="confirmPasswordInput">Confirmar contraseña</label>
-                    </div>
-
-                    {error && <div className="alert alert-danger">{error}</div>}
-
-                    <button className="btn btn-success w-100 py-2" type="submit">Registrarse</button>
-                </form>
-
-                <hr className="my-4" />
-
-                <button className="btn btn-danger w-100 py-2" type="button">
-                    <i className="fab fa-google me-2"></i> Iniciar con Google
-                </button>
-            </div>
+            <form onSubmit={onSubmit} className="d-grid gap-2">
+                <input className="form-control" name="name" placeholder="Nombre" value={input.name} onChange={onChange} />
+                <input className="form-control" name="last_name" placeholder="Apellidos" value={input.last_name} onChange={onChange} />
+                <input className="form-control" name="email" type="email" placeholder="E-mail" value={input.email} onChange={onChange} required />
+                <input className="form-control" name="password" type="password" placeholder="Contraseña" value={input.password} onChange={onChange} required />
+                <input className="form-control" name="confirmPassword" type="password" placeholder="Confirmar contraseña" value={input.confirmPassword} onChange={onChange} required />
+                <button className="btn btn-success" type="submit">Registrarse</button>
+                {msg && <p className="text-danger">{msg}</p>}
+            </form>
         </div>
     );
 }

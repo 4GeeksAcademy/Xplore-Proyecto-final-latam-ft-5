@@ -1,6 +1,4 @@
-// src/front/src/auth.js
 const KEY = "access_token";
-
 export function saveToken(t) {
   sessionStorage.setItem(KEY, t);
 }

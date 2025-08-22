@@ -1,38 +1,46 @@
-const BASE = import.meta.env.VITE_BACKEND_URL; // p.ej. http://127.0.0.1:3001/
+// Asegura barra final y usa JSON sólo si el servidor manda JSON
+const BASE = (import.meta.env.VITE_BACKEND_URL || "")
+  .trim()
+  .replace(/\/?$/, "/");
 
-export async function apiSignup(data) {
-  const r = await fetch(`${BASE}api/signup`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+async function parse(r) {
+  const ct = r.headers.get("content-type") || "";
+  if (ct.includes("application/json")) return await r.json();
+  const text = await r.text();
+  try {
+    return JSON.parse(text);
+  } catch {
+    return { msg: text || r.statusText };
+  }
+}
+async function request(url, options = {}) {
+  const res = await fetch(`${BASE}${url}`, {
+    headers: { Accept: "application/json", ...options.headers },
+    ...options,
   });
-  if (!r.ok) throw new Error((await safeMsg(r)) || "Signup error");
-  return r.json();
+  const data = await parse(res);
+  if (!res.ok) throw new Error(data?.msg || `HTTP ${res.status}`);
+  return data;
 }
 
-export async function apiLogin(email, password) {
-  const r = await fetch(`${BASE}api/login`, {
+export function apiSignup(payload) {
+  return request("api/signup", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+}
+
+export function apiLogin(email, password) {
+  return request("api/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
   });
-  if (!r.ok) throw new Error((await safeMsg(r)) || "Login error");
-  return r.json(); // { access_token, user }
 }
 
-export async function apiProfile(token) {
-  const r = await fetch(`${BASE}api/profile`, {
+export function apiProfile(token) {
+  return request("api/profile", {
     headers: { Authorization: `Bearer ${token}` },
   });
-  if (!r.ok) throw new Error((await safeMsg(r)) || "Profile error");
-  return r.json();
-}
-
-async function safeMsg(r) {
-  try {
-    const j = await r.json();
-    return j?.msg;
-  } catch {
-    return null;
-  }
 }

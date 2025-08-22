@@ -32,18 +32,15 @@ export const Navbar = () => {
             </li>
           </ul>
 
-          <div className="d-flex flex-column flex-sm-row gap-2 mt-3 mt-lg-0 ms-lg-auto">
+          <div className="d-flex flex-column flex-sm-row  gap-2 mt-3 mt-lg-0 ms-lg-auto">
             <button className="btn btn-experto rounded-pill px-3">
               Conviértete en Experto
             </button>
-
-            {/* === CAMBIO REALIZADO AQUÍ === */}
-            {/* Se reemplazó <button> por <Link> y se añadió to="/acceder" */}
-            <Link to="/acceder" className="btn btn-login rounded-pill px-3">
-              Iniciar sesión / Registrarse
-            </Link>
-            {/* ============================== */}
-
+            <button className="btn btn-login rounded-pill px-3">
+              <Link to='/login' className="btn-login text-decoration-none">
+                Iniciar sesión / Registrarse
+              </Link>
+            </button>
           </div>
         </div>
       </div>
