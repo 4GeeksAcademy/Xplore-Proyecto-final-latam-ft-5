@@ -17,6 +17,7 @@ import TermsAndConditions from "./pages/TermsAndConditions.jsx";
 import SignUp from "./pages/auth/SignUp.jsx";
 import Login from "./pages/auth/Login.jsx";
 import RecoverPassword from "./pages/auth/RecoverPassword.jsx";
+import ResetPassword from "./pages/auth/ResetPassword.jsx";
 
 // Creamos UNA SOLA configuración para el router
 export const router = createBrowserRouter(
@@ -34,6 +35,7 @@ export const router = createBrowserRouter(
       <Route path="/signup" element={<SignUp />} />
       <Route path="/login" element={<Login />} />
       <Route path="/recover-password" element={<RecoverPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
       {/* --- RUTAS QUE TÚ CREASTE (AÑADIDAS AQUÍ) --- */}
       <Route path="/panel" element={<Panel />} />
