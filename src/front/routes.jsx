@@ -12,6 +12,8 @@ import { Demo } from "./pages/Demo";
 import NotFound from "./pages/NotFound";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import SignUp from "./pages/auth/SignUp";
+import { element } from "prop-types";
+import HomeXpertos from "./pages/Xpertos/HomeXpertos";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -32,6 +34,9 @@ export const router = createBrowserRouter(
 
       {/* AUTH ROUTES: */}
       <Route path="/signup" element={<SignUp />} />
+
+      {/* Xpertos Route: */}
+      <Route path="/xpertos" element={<HomeXpertos />} />
 
     </Route>
   )
