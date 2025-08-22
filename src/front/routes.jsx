@@ -1,40 +1,49 @@
-// Import necessary components and functions from react-router-dom.
-
+import React from "react";
 import {
   createBrowserRouter,
   createRoutesFromElements,
   Route,
 } from "react-router-dom";
-import { Layout } from "./pages/Layout";
-import { Home } from "./pages/Home";
-import { Single } from "./pages/Single";
-import { Demo } from "./pages/Demo";
-import NotFound from "./pages/NotFound";
-import TermsAndConditions from "./pages/TermsAndConditions";
-import SignUp from "./pages/auth/SignUp";
-import { element } from "prop-types";
+
+// Importamos TODOS los componentes de página necesarios de ambas versiones
+import { Layout } from "./pages/Layout.jsx";
+import { Home } from "./pages/Home.jsx";
+import { Panel } from "./pages/Panel.jsx"; // Tu panel de usuario
+import { TourDetail } from "./pages/TourDetail.jsx"; // Tu página de detalle de tour
+import { Single } from "./pages/Single.jsx";
+import { Demo } from "./pages/Demo.jsx";
+import NotFound from "./pages/NotFound.jsx";
+import TermsAndConditions from "./pages/TermsAndConditions.jsx";
+import SignUp from "./pages/auth/SignUp.jsx";
+import Login from "./pages/auth/Login.jsx";
+import RecoverPassword from "./pages/auth/RecoverPassword.jsx";
+import ProveedorSignUp from "./pages/auth/ProveedorSignUp.jsx";
+import ResetPassword from "./pages/auth/ResetPassword.jsx";
+
+// Creamos UNA SOLA configuración para el routerimport { element } from "prop-types";
 import HomeXpertos from "./pages/Xpertos/HomeXpertos";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
-    // CreateRoutesFromElements function allows you to build route elements declaratively.
-    // Create your routes here, if you want to keep the Navbar and Footer in all views, add your new routes inside the containing Route.
-    // Root, on the contrary, create a sister Route, if you have doubts, try it!
-    // Note: keep in mind that errorElement will be the default page when you don't get a route, customize that page to make your project more attractive.
-    // Note: The child paths of the Layout element replace the Outlet component with the elements contained in the "element" attribute of these child paths.
-
-    // Root Route: All navigation will start from here.
+    // Todas las rutas se anidan dentro del Layout para que compartan Navbar y Footer
     <Route path="/" element={<Layout />} errorElement={<NotFound />} >
 
-      {/* Nested Routes: Defines sub-routes within the BaseHome component. */}
+      {/* Rutas que ya tenía tu compañero */}
       <Route path="/" element={<Home />} />
-      <Route path="/single/:theId" element={<Single />} />  {/* Dynamic route for single items */}
+      <Route path="/single/:theId" element={<Single />} />
       <Route path="/demo" element={<Demo />} />
       <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
 
-      {/* AUTH ROUTES: */}
+      {/* Rutas de Autenticación que ya tenía tu compañero */}
       <Route path="/signup" element={<SignUp />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/recover-password" element={<RecoverPassword />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
 
+      {/* --- RUTAS QUE TÚ CREASTE (AÑADIDAS AQUÍ) --- */}
+      <Route path="/panel" element={<Panel />} />
+      <Route path="/tour/:tourId" element={<TourDetail />} />
+      <Route path="/convierte-experto" element={<ProveedorSignUp />} />
       {/* Xpertos Route: */}
       <Route path="/xpertos" element={<HomeXpertos />} />
 
