@@ -1,7 +1,6 @@
 import React from 'react';
-import logo from "/workspaces/Xplore-Proyecto-final-latam-ft-5/docs/assets/Xplora logo png.png"
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import logo from '../../assets/img/Xplora_logo.png';
+
 import { Link } from 'react-router-dom';
 
 
