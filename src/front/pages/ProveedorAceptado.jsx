@@ -1,23 +1,22 @@
+import React from "react";
+import acepted from "../assets/img/acepted.png";
+
 export default function ProveedorAceptado() {
     return (
-        <div className="d-flex justify-content-center align-items-center vh-100">
-            <div className="card border-success p-4 text-center" style={{ maxWidth: '400px' }}>
-
+        <div className="d-flex justify-content-center align-items-center vh-100 px-3">
+            <div className="card border-success p-4 text-center" style={{ maxWidth: "600px", width:"100%"}}>
                 <h2>¡Bienvenido a la comunidad Xplora!</h2>
                 <p>Gracias por registrarte como Experto, ya puedes contactarte con turistas de todo el mundo.</p>
 
-
                 <img
-                    src={MANOS}
-                    alt="proveedor-ok"
-                    className="mx-auto my-3"
-                    style={{ width: '120px', height: 'auto' }}
+                    src={acepted}
+                    alt="Proveedor aceptado"
+                    className="mx-auto my-4"
+                    style={{ maxWidth: "120px", width: "100%", height: "auto" }}
                 />
 
-                <bUtton> Crea tu primer Tour</bUtton>
+                <button className="btn btn-success mt-4 w-100 w-md-auto">Crea tu primer Tour</button>
             </div>
         </div>
-
-
     );
 }
