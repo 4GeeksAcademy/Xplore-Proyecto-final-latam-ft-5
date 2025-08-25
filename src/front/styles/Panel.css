@@ -1,0 +1,147 @@
+/* Tipos y tamaños compactos */
+.tiny {
+  font-size: 0.82rem;
+}
+.panel-container {
+  max-width: 1200px;
+}
+
+/* Banner próximo viaje */
+.next-trip {
+  border-radius: 12px;
+}
+
+/* Results bar */
+.results-bar {
+  margin-bottom: 10px;
+}
+
+/* Layout: sidebar + grid */
+.panel-grid {
+  display: grid;
+  grid-template-columns: 270px 1fr;
+  gap: 24px;
+}
+@media (max-width: 991px) {
+  .panel-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Card base */
+.card-elevated {
+  background: #fff;
+  border: 1px solid #e9edf2;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+/* Sidebar (sticky) */
+.filters-card {
+  padding: 14px;
+  position: sticky;
+  top: 84px; /* ajusta según tu navbar */
+  height: fit-content;
+}
+
+/* Tour Card */
+.tour-card {
+  overflow: hidden;
+  border-radius: 16px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.tour-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+}
+.thumb-wrap {
+  position: relative;
+  background: #f4f6f8;
+}
+.thumb {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Favorito */
+.fav-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 0;
+  background: #fff;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  line-height: 36px;
+  text-align: center;
+  font-size: 17px;
+  cursor: pointer;
+  color: #9aa1ac;
+}
+.fav-btn.is-fav {
+  color: #e74c3c;
+}
+
+/* Cinta reservado (mucho más visible) */
+.ribbon {
+  position: absolute;
+  left: -6px;
+  top: 12px;
+  background: #1b8a5a;
+  color: #fff;
+  padding: 4px 10px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  box-shadow: 0 6px 14px rgba(27, 138, 90, 0.25);
+}
+
+/* Título más compacto */
+.card-title-trim {
+  font-size: 1.1rem;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+/* Meta y tags */
+.meta {
+  color: #6b7380;
+}
+.tag {
+  display: inline-block;
+  margin: 0 0.35rem 0.35rem 0;
+  padding: 0.18rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.73rem;
+  font-weight: 700;
+  background: #eef4ff;
+  color: #2a4bd7;
+}
+
+/* Precio */
+.price {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+/* Rating con máscara */
+.rating {
+  position: relative;
+  font-size: 0.9rem;
+  color: #f5a623;
+  line-height: 1;
+}
+.rating .rating-mask {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: #d4d7dd;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}

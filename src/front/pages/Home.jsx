@@ -11,6 +11,8 @@ export const Home = () => {
 	return (
 		<div>
 			{/* Aquí puede ir tu Hero Section o Navbar */}
+
+			{/* Aquí puede ir tu Jumbotron u otras secciones */}
 			<Jumbotron />
 			<Testimonials />
 			<WhyUs />

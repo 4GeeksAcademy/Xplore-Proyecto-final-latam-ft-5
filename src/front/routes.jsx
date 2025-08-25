@@ -13,6 +13,12 @@ import { Home } from "./pages/Home.jsx";
 import { Demo } from "./pages/Demo.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import TermsAndConditions from "./pages/TermsAndConditions.jsx";
+import { TourDetail } from "./pages/TourDetail.jsx"; // <- IMPORTAR (named export)
+
+// imports nuevos
+import OrderSummary from "./pages/OrderSummary.jsx";
+import BookingSuccess from "./pages/BookingSuccess.jsx";
+import PanelReservation from "./pages/PanelReservation.jsx";
 
 // Auth
 import SignUp from "./pages/auth/SignUp.jsx";
@@ -22,9 +28,9 @@ import ResetPassword from "./pages/auth/ResetPassword.jsx";
 import ProveedorSignUp from "./pages/auth/ProveedorSignUp.jsx";
 
 // Panel (páginas)
-import Panel from "./pages/Panel.jsx";               // dashboard del panel
-import BookingDate from "./pages/BookingDate.jsx";   // seleccionar fecha
-import Payment from "./pages/Payment.jsx";           // método de pago
+import Panel from "./pages/Panel.jsx";
+import BookingDate from "./pages/BookingDate.jsx";
+import Payment from "./pages/Payment.jsx";
 import PanelFavorites from "./pages/PanelFavorites.jsx";
 import PanelSettings from "./pages/PanelSettings.jsx";
 import PanelProfile from "./pages/PanelProfile.jsx";
@@ -57,15 +63,14 @@ export const router = createBrowserRouter(
       {/* Públicas */}
       <Route path="demo" element={<Demo />} />
       <Route path="terms-and-conditions" element={<TermsAndConditions />} />
-      {/* Si tienes página de ayuda, crea el componente y añade la ruta real */}
-      {/* <Route path="ayuda" element={<Ayuda />} /> */}
+      <Route path="tour/:tourId" element={<TourDetail />} />  {/* <- RUTA DE DETALLE */}
 
       {/* Auth */}
       <Route path="signup" element={<SignUp />} />
       <Route path="login" element={<Login />} />
       <Route path="recover-password" element={<RecoverPassword />} />
       <Route path="reset-password" element={<ResetPassword />} />
-      <Route path="/convierte-experto" element={<ProveedorSignUp />} />
+      <Route path="convierte-experto" element={<ProveedorSignUp />} />
 
       {/* ===== PANEL (PROTEGIDO) ===== */}
       <Route
@@ -79,6 +84,9 @@ export const router = createBrowserRouter(
         <Route index element={<Panel />} />
         <Route path="booking/:tourId/date" element={<BookingDate />} />
         <Route path="booking/:tourId/payment" element={<Payment />} />
+        <Route path="booking/:tourId/summary" element={<OrderSummary />} />
+        <Route path="booking/:tourId/success" element={<BookingSuccess />} />
+        <Route path="reservations/:bookingId" element={<PanelReservation />} />
         <Route path="favorites" element={<PanelFavorites />} />
         <Route path="settings" element={<PanelSettings />} />
         <Route path="profile" element={<PanelProfile />} />

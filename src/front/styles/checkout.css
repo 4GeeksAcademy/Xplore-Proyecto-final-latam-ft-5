@@ -1,0 +1,62 @@
+/* src/front/styles/checkout.css */
+.checkout-wrap {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.stepper {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  margin: 10px 0 24px;
+}
+.stepper .dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  background: #e9ecef;
+  color: #6c757d;
+}
+.stepper .dot.active {
+  background: #2d7360;
+  color: #fff;
+}
+.stepper .bar {
+  height: 3px;
+  width: 48px;
+  background: #e9ecef;
+  border-radius: 2px;
+}
+.stepper .bar.active {
+  background: #2d7360;
+}
+
+.card-soft {
+  border: 1px solid #edf1f5;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  background: #fff;
+}
+.summary-sticky {
+  position: sticky;
+  top: 24px;
+}
+
+.badge-soft {
+  background: #e7f6f2;
+  color: #2d7360;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-weight: 600;
+}
+
+hr.hr-soft {
+  border: 0;
+  border-top: 1px dashed #dfe6ee;
+  margin: 14px 0;
+}
