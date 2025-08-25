@@ -40,35 +40,33 @@ function Navbar() {
             <li className="nav-item"><NavLink className="nav-link" to="/terms-and-conditions">Tours</NavLink></li>
             <li className="nav-item"><NavLink className="nav-link" to="/ayuda">Ayuda</NavLink></li>
           </ul>
-          {/* ACTUALIZAR LINKS */}
-          <div className="d-flex flex-column flex-sm-row  gap-2 mt-3 mt-lg-0 ms-lg-auto">
-            <Link to="/convierte-experto" className="btn btn-experto rounded-pill px-3">
+
+          <div className="d-flex flex-column flex-sm-row gap-2 ms-lg-auto">
+            <Link
+              to="/convierte-experto"
+              style={{ backgroundColor: '#2d7360', color: '#fff', border: 'none' }}
+              className="btn btn-experto rounded-pill px-3"
+            >
               Conviértete en Experto
             </Link>
-            <button className="btn btn-login rounded-pill px-3">
-              <Link to='/login' className="btn-login text-decoration-none">
+
+            {!logged ? (
+              <Link
+                to="/login"
+                style={{ backgroundColor: '#B9E3E1', color: '#214f4d', border: 'none' }}
+                className="btn btn-outline rounded-pill px-3 btn-login"
+              >
                 Iniciar sesión / Registrarse
               </Link>
-            </button>
-
-            <div className="d-flex flex-column flex-sm-row gap-2 ms-lg-auto">
-              <Link to="/convierte-experto" style={{ backgroundColor: '#2d7360', color: '#fff', border: 'none' }} className="btn btn-experto rounded-pill px-3">
-                Conviértete en Experto
-              </Link>
-
-              {!logged ? (
-                <Link to="/login" style={{ backgroundColor: '#B9E3E1', color: '#fff', border: 'none' }} className="btn btn-outline rounded-pill px-3 btn-login">
-                  Iniciar sesión / Registrarse
-                </Link>
-              ) : (
-                <div className="d-flex gap-2">
-                  <Link to="/panel" style={{ backgroundColor: '#a0e0a0' }} className="btn btn-primary rounded-pill px-3">Ir al Panel</Link>
-                  <button className="btn btn-outline-danger rounded-pill px-3" onClick={logout}>Salir</button>
-                </div>
-              )}
-            </div>
+            ) : (
+              <div className="d-flex gap-2">
+                <Link to="/panel" style={{ backgroundColor: '#a0e0a0' }} className="btn btn-primary rounded-pill px-3">Ir al Panel</Link>
+                <button className="btn btn-outline-danger rounded-pill px-3" onClick={logout}>Salir</button>
+              </div>
+            )}
           </div>
         </div>
+      </div>
     </nav>
   );
 }

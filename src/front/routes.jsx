@@ -13,9 +13,11 @@ import { Home } from "./pages/Home.jsx";
 import { Demo } from "./pages/Demo.jsx";
 import NotFound from "./pages/NotFound.jsx";
 import TermsAndConditions from "./pages/TermsAndConditions.jsx";
-import { TourDetail } from "./pages/TourDetail.jsx"; // <- IMPORTAR (named export)
+import { TourDetail } from "./pages/TourDetail.jsx";
 
-// imports nuevos
+// Booking flow
+import BookingDate from "./pages/BookingDate.jsx";
+import Payment from "./pages/Payment.jsx";
 import OrderSummary from "./pages/OrderSummary.jsx";
 import BookingSuccess from "./pages/BookingSuccess.jsx";
 import PanelReservation from "./pages/PanelReservation.jsx";
@@ -24,29 +26,20 @@ import PanelReservation from "./pages/PanelReservation.jsx";
 import SignUp from "./pages/auth/SignUp.jsx";
 import Login from "./pages/auth/Login.jsx";
 import RecoverPassword from "./pages/auth/RecoverPassword.jsx";
-import ProveedorSignUp from "./pages/auth/ProveedorSignUp.jsx";
 import ResetPassword from "./pages/auth/ResetPassword.jsx";
+import ProveedorSignUp from "./pages/auth/ProveedorSignUp.jsx";
 import ProveedorAceptado from "./pages/ProveedorAceptado.jsx";
-// Creamos UNA SOLA configuración para el router
 
-// Creamos UNA SOLA configuración para el routerimport { element } from "prop-types";
+// Otros
 import HomeXpertos from "./pages/Xpertos/HomeXpertos";
 import Profile from "./pages/touristUser/Profile.jsx";
-import ResetPassword from "./pages/auth/ResetPassword.jsx";
-import ProveedorSignUp from "./pages/auth/ProveedorSignUp.jsx";
 
-// Panel (páginas)
+// Panel
 import Panel from "./pages/Panel.jsx";
-import BookingDate from "./pages/BookingDate.jsx";
-import Payment from "./pages/Payment.jsx";
 import PanelFavorites from "./pages/PanelFavorites.jsx";
 import PanelSettings from "./pages/PanelSettings.jsx";
 import PanelProfile from "./pages/PanelProfile.jsx";
-
-// Protegida
 import ProtectedRoute from "./utils/auth/ProtectedRoute.jsx";
-
-// Navbar del panel (tu componente)
 import PanelNavbar from "./components/PanelNavbar.jsx";
 
 // Shell del panel
@@ -71,25 +64,21 @@ export const router = createBrowserRouter(
       {/* Públicas */}
       <Route path="demo" element={<Demo />} />
       <Route path="terms-and-conditions" element={<TermsAndConditions />} />
-      <Route path="tour/:tourId" element={<TourDetail />} />  {/* <- RUTA DE DETALLE */}
+      <Route path="tour/:tourId" element={<TourDetail />} />
 
       {/* Auth */}
-      <Route path="signup" element={<SignUp />} />
       <Route path="login" element={<Login />} />
+      <Route path="signup" element={<SignUp />} />
       <Route path="recover-password" element={<RecoverPassword />} />
       <Route path="reset-password" element={<ResetPassword />} />
       <Route path="convierte-experto" element={<ProveedorSignUp />} />
+      <Route path="proveedor-aceptado" element={<ProveedorAceptado />} />
 
-      {/* --- RUTAS QUE TÚ CREASTE (AÑADIDAS AQUÍ) --- */}
-      <Route path="/panel" element={<Panel />} />
-      <Route path="/tour/:tourId" element={<TourDetail />} />
-      <Route path="/convierte-experto" element={<ProveedorSignUp />} />
-      <Route path="/proveedor-aceptado" element={<ProveedorAceptado />} />
-      {/* Xpertos Route: */}
-      <Route path="/xpertos" element={<HomeXpertos />} />
-      {/* User Route: */}
-      <Route path="/profile" element={<Profile />} />
-      {/* ===== PANEL (PROTEGIDO) ===== */}
+      {/* Otros */}
+      <Route path="xpertos" element={<HomeXpertos />} />
+      <Route path="profile" element={<Profile />} />
+
+      {/* ===== PANEL (protegido) ===== */}
       <Route
         path="panel"
         element={

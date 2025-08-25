@@ -1,13 +1,25 @@
-const KEY = "access_token";
-export function saveToken(t) {
-  sessionStorage.setItem(KEY, t);
+const TOKEN_KEY = "access_token";
+
+export function saveToken(token) {
+  try {
+    localStorage.setItem(TOKEN_KEY, token);
+  } catch {}
 }
+
 export function getToken() {
-  return sessionStorage.getItem(KEY);
+  try {
+    return localStorage.getItem(TOKEN_KEY);
+  } catch {
+    return null;
+  }
 }
-export function clearToken() {
-  sessionStorage.removeItem(KEY);
-}
+
 export function isLoggedIn() {
   return !!getToken();
+}
+
+export function clearToken() {
+  try {
+    localStorage.removeItem(TOKEN_KEY);
+  } catch {}
 }

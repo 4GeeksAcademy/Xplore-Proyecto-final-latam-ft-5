@@ -1,4 +1,3 @@
-// src/front/pages/auth/Login.jsx
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { apiLogin } from "../../utils/api";
@@ -18,7 +17,7 @@ export default function Login() {
         try {
             const { access_token } = await apiLogin(input.email, input.password);
             saveToken(access_token);
-            nav("/panel", { replace: true }); // ✅ ir al Panel después de login
+            nav("/panel", { replace: true });
         } catch (err) {
             setMsg(err.message || "Error al iniciar sesión");
         }
@@ -36,7 +35,6 @@ export default function Login() {
                     </div>
 
                     <div className="mb-3">
-                        <input className="form-control" placeholder="E-mail" name="email" type="email" value={inputValue.email} onChange={handleOnChange} />
                         <input
                             className="form-control"
                             placeholder="E-mail"
@@ -49,7 +47,6 @@ export default function Login() {
                     </div>
 
                     <div className="mb-3">
-                        <input className="form-control" placeholder="Contraseña" name="password" type="password" value={inputValue.password} onChange={handleOnChange} />
                         <input
                             className="form-control"
                             placeholder="Contraseña"
@@ -61,11 +58,10 @@ export default function Login() {
                         />
                     </div>
 
-                    <button className="-2 mb-3 col-12 btn bg-success text-white" type="submit">
+                    <button className="p-2 mb-3 col-12 btn bg-success text-white" type="submit">
                         Entrar
                     </button>
 
-                    {/* Botón placeholder por si luego conectan OAuth */}
                     <button
                         className="btn border border-danger text-danger p-2 mb-2 col-12"
                         type="button"
