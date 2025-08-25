@@ -1,10 +1,10 @@
 import React from 'react';
-import imagen1 from "/workspaces/Xplore-Proyecto-final-latam-ft-5/docs/assets/pexels-fukajaz-9762762.jpg"
-import imagenTelefono from "/workspaces/Xplore-Proyecto-final-latam-ft-5/docs/assets/Telefono-02.png"
-import imagen2 from "/workspaces/Xplore-Proyecto-final-latam-ft-5/docs/assets/pexels-david-kooijman-1969435-3591326.jpg"
-import imagen3 from "/workspaces/Xplore-Proyecto-final-latam-ft-5/docs/assets/pexels-marc-coenen-298185-3675393.jpg"
-import imagen4 from "/workspaces/Xplore-Proyecto-final-latam-ft-5/docs/assets/pexels-mikhail-nilov-8322906.jpg"
-import imagen5 from "/workspaces/Xplore-Proyecto-final-latam-ft-5/docs/assets/pexels-oscar-steiner-982093-33510678.jpg"
+// import imagen1 from "/workspaces/Xplore-Proyecto-final-latam-ft-5/docs/assets/pexels-fukajaz-9762762.jpg"
+// import imagenTelefono from "/workspaces/Xplore-Proyecto-final-latam-ft-5/docs/assets/Telefono-02.png"
+// import imagen2 from "/workspaces/Xplore-Proyecto-final-latam-ft-5/docs/assets/pexels-david-kooijman-1969435-3591326.jpg"
+// import imagen3 from "/workspaces/Xplore-Proyecto-final-latam-ft-5/docs/assets/pexels-marc-coenen-298185-3675393.jpg"
+// import imagen4 from "/workspaces/Xplore-Proyecto-final-latam-ft-5/docs/assets/pexels-mikhail-nilov-8322906.jpg"
+// import imagen5 from "/workspaces/Xplore-Proyecto-final-latam-ft-5/docs/assets/pexels-oscar-steiner-982093-33510678.jpg"
 import './styles.css';
 
 const Landing = () => {
@@ -58,7 +58,7 @@ const Landing = () => {
                     <div className="col-md-6 text-center position-relative">
                         <div className="rounded-box"></div>
                         <img
-                            src={imagenTelefono}
+                            src="https://i.pinimg.com/736x/93/87/45/938745369df9fed5ab0c726f0b2fdb35.jpg"
                             alt="App en celular"
                             className="img-fluid image-on-top"
                         />

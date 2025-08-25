@@ -27,10 +27,10 @@ export default function Login() {
                         <div>No tienes cuenta? <Link to="/signup" >crear cuenta</Link> </div>
                     </div>
                     <div className="mb-3">
-                        <input className="form-control" placeholder="E-mail" name="email" type="text" value={inputValue.email} onChange={handleOnChange} />
+                        <input className="form-control" placeholder="E-mail" name="email" type="email" value={inputValue.email} onChange={handleOnChange} />
                     </div>
                     <div className="mb-3">
-                        <input className="form-control" placeholder="Contraseña" type="password" value={inputValue.password} onChange={handleOnChange} />
+                        <input className="form-control" placeholder="Contraseña" name="password" type="password" value={inputValue.password} onChange={handleOnChange} />
                     </div>
                     <button className=" p-2 mb-3 col-12 btn bg-success text-white" type="submit">Iniciar sesion</button>
                 </form>

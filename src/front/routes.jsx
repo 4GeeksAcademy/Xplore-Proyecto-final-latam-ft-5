@@ -22,6 +22,7 @@ import ResetPassword from "./pages/auth/ResetPassword.jsx";
 
 // Creamos UNA SOLA configuración para el routerimport { element } from "prop-types";
 import HomeXpertos from "./pages/Xpertos/HomeXpertos";
+import Profile from "./pages/touristUser/Profile.jsx";
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -46,7 +47,8 @@ export const router = createBrowserRouter(
       <Route path="/convierte-experto" element={<ProveedorSignUp />} />
       {/* Xpertos Route: */}
       <Route path="/xpertos" element={<HomeXpertos />} />
-
+      {/* User Route: */}
+      <Route path="/profile" element={<Profile />} />
     </Route>
   )
 );
