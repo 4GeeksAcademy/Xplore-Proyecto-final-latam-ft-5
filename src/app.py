@@ -6,9 +6,15 @@ from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from flask_jwt_extended import JWTManager
+<<<<<<< HEAD
 from flask_cors import CORS
 
 # ✅ IMPORTS RELATIVOS (porque el app es src.app)
+=======
+from flask_cors import CORS  # <-- 1. Importa CORS
+
+# --- Imports del proyecto (relativos al paquete src) ---
+>>>>>>> origin/Back-work
 from .config import (
     SQLALCHEMY_DATABASE_URI,
     SQLALCHEMY_TRACK_MODIFICATIONS,
@@ -21,12 +27,17 @@ from .api.routes import api
 from .api.admin import setup_admin
 from .api.commands import setup_commands
 
+<<<<<<< HEAD
+=======
+# --- Inicialización de la App ---
+>>>>>>> origin/Back-work
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../dist/")
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
+<<<<<<< HEAD
 CORS(app)
 
 app.config["SECRET_KEY"] = SECRET_KEY
@@ -34,25 +45,53 @@ app.config["JWT_SECRET_KEY"] = JWT_SECRET_KEY
 app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = SQLALCHEMY_TRACK_MODIFICATIONS
 
+=======
+# --- 2. Habilita CORS para toda la aplicación ---
+CORS(app)
+
+# ---- Configuración de Flask/DB/JWT ----
+app.config["SECRET_KEY"] = SECRET_KEY
+app.config["JWT_SECRET_KEY"] = JWT_SECRET_KEY
+app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = SQLALCHEMY_TRACK_MODIFICATIONS
+
+# ---- Inicialización de Extensiones ----
+>>>>>>> origin/Back-work
 db.init_app(app)
 bcrypt.init_app(app)
 jwt = JWTManager(app)
 MIGRATE = Migrate(app, db, compare_type=True)
 
+<<<<<<< HEAD
+=======
+# ---- Registro de Componentes ----
+>>>>>>> origin/Back-work
 setup_admin(app)
 setup_commands(app)
 app.register_blueprint(api, url_prefix="/api")
 
+<<<<<<< HEAD
+=======
+# ---- Manejadores de Errores y Rutas Estáticas ----
+>>>>>>> origin/Back-work
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
     return jsonify(error.to_dict()), error.status_code
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/Back-work
 @app.route("/")
 def sitemap():
     if ENV == "development":
         return generate_sitemap(app)
     return send_from_directory(static_file_dir, "index.html")
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/Back-work
 @app.route("/<path:path>", methods=["GET"])
 def serve_any_other_file(path):
     if not os.path.isfile(os.path.join(static_file_dir, path)):
@@ -61,12 +100,21 @@ def serve_any_other_file(path):
     response.cache_control.max_age = 0
     return response
 
+<<<<<<< HEAD
+=======
+
+# ---- Creación de Tablas ----
+>>>>>>> origin/Back-work
 with app.app_context():
     try:
         db.create_all()
     except Exception as e:
         print(f"[DB INIT] Error creando tablas: {e}")
 
+<<<<<<< HEAD
+=======
+# ---- Punto de Entrada Principal ----
+>>>>>>> origin/Back-work
 if __name__ == "__main__":
     PORT = int(os.environ.get("PORT", 3001))
     app.run(host="0.0.0.0", port=PORT, debug=True)
