@@ -44,6 +44,7 @@ export const router = createBrowserRouter(
       <Route path="/panel" element={<Panel />} />
       <Route path="/tour/:tourId" element={<TourDetail />} />
       <Route path="/convierte-experto" element={<ProveedorSignUp />} />
+      
       {/* Xpertos Route: */}
       <Route path="/xpertos" element={<HomeXpertos />} />
 

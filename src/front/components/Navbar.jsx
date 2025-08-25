@@ -33,7 +33,7 @@ export const Navbar = () => {
           </ul>
           {/* ACTUALIZAR LINKS */}
           <div className="d-flex flex-column flex-sm-row  gap-2 mt-3 mt-lg-0 ms-lg-auto">
-            <Link to="/convierte-experto" className="btn btn-experto rounded-pill px-3">
+            <Link to="/xpertos" className="btn btn-experto rounded-pill px-3">
               Conviértete en Experto
             </Link>
             <Link to="/login" className="btn btn-login rounded-pill px-3">
