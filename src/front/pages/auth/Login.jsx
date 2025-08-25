@@ -36,9 +36,7 @@ export default function Login() {
                     </div>
 
                     <div className="mb-3">
-<<<<<<< HEAD
                         <input className="form-control" placeholder="E-mail" name="email" type="email" value={inputValue.email} onChange={handleOnChange} />
-=======
                         <input
                             className="form-control"
                             placeholder="E-mail"
@@ -48,13 +46,10 @@ export default function Login() {
                             onChange={onChange}
                             required
                         />
->>>>>>> origin/Back-work
                     </div>
 
                     <div className="mb-3">
-<<<<<<< HEAD
                         <input className="form-control" placeholder="Contraseña" name="password" type="password" value={inputValue.password} onChange={handleOnChange} />
-=======
                         <input
                             className="form-control"
                             placeholder="Contraseña"
@@ -83,7 +78,6 @@ export default function Login() {
 
                     <div className="mt-2 text-end">
                         <Link to="/recover-password">Olvidé mi contraseña</Link>
->>>>>>> origin/Back-work
                     </div>
                 </form>
             </div>

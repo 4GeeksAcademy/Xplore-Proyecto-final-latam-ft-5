@@ -24,7 +24,6 @@ import PanelReservation from "./pages/PanelReservation.jsx";
 import SignUp from "./pages/auth/SignUp.jsx";
 import Login from "./pages/auth/Login.jsx";
 import RecoverPassword from "./pages/auth/RecoverPassword.jsx";
-<<<<<<< HEAD
 import ProveedorSignUp from "./pages/auth/ProveedorSignUp.jsx";
 import ResetPassword from "./pages/auth/ResetPassword.jsx";
 import ProveedorAceptado from "./pages/ProveedorAceptado.jsx";
@@ -33,7 +32,6 @@ import ProveedorAceptado from "./pages/ProveedorAceptado.jsx";
 // Creamos UNA SOLA configuración para el routerimport { element } from "prop-types";
 import HomeXpertos from "./pages/Xpertos/HomeXpertos";
 import Profile from "./pages/touristUser/Profile.jsx";
-=======
 import ResetPassword from "./pages/auth/ResetPassword.jsx";
 import ProveedorSignUp from "./pages/auth/ProveedorSignUp.jsx";
 
@@ -62,7 +60,6 @@ function PanelShell() {
     </div>
   );
 }
->>>>>>> origin/Back-work
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -83,7 +80,6 @@ export const router = createBrowserRouter(
       <Route path="reset-password" element={<ResetPassword />} />
       <Route path="convierte-experto" element={<ProveedorSignUp />} />
 
-<<<<<<< HEAD
       {/* --- RUTAS QUE TÚ CREASTE (AÑADIDAS AQUÍ) --- */}
       <Route path="/panel" element={<Panel />} />
       <Route path="/tour/:tourId" element={<TourDetail />} />
@@ -93,7 +89,6 @@ export const router = createBrowserRouter(
       <Route path="/xpertos" element={<HomeXpertos />} />
       {/* User Route: */}
       <Route path="/profile" element={<Profile />} />
-=======
       {/* ===== PANEL (PROTEGIDO) ===== */}
       <Route
         path="panel"
@@ -116,7 +111,6 @@ export const router = createBrowserRouter(
 
       {/* 404 */}
       <Route path="*" element={<NotFound />} />
->>>>>>> origin/Back-work
     </Route>
   )
 );

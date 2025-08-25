@@ -1,15 +1,3 @@
-<<<<<<< HEAD
-
-from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-
-from flask import request, jsonify, Blueprint
-from .models import db, User, UserRole
-from .utils import APIException
-from flask_jwt_extended import create_access_token
-
-api = Blueprint('api', __name__)
-=======
 # src/api/routes.py
 from flask import request, jsonify, Blueprint
 from flask_jwt_extended import (
@@ -17,7 +5,6 @@ from flask_jwt_extended import (
 )
 from .models import db, User, UserRole
 from .utils import APIException
->>>>>>> origin/Back-work
 
 api = Blueprint("api", __name__)
 

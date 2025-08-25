@@ -11,11 +11,7 @@ const NavBar = () => {
                 {/* Logo */}
                 <button type="button" className="btn btn-link p-0 border-0">
                     <img
-<<<<<<< HEAD
-                        src="https://i.pinimg.com/736x/93/87/45/938745369df9fed5ab0c726f0b2fdb35.jpg"
-=======
                         src={logo}
->>>>>>> origin/Back-work
                         alt="Logo"
                         width="200px"
                         className="d-inline-block align-text-top"

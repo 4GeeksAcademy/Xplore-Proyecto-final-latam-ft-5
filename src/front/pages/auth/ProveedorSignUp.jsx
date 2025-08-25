@@ -1,12 +1,9 @@
 import { useState } from "react";
-<<<<<<< HEAD
 import { Link, useNavigate } from "react-router-dom";
 import '../../styles/ProveedorSignUp.css';
-=======
 import { Link } from "react-router-dom";
 import "../../styles/Navbar.css";
 import "../../styles/ProveedorSignUp.css" // Asegúrate de tener este CSS para estilos
->>>>>>> origin/Back-work
 
 export default function ProveedorSignUp() {
     const navigate = useNavigate();
