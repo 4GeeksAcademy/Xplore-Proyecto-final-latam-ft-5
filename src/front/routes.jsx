@@ -21,6 +21,10 @@ import ProveedorSignUp from "./pages/auth/ProveedorSignUp.jsx";
 import ResetPassword from "./pages/auth/ResetPassword.jsx";
 import ProveedorAceptado from "./pages/ProveedorAceptado.jsx";
 // Creamos UNA SOLA configuración para el router
+
+// Creamos UNA SOLA configuración para el routerimport { element } from "prop-types";
+import HomeXpertos from "./pages/Xpertos/HomeXpertos";
+
 export const router = createBrowserRouter(
   createRoutesFromElements(
     // Todas las rutas se anidan dentro del Layout para que compartan Navbar y Footer
@@ -43,6 +47,9 @@ export const router = createBrowserRouter(
       <Route path="/tour/:tourId" element={<TourDetail />} />
       <Route path="/convierte-experto" element={<ProveedorSignUp />} />
       <Route path="/proveedor-aceptado" element={<ProveedorAceptado />} />
+      {/* Xpertos Route: */}
+      <Route path="/xpertos" element={<HomeXpertos />} />
+
     </Route>
   )
 );
