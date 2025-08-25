@@ -58,8 +58,8 @@ const Landing = () => {
                     <div className="col-md-6 text-center position-relative">
                         <div className="rounded-box"></div>
                         <img
-                            src="https://i.pinimg.com/736x/93/87/45/938745369df9fed5ab0c726f0b2fdb35.jpg"
-                            alt="App en celular"
+                            src="https://unsplash.com/es/fotos/camion-de-helados-estacionado-al-aire-libre-durante-el-dia-ODXOROjPeds"
+                            alt="Imagen de un celular"
                             className="img-fluid image-on-top"
                         />
                     </div>

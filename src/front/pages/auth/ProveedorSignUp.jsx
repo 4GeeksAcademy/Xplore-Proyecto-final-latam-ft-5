@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import '../../styles/ProveedorSignUp.css';
 
 export default function ProveedorSignUp() {
+    const navigate = useNavigate();
     const [opcion, setOpcion] = useState("");
     const [paso, setPaso] = useState(1);
 
@@ -39,6 +40,56 @@ export default function ProveedorSignUp() {
 
         return Object.keys(fillError).length === 0;
     };
+
+    /* AÑADIR ESTRUCTURA BACKEND
+const handleFinalizar = async (e) => {
+e.preventDefault();
+
+if (validar()) {
+    const data = {
+        nombreEmpresa,
+        paginaWeb,
+        monedaPago,
+        nombres,
+        apellidos,
+        telefono,
+        email,
+        contraseña,
+    };
+
+    try {
+        const response = await fetch("https://", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data),
+        });
+
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            alert(`Error: ${errorData.message || 'error'}`);
+            return;
+        }
+
+       
+        navigate("/proveedor-aceptado");
+
+    } catch (error) {
+        alert(`error: ${error.message}`);
+    }
+}
+};
+*/
+    const handleFinalizar = (e) => {
+        e.preventDefault();
+
+        if (validar()) {
+            navigate("/proveedor-aceptado");
+        }
+    };
+
 
     return (
         <div className="container">
@@ -90,46 +141,46 @@ export default function ProveedorSignUp() {
                             <form className="m-2">
                                 <div className="mb-3">
                                     <label className="form-label">Nombre Empresa</label>
-                                    <input type="text" className={`form-control ${error.nombreEmpresa ? "border border-danger" : ""}`} placeholder="Nombre empresa" value={nombreEmpresa}
+                                    <input type="text" className={`form-control ${error.nombreEmpresa ? "border border-danger" : ""}`} placeholder="Nombre empresa" value={nombreEmpresa} maxLength={30}
                                         onChange={(e) => setNombreEmpresa(e.target.value)} />
                                 </div>
                                 <div className="mb-3">
                                     <label className="form-label">Pagina web</label>
-                                    <input type="text" className={`form-control ${error.paginaWeb ? "border border-danger" : ""}`} placeholder="Ingresa tu Web" value={paginaWeb}
+                                    <input type="text" className={`form-control ${error.paginaWeb ? "border border-danger" : ""}`} placeholder="Ingresa tu Web" value={paginaWeb} maxLength={30}
                                         onChange={(e) => setPaginaWeb(e.target.value)} />
                                 </div>
 
                                 {/* CAMBIAR A OPCIONES DE MONEDA, ¿USE STATE?*/}
                                 <div className="mb-3">
                                     <label className="form-label">moneda de pago</label>
-                                    <input type="text" className={`form-control ${error.monedaPago ? "border border-danger" : ""}`} placeholder="selecciona moneda" value={monedaPago}
+                                    <input type="text" className={`form-control ${error.monedaPago ? "border border-danger" : ""}`} placeholder="selecciona moneda" value={monedaPago} maxLength={15}
                                         onChange={(e) => setMonedaPago(e.target.value)} />
                                 </div>
                                 <div className="mb-3">
                                     <label className="form-label">Nombres</label>
-                                    <input type="text" className={`form-control ${error.nombreEmpresa ? "border border-danger" : ""}`}
+                                    <input type="text" className={`form-control ${error.nombreEmpresa ? "border border-danger" : ""}`} maxLength={20}
                                         placeholder="Ingresa tu nombre" value={nombres}
                                         onChange={(e) => setNombres(e.target.value)} />
                                 </div>
                                 <div className="mb-3">
                                     <label className="form-label">Apellidos</label>
-                                    <input type="text" className={`form-control ${error.apellidos ? "border border-danger" : ""}`} placeholder="Apellidos" value={apellidos}
+                                    <input type="text" className={`form-control ${error.apellidos ? "border border-danger" : ""}`} placeholder="Apellidos" value={apellidos} maxLength={20}
                                         onChange={(e) => setApellidos(e.target.value)} />
                                 </div>
                                 <div className="mb-3">
                                     <label className="form-label">Teléfono</label>
-                                    <input type="text" className={`form-control ${error.telefono ? "border border-danger" : ""}`} placeholder="+56 9 1234 5678" value={telefono}
+                                    <input type="text" className={`form-control ${error.telefono ? "border border-danger" : ""}`} placeholder="+56 9 1234 5678" value={telefono} maxLength={15}
                                         onChange={(e) => setTelefono(e.target.value)} />
                                 </div>
 
                                 <div className="mb-3">
                                     <label className="form-label">Correo electrónico</label>
-                                    <input type="email" className={`form-control ${error.email ? "border border-danger" : ""}`} placeholder="ejemplo@email.com" value={email}
+                                    <input type="email" className={`form-control ${error.email ? "border border-danger" : ""}`} placeholder="ejemplo@email.com" value={email} maxLength={30}
                                         onChange={(e) => setEmail(e.target.value)} />
                                 </div>
                                 <div className="mb-3">
                                     <label className="form-label">Contraseña</label>
-                                    <input type="text" className={`form-control ${error.contraseña ? "border border-danger" : ""}`} placeholder="Ingresa tu contraseña" value={contraseña}
+                                    <input type="password" className={`form-control ${error.contraseña ? "border border-danger" : ""}`} placeholder="Ingresa tu contraseña" value={contraseña} maxLength={15}
                                         onChange={(e) => setContraseña(e.target.value)} />
                                 </div>
 
@@ -144,14 +195,8 @@ export default function ProveedorSignUp() {
                                     Volver
                                 </button>
                                 <button className="btn btn-success"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        if (validar()) {
-                                            alert("Formulario enviado con éxito");
-                                            {/* AÑADIR BACKEEEND!*/ }
-                                        }
-                                    }}
-                                >
+                                    onClick={handleFinalizar}>
+
                                     Finalizar
                                 </button>
                             </div>

@@ -36,9 +36,11 @@ export const Navbar = () => {
             <Link to="/convierte-experto" className="btn btn-experto rounded-pill px-3">
               Conviértete en Experto
             </Link>
-            <Link to="/login" className="btn btn-login rounded-pill px-3">
-              Iniciar sesión / Registrarse
-            </Link>
+            <button className="btn btn-login rounded-pill px-3">
+              <Link to='/login' className="btn-login text-decoration-none">
+                Iniciar sesión / Registrarse
+              </Link>
+            </button>
           </div>
         </div>
       </div>
