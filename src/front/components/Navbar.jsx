@@ -1,4 +1,3 @@
-// src/front/components/Navbar.jsx
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { isLoggedIn, clearToken } from "../utils/auth";
 import logo from "../assets/img/Xplora_logo.png";
@@ -43,12 +42,12 @@ function Navbar() {
           </ul>
 
           <div className="d-flex flex-column flex-sm-row gap-2 ms-lg-auto">
-            <Link to="/convierte-experto" style={{ backgroundColor: '#00ffbbff ' }} className="btn btn-experto rounded-pill px-3">
+            <Link to="/convierte-experto" style={{ backgroundColor: '#2d7360', color: '#fff', border: 'none' }} className="btn btn-experto rounded-pill px-3">
               Conviértete en Experto
             </Link>
 
             {!logged ? (
-              <Link to="/login" style={{ backgroundColor: '#2d7360 ' }} className="btn btn-outline rounded-pill px-3 btn-login">
+              <Link to="/login" style={{ backgroundColor: '#B9E3E1', color: '#fff', border: 'none' }} className="btn btn-outline rounded-pill px-3 btn-login">
                 Iniciar sesión / Registrarse
               </Link>
             ) : (
@@ -65,4 +64,4 @@ function Navbar() {
 }
 
 export default Navbar;
-export { Navbar }; // por compatibilidad con imports antiguos
+export { Navbar };
