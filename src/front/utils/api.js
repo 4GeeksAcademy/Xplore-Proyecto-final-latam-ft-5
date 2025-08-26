@@ -1,56 +1,32 @@
-// src/front/utils/api.js
-const BASE = (
-  import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:3001"
-).replace(/\/+$/, "");
+import { getToken } from "./auth";
+
+const BASE = import.meta.env.VITE_BACKEND_URL; // ej: http://127.0.0.1:3001 (sin /api)
 
 async function request(path, options = {}) {
-  const res = await fetch(`${BASE}${path}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-    ...options,
-  });
-
-  const isJson = res.headers.get("content-type")?.includes("application/json");
-  const data = isJson ? await res.json() : await res.text();
-
+  const token = getToken();
+  const headers = {
+    "Content-Type": "application/json",
+    ...(options.headers || {}),
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+  const res = await fetch(`${BASE}${path}`, { ...options, headers });
+  const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    const msg = isJson ? data?.msg || data?.error : res.statusText;
-    throw new Error(msg || "Request error");
+    const msg = data?.msg || data?.error || res.statusText;
+    throw new Error(msg);
   }
   return data;
 }
 
-export function apiSignup(payload) {
-  // payload: { name, last_name, email, password, role }
-  return request("/api/signup", {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
-}
+export const apiSignup = (payload) =>
+  request("/api/signup", { method: "POST", body: JSON.stringify(payload) });
 
-export function apiLogin(email, password) {
-  // devuelve { access_token }
-  return request("/api/login", {
+export const apiLogin = (email, password) =>
+  request("/api/login", {
     method: "POST",
     body: JSON.stringify({ email, password }),
   });
-}
 
-export function apiGetProfile(token) {
-  return request("/api/profile", {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  });
-}
+export const apiProfile = () => request("/api/profile", { method: "GET" });
 
-// Útil si quieres llamar a otros endpoints autenticados
-export function apiAuthFetch(path, options = {}, token) {
-  return request(path, {
-    ...options,
-    headers: {
-      ...(options.headers || {}),
-      Authorization: `Bearer ${token}`,
-    },
-  });
-}
+export default { request, apiSignup, apiLogin, apiProfile };

@@ -18,6 +18,27 @@
   transition: 0.2s ease;
 }
 
+.convierte-experto {
+  background-color: #b9e3e1 !important;
+  border-color: #b9e3e1 !important;
+  color: #2d7360 !important;
+}
+.convierte-experto .btn.btn-opcion.btn-outline-primary:hover {
+  background-color: #a0cfcd;
+  border-color: #a0cfcd;
+  color: #214f4d;
+}
+
+/* botón Continuar / Finalizar (si quieres que no sea el verde de bootstrap) */
+.convierte-experto {
+  background-color: #2d7360 !important;
+  border-color: #2d7360 !important;
+}
+.convierte-experto .btn.btn-success:hover {
+  background-color: #265d4e !important;
+  border-color: #265d4e !important;
+}
+
 /* cuando usas btn-opcion junto con outline-primary de Bootstrap */
 .proveedor-sign .btn.btn-opcion.btn-outline-primary {
   background-color: #b9e3e1 !important;

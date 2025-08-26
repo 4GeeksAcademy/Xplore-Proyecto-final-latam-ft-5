@@ -131,7 +131,7 @@ export default function ProveedorSignUp() {
                         <>
                             <div className="m-2">
                                 <h3>Completa la información</h3>
-                                <p>Llena los siguientes campos:</p>
+                                <p>Llena los siguientes campos:</p>d
                             </div>
 
                             <form className="m-2">
