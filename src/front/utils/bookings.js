@@ -1,55 +1,40 @@
-// src/front/utils/bookings.js
-const KEY = "xplora_bookings_v1";
+// bookings.js
+const KEY = "xplora_bookings";
 
-export function getBookings() {
+function load() {
   try {
-    return JSON.parse(localStorage.getItem(KEY)) || [];
+    return JSON.parse(localStorage.getItem(KEY) || "[]");
   } catch {
     return [];
   }
 }
-
-function save(bookings) {
-  localStorage.setItem(KEY, JSON.stringify(bookings));
+function save(list) {
+  localStorage.setItem(KEY, JSON.stringify(list));
 }
 
-export function addBooking(booking) {
-  const bookings = getBookings();
-  // Evitar duplicados por confirmationCode si existe
-  if (booking?.confirmationCode) {
-    const exists = bookings.some(
-      (b) => b.confirmationCode === booking.confirmationCode
-    );
-    if (exists) return booking;
-  }
-  const withId = {
-    id: booking.id || String(Date.now()),
-    createdAt: new Date().toISOString(),
-    status: "reserved",
-    ...booking,
-  };
-  bookings.push(withId);
-  save(bookings);
-  return withId;
+export function getBookings() {
+  return load();
 }
 
-export function removeBooking(id) {
-  save(getBookings().filter((b) => b.id !== id));
+export function addBooking(b) {
+  const list = load();
+  const id = crypto.randomUUID();
+  const item = { id, createdAt: Date.now(), status: "reserved", ...b };
+  list.push(item);
+  save(list);
+  return item;
 }
 
-export function getBookingById(id) {
-  return getBookings().find((b) => b.id === id);
+export function cancelBooking(id) {
+  const list = load().map((b) =>
+    b.id === id ? { ...b, status: "canceled" } : b
+  );
+  save(list);
 }
 
-export function getUpcomingBookings() {
-  const today = new Date();
-  return getBookings()
-    .filter((b) => new Date(b.date) >= new Date(today.toDateString()))
+export function nextBooking() {
+  const future = load()
+    .filter((b) => b.status === "reserved")
     .sort((a, b) => new Date(a.date) - new Date(b.date));
-}
-
-export function daysUntil(dateStr) {
-  const d1 = new Date(new Date().toDateString());
-  const d2 = new Date(dateStr);
-  return Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24));
+  return future[0] || null;
 }

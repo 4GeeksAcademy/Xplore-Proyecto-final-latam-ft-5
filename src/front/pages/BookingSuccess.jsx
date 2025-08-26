@@ -1,5 +1,4 @@
-// src/front/pages/BookingSuccess.jsx
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getCheckout, clearCheckout } from "../utils/checkout";
 import { addBooking } from "../utils/bookings";
@@ -9,11 +8,9 @@ export default function BookingSuccess() {
     const { tourId } = useParams();
     const ck = getCheckout();
 
-    // Guarda la reserva (si no existe aún) al entrar
     useEffect(() => {
         if (!ck?.date || !ck?.total) return;
-
-        addBooking({
+        const saved = addBooking({
             tourId,
             title: ck.tourTitle || `Tour #${tourId}`,
             date: ck.date,
@@ -24,25 +21,12 @@ export default function BookingSuccess() {
             confirmationCode: ck.confirmationCode,
             notes: ck.notes || "",
         });
-        // No limpiamos aún: dejamos que el usuario vea los datos
+        sessionStorage.setItem("xplora_just_booked", JSON.stringify({
+            bookingId: saved.id, tourId: saved.tourId, title: saved.title, date: saved.date,
+        }));
     }, []);
-    // Después de addBooking({...})
-    const saved = addBooking({ /* ... */ });
-    // avisa al Panel qué reserva se acaba de crear
-    sessionStorage.setItem(
-        "xplora_just_booked",
-        JSON.stringify({
-            bookingId: saved.id,
-            tourId: saved.tourId,
-            title: saved.title,
-            date: saved.date,
-        })
-    );
 
-
-    const handleFinish = () => {
-        clearCheckout();
-    };
+    function handleFinish() { clearCheckout(); }
 
     return (
         <div className="checkout-wrap text-center">

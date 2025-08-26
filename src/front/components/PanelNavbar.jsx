@@ -1,40 +1,23 @@
-import { Link, NavLink, useNavigate } from "react-router-dom";
-import { clearToken } from "../utils/auth";
+// PanelNavbar.jsx
+import { Link, NavLink } from "react-router-dom";
 
 export default function PanelNavbar() {
-    const nav = useNavigate();
-
-    function logout() {
-        clearToken();
-        nav("/login", { replace: true });
-    }
-
     return (
-        <nav className="navbar navbar-expand bg-light border-bottom px-3">
-            <Link className="navbar-brand fw-bold me-3" to="/panel">Xplora • Panel</Link>
-
-            <form
-                className="d-flex me-auto"
-                role="search"
-                onSubmit={(e) => { e.preventDefault(); /* aquí harías la búsqueda */ }}
-            >
-                <input className="form-control" type="search" placeholder="Buscar tours..." />
-            </form>
-
-            <ul className="navbar-nav gap-2 align-items-center">
-                <li className="nav-item">
-                    <NavLink className="nav-link" to="/panel/favorites" title="Favoritos">❤️</NavLink>
-                </li>
-                <li className="nav-item">
-                    <NavLink className="nav-link" to="/panel/settings" title="Ajustes">⚙️</NavLink>
-                </li>
-                <li className="nav-item">
-                    <NavLink className="nav-link" to="/panel/profile" title="Perfil">👤</NavLink>
-                </li>
-                <li className="nav-item">
-                    <button className="btn btn-outline-danger btn-sm" onClick={logout}>Salir</button>
-                </li>
-            </ul>
+        <nav className="navbar navbar-light bg-white border-bottom">
+            <div className="container">
+                <Link to="/panel" className="navbar-brand fw-bold">Xplora • Panel</Link>
+                <ul className="navbar-nav flex-row gap-3">
+                    <li className="nav-item">
+                        <NavLink to="/panel" className="nav-link">Reservas</NavLink>
+                    </li>
+                    <li className="nav-item">
+                        <NavLink to="/panel/favorites" className="nav-link">Favoritos</NavLink>
+                    </li>
+                    <li className="nav-item">
+                        <NavLink to="/panel/profile" className="nav-link">Perfil</NavLink>
+                    </li>
+                </ul>
+            </div>
         </nav>
     );
 }

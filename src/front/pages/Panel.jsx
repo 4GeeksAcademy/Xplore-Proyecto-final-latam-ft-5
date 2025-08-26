@@ -1,284 +1,169 @@
-import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import "../styles/Panel.css";
+import { getBookings, nextBooking } from "../utils/bookings";
+import { isFavorite, toggleFavorite } from "../utils/favorites";
+import "../styles/panel.css";
 
-// Mock: cámbialo por tu fetch al backend
 const TOURS = [
     {
         id: 1,
         title: "Viaje de Escalada",
-        location: "Huaraz, Perú",
+        city: "Huaraz, Perú",
         days: 3,
         price: 450,
-        rating: 4.8,
+        rating: 4.7,
         tags: ["aventura", "montaña"],
-        image:
-            "https://images.pexels.com/photos/314860/pexels-photo-314860.jpeg?auto=compress&cs=tinysrgb&w=1260",
+        img: "https://images.unsplash.com/photo-1549880338-65ddcdfd017b?q=80&w=1600&auto=format&fit=crop"
     },
     {
         id: 2,
         title: "Antropología Mística",
-        location: "San Juan Chamula, MX",
+        city: "San Juan Chamula, MX",
         days: 2,
         price: 380,
-        rating: 4.6,
+        rating: 4.5,
         tags: ["cultura"],
-        image:
-            "https://images.pexels.com/photos/314860/pexels-photo-314860.jpeg?auto=compress&cs=tinysrgb&w=1260",
+        img: "https://images.unsplash.com/photo-1526772662000-3f88f10405ff?q=80&w=1600&auto=format&fit=crop"
     },
     {
         id: 3,
         title: "Viaje a Chile",
-        location: "Santiago, Chile",
+        city: "Santiago, Chile",
         days: 5,
         price: 520,
-        rating: 4.7,
+        rating: 4.8,
         tags: ["montaña", "cultura"],
-        image:
-            "https://images.pexels.com/photos/314860/pexels-photo-314860.jpeg?auto=compress&cs=tinysrgb&w=1260",
-    },
+        img: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop"
+    }
 ];
 
-const ALL_CATS = ["aventura", "cultura", "montaña", "playa"];
-
 export default function Panel() {
-    // Última reserva (guardada por la página de éxito)
-    const lastBooking = useMemo(() => {
-        try {
-            return JSON.parse(localStorage.getItem("lastBooking") || "null");
-        } catch {
-            return null;
-        }
-    }, []);
+    const bookings = getBookings();
+    const bookedIds = new Set(
+        bookings.filter(b => b.status === "reserved").map(b => String(b.tourId))
+    );
+    const next = nextBooking();
 
-    // Filtros
-    const [q, setQ] = useState("");
-    const [maxPrice, setMaxPrice] = useState(1000);
-    const [onlyReserved, setOnlyReserved] = useState(false);
-    const [cats, setCats] = useState(() => new Set()); // categorías seleccionadas
-    const [order, setOrder] = useState("relevance");
-
-    // Favoritos (demo)
-    const [favs, setFavs] = useState(() => {
-        try {
-            return JSON.parse(localStorage.getItem("favs") || "[]");
-        } catch {
-            return [];
-        }
-    });
-    useEffect(() => {
-        localStorage.setItem("favs", JSON.stringify(favs));
-    }, [favs]);
-    const toggleFav = (id) =>
-        setFavs((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
-
-    // Aplica filtros y orden
-    const filtered = useMemo(() => {
-        let list = TOURS.map((t) => ({
-            ...t,
-            reserved: lastBooking?.tourId === t.id,
-            fav: favs.includes(t.id),
-        })).filter((t) => {
-            if (onlyReserved && !t.reserved) return false;
-            if (t.price > maxPrice) return false;
-
-            const qok =
-                !q ||
-                t.title.toLowerCase().includes(q.toLowerCase()) ||
-                t.location.toLowerCase().includes(q.toLowerCase());
-
-            const catsOk =
-                cats.size === 0 ||
-                Array.from(cats).every((c) => t.tags.includes(c));
-
-            return qok && catsOk;
-        });
-
-        switch (order) {
-            case "price_asc":
-                list.sort((a, b) => a.price - b.price);
-                break;
-            case "price_desc":
-                list.sort((a, b) => b.price - a.price);
-                break;
-            case "rating_desc":
-                list.sort((a, b) => b.rating - a.rating);
-                break;
-            default:
-                // relevance: sin cambios
-                break;
-        }
-        return list;
-    }, [q, maxPrice, onlyReserved, cats, order, favs, lastBooking]);
-
-    const onToggleCat = (c) =>
-        setCats((prev) => {
-            const next = new Set(prev);
-            next.has(c) ? next.delete(c) : next.add(c);
-            return next;
-        });
+    function FavBtn({ id }) {
+        const active = isFavorite(id);
+        return (
+            <button
+                className={`tour-heart ${active ? "active" : ""}`}
+                onClick={() => {
+                    toggleFavorite(id);
+                    location.reload(); // simple para demo
+                }}
+                title={active ? "Quitar de favoritos" : "Agregar a favoritos"}
+            >
+                ♥
+            </button>
+        );
+    }
 
     return (
-        <div className="container py-4 panel-container">
-            {lastBooking && (
-                <div className="next-trip alert alert-success d-flex align-items-center gap-3">
-                    <span className="badge bg-success-subtle text-success fw-semibold">Reservado</span>
-                    <div className="small">
-                        Tu próximo viaje: <strong>Tour #{lastBooking.tourId}</strong>
-                        {lastBooking.date && <> · {lastBooking.date}</>}
+        <div className="panel-wrap">
+            {next && (
+                <div className="next-banner mb-3 d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>Tu próximo viaje:</strong>{" "}
+                        <span className="badge-soft me-1">{next.title}</span>
+                        <span className="text-muted">
+                            {new Date(next.date).toLocaleDateString()}
+                        </span>
                     </div>
-                    <div className="ms-auto d-none d-sm-block">
-                        <Link to={`/panel/booking/${lastBooking.tourId}/date`} className="btn btn-outline-success btn-sm">
-                            Reprogramar
+                    <div className="d-flex gap-2">
+                        <Link
+                            className="btn btn-outline-primary btn-sm"
+                            to={`/panel/reservations/${next.id}`}
+                        >
+                            Ver detalles
                         </Link>
+                        <button
+                            className="btn btn-outline-secondary btn-sm"
+                            onClick={() => alert("Reprogramar (mock)")}
+                        >
+                            Reprogramar
+                        </button>
                     </div>
                 </div>
             )}
 
-            <div className="d-flex align-items-center gap-3 results-bar">
-                <h2 className="h4 fw-bold mb-0">Destacados</h2>
-                <span className="text-muted small">{filtered.length} resultados</span>
-                <div className="ms-auto d-flex align-items-center gap-2">
-                    <label className="small text-muted mb-0">Ordenar</label>
-                    <select
-                        className="form-select form-select-sm w-auto"
-                        value={order}
-                        onChange={(e) => setOrder(e.target.value)}
-                    >
-                        <option value="relevance">Relevancia</option>
-                        <option value="price_asc">Precio ↑</option>
-                        <option value="price_desc">Precio ↓</option>
-                        <option value="rating_desc">Mejor valorados</option>
-                    </select>
-                </div>
-            </div>
+            <div className="row g-4">
+                {/* FILTROS */}
+                <aside className="col-lg-3">
+                    <div className="card-soft panel-filters">
+                        <h6 className="mb-3">Filtros</h6>
 
-            <div className="panel-grid">
-                {/* Filtros */}
-                <aside className="filters-card card-elevated">
-                    <h6 className="fw-semibold small mb-3">Filtros</h6>
+                        <label className="form-label">Buscar</label>
+                        <input className="form-control mb-3" placeholder="destino, actividad..." />
 
-                    <label className="form-label tiny mt-1">Buscar</label>
-                    <input
-                        className="form-control form-control-sm"
-                        placeholder="destino, actividad..."
-                        value={q}
-                        onChange={(e) => setQ(e.target.value)}
-                    />
+                        <label className="form-label">Precio máx.</label>
+                        <input type="range" min="100" max="1500" defaultValue="1000" className="form-range" />
+                        <div className="range-value mb-3">$1000</div>
 
-                    <div className="mt-3">
-                        <div className="d-flex justify-content-between tiny">
-                            <span className="text-muted">Precio máx:</span>
-                            <strong>${maxPrice}</strong>
+                        <label className="form-label d-block">Categorías</label>
+                        <div className="form-check"><input id="c1" className="form-check-input" type="checkbox" /><label htmlFor="c1" className="form-check-label">Aventura</label></div>
+                        <div className="form-check"><input id="c2" className="form-check-input" type="checkbox" /><label htmlFor="c2" className="form-check-label">Cultura</label></div>
+                        <div className="form-check"><input id="c3" className="form-check-input" type="checkbox" /><label htmlFor="c3" className="form-check-label">Playa</label></div>
+                        <div className="form-check"><input id="c4" className="form-check-input" type="checkbox" /><label htmlFor="c4" className="form-check-label">Montaña</label></div>
+
+                        <div className="form-check mt-3">
+                            <input id="onlyr" className="form-check-input" type="checkbox" />
+                            <label htmlFor="onlyr" className="form-check-label">Solo reservados</label>
                         </div>
-                        <input
-                            type="range"
-                            className="form-range"
-                            min={100}
-                            max={1000}
-                            step={10}
-                            value={maxPrice}
-                            onChange={(e) => setMaxPrice(Number(e.target.value))}
-                        />
                     </div>
 
-                    <div className="mt-3">
-                        <div className="tiny text-muted mb-2">Categorías</div>
-                        {ALL_CATS.map((c) => (
-                            <div className="form-check tiny" key={c}>
-                                <input
-                                    id={`cat-${c}`}
-                                    type="checkbox"
-                                    className="form-check-input"
-                                    checked={cats.has(c)}
-                                    onChange={() => onToggleCat(c)}
-                                />
-                                <label htmlFor={`cat-${c}`} className="form-check-label text-capitalize">
-                                    {c}
-                                </label>
+                    <div className="card-soft mt-3 list-compact">
+                        <h6 className="mb-2">Tus próximas reservas</h6>
+                        {bookings.length === 0 && <small className="text-muted">Aún no tienes reservas.</small>}
+                        {bookings.map(b => (
+                            <div key={b.id} className="item">
+                                <div>
+                                    <div className="fw-semibold">{b.title}</div>
+                                    <small className="text-muted">{new Date(b.date).toLocaleDateString()}</small>
+                                </div>
+                                <Link className="btn btn-sm btn-outline-primary" to={`/panel/reservations/${b.id}`}>Ver</Link>
                             </div>
                         ))}
                     </div>
-
-                    <div className="form-check tiny mt-3">
-                        <input
-                            id="onlyReserved"
-                            className="form-check-input"
-                            type="checkbox"
-                            checked={onlyReserved}
-                            onChange={(e) => setOnlyReserved(e.target.checked)}
-                        />
-                        <label htmlFor="onlyReserved" className="form-check-label">
-                            Solo reservados
-                        </label>
-                    </div>
                 </aside>
 
-                {/* Cards */}
-                <section>
+                {/* CARDS */}
+                <section className="col-lg-9">
+                    <h2 className="mb-3">Destacados</h2>
                     <div className="row g-4">
-                        {filtered.map((t) => (
-                            <article key={t.id} className="col-12 col-sm-6 col-lg-4">
-                                <div className="tour-card card-elevated">
-                                    <div className="thumb-wrap">
-                                        <img src={t.image} alt={t.title} className="thumb" />
-                                        <button
-                                            className={`fav-btn ${t.fav ? "is-fav" : ""}`}
-                                            onClick={() => toggleFav(t.id)}
-                                            aria-label="Favorito"
-                                            type="button"
-                                        >
-                                            {t.fav ? "♥" : "♡"}
-                                        </button>
-                                        {t.reserved && <span className="ribbon">Reservado</span>}
-                                    </div>
-
-                                    <div className="p-3">
-                                        <div className="d-flex justify-content-between align-items-start mb-1">
-                                            <h3 className="card-title-trim mb-0">{t.title}</h3>
-                                            <div className="rating" title={`${t.rating} / 5`}>
-                                                ★★★★★
-                                                <span className="rating-mask" style={{ width: `${(1 - t.rating / 5) * 100}%` }} />
+                        {TOURS.map(t => {
+                            const reserved = bookedIds.has(String(t.id));
+                            return (
+                                <div key={t.id} className="col-12 col-md-6 col-xl-4">
+                                    <div className="tour-card h-100">
+                                        <div className="tour-media" style={{ backgroundImage: `url(${t.img})`, backgroundSize: "cover", backgroundPosition: "center" }}>
+                                            <FavBtn id={t.id} />
+                                            {reserved && <div className="ribbon">Reservado</div>}
+                                        </div>
+                                        <div className="tour-body">
+                                            <div className="tour-sub">{t.city} • {t.days} días</div>
+                                            <h3 className="tour-title">{t.title}</h3>
+                                            <div className="d-flex align-items-center gap-1 text-warning" title={`${t.rating} / 5`}>
+                                                {"★".repeat(5)} <small className="text-muted ms-1">{t.rating}</small>
                                             </div>
-                                        </div>
-
-                                        <div className="meta tiny text-muted mb-2">
-                                            {t.location} · {t.days} días
-                                        </div>
-
-                                        <div className="mb-3">
-                                            {t.tags.map((tag) => (
-                                                <span key={tag} className="tag">
-                                                    {tag}
-                                                </span>
-                                            ))}
-                                        </div>
-
-                                        <div className="d-flex align-items-center justify-content-between">
-                                            <div>
-                                                <div className="price">${t.price} USD</div>
-                                                <div className="tiny text-muted">por persona</div>
+                                            <div className="d-flex flex-wrap tour-tags mt-2">
+                                                {t.tags.map(tag => <span key={tag} className="badge-soft">{tag}</span>)}
                                             </div>
 
-                                            <div className="d-flex gap-2">
-                                                <Link to={`/tour/${t.id}`} className="btn btn-outline-primary btn-sm">
-                                                    Ver detalles
-                                                </Link>
-
-                                                <Link
-                                                    to={`/panel/booking/${t.id}/date`}
-                                                    className={`btn btn-primary btn-sm ${t.reserved ? "disabled" : ""}`}
-                                                    aria-disabled={t.reserved}
-                                                    onClick={(e) => t.reserved && e.preventDefault()}
-                                                >
-                                                    {t.reserved ? "Ya reservado" : "Reservar"}
-                                                </Link>
+                                            <div className="tour-cta">
+                                                <div className="tour-price">${t.price} USD</div>
+                                                <div className="d-flex gap-2">
+                                                    <Link className="btn btn-outline-primary btn-sm" to={`/tour/${t.id}`}>Ver detalles</Link>
+                                                    {reserved
+                                                        ? <span className="btn btn-secondary btn-sm disabled">Ya reservado</span>
+                                                        : <Link className="btn btn-primary btn-sm" to={`/panel/booking/${t.id}/date`}>Reservar</Link>}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </article>
-                        ))}
+                            );
+                        })}
                     </div>
                 </section>
             </div>

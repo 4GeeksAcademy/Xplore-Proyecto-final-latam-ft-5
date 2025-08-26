@@ -1,62 +1,55 @@
-/* src/front/styles/checkout.css */
+:root {
+  --brand: #2d7360;
+  --line: #e5e7eb;
+  --soft: #f5faf8;
+}
 .checkout-wrap {
-  max-width: 980px;
-  margin: 0 auto;
+  padding: 1.25rem 0 2rem;
+}
+.card-soft {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
 }
 
+/* stepper */
 .stepper {
   display: flex;
-  gap: 10px;
   align-items: center;
   justify-content: center;
-  margin: 10px 0 24px;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
 }
 .stepper .dot {
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #e5e7eb;
   display: grid;
   place-items: center;
+  font-size: 0.8rem;
   font-weight: 700;
-  background: #e9ecef;
-  color: #6c757d;
+  color: #374151;
 }
 .stepper .dot.active {
-  background: #2d7360;
+  background: var(--brand);
   color: #fff;
 }
 .stepper .bar {
-  height: 3px;
   width: 48px;
-  background: #e9ecef;
-  border-radius: 2px;
+  height: 4px;
+  background: #e5e7eb;
+  border-radius: 999px;
 }
 .stepper .bar.active {
-  background: #2d7360;
+  background: var(--brand);
 }
 
-.card-soft {
-  border: 1px solid #edf1f5;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
-  background: #fff;
-}
-.summary-sticky {
-  position: sticky;
-  top: 24px;
-}
-
-.badge-soft {
-  background: #e7f6f2;
-  color: #2d7360;
-  border-radius: 999px;
-  padding: 4px 10px;
-  font-weight: 600;
-}
-
-hr.hr-soft {
-  border: 0;
-  border-top: 1px dashed #dfe6ee;
-  margin: 14px 0;
+.summary {
+  background: var(--soft);
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  padding: 0.8rem;
 }
