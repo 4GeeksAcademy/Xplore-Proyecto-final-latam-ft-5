@@ -3,8 +3,8 @@ import acepted from "../assets/img/acepted.png";
 
 export default function ProveedorAceptado() {
     return (
-        <div className="d-flex justify-content-center align-items-center vh-100 px-3">
-            <div className="card border-success p-4 text-center" style={{ maxWidth: "600px", width:"100%"}}>
+        <div className="d-flex justify-content-center align-items-center  px-3">
+            <div className="card border-success p-3 text-center" style={{ maxWidth: "500px", width:"100%"}}>
                 <h2>¡Bienvenido a la comunidad Xplora!</h2>
                 <p>Gracias por registrarte como Experto, ya puedes contactarte con turistas de todo el mundo.</p>
 

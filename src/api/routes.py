@@ -2,7 +2,7 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
-from flask import request, jsonify, Blueprint
+from flask import  request, jsonify, Blueprint
 from .models import db, User, UserRole
 from .utils import APIException
 from flask_jwt_extended import create_access_token
@@ -34,3 +34,11 @@ def create_user():
     db.session.commit()
 
     return jsonify({"msg": "Usuario creado exitosamente", "user": new_user.serialize()}), 201
+
+@api.route("/proveedor/signup", methods=["POST"])
+def proveedor_signup():
+    data = request.json
+    return jsonify({
+        "msg": "Proveedor registrado con éxito",
+        "data": data
+    }), 201
