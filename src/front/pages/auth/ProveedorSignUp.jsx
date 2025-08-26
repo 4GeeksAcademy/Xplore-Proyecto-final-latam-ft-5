@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import '../../styles/ProveedorSignUp.css';
-import "../../styles/Navbar.css";
-
+import { apiProveedorSignup } from "../../utils/apiGuias";
 export default function ProveedorSignUp() {
     const navigate = useNavigate();
     const [opcion, setOpcion] = useState("");
@@ -16,6 +15,7 @@ export default function ProveedorSignUp() {
     const [telefono, setTelefono] = useState("");
     const [email, setEmail] = useState("");
     const [contraseña, setContraseña] = useState("");
+    const [confirmarContraseña, setConfirmarContraseña] = useState("");
     const [error, setError] = useState({});
 
 
@@ -37,60 +37,55 @@ export default function ProveedorSignUp() {
         if (!email || !email.includes("@")) fillError.email = true;
         if (!contraseña) fillError.contraseña = true;
 
+
+        if (contraseña !== confirmarContraseña){ fillError.confirmarContraseña=true;}
         setError(fillError);
 
         return Object.keys(fillError).length === 0;
     };
 
-    /* AÑADIR ESTRUCTURA BACKEND
-const handleFinalizar = async (e) => {
-e.preventDefault();
 
-if (validar()) {
-    const data = {
-        nombreEmpresa,
-        paginaWeb,
-        monedaPago,
-        nombres,
-        apellidos,
-        telefono,
-        email,
-        contraseña,
-    };
-
-    try {
-        const response = await fetch("https://", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        });
-
-        
-        if (!response.ok) {
-            const errorData = await response.json();
-            alert(`Error: ${errorData.message || 'error'}`);
-            return;
-        }
-
-       
-        navigate("/proveedor-aceptado");
-
-    } catch (error) {
-        alert(`error: ${error.message}`);
-    }
-}
-};
-*/
-    const handleFinalizar = (e) => {
+    const handleFinalizar = async (e) => {
         e.preventDefault();
 
         if (validar()) {
-            navigate("/proveedor-aceptado");
+            const data = {
+                opcion,
+                nombreEmpresa,
+                paginaWeb,
+                monedaPago,
+                nombres,
+                apellidos,
+                telefono,
+                email,
+                contraseña,
+                confirmarContraseña,
+            };
+
+            try {
+                const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/proveedor/signup`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(data),
+                });
+
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    alert(`Error: ${errorData.message || 'error'}`);
+                    return;
+                }
+
+
+                navigate("/proveedor-aceptado");
+
+            } catch (error) {
+                alert(`error: ${error.message}`);
+            }
         }
     };
-
 
     return (
         <div className="container">
@@ -136,7 +131,7 @@ if (validar()) {
                         <>
                             <div className="m-2">
                                 <h3>Completa la información</h3>
-                                <p>Llena los siguientes campos:</p>d
+                                <p>Llena los siguientes campos para registrarte:</p>
                             </div>
 
                             <form className="m-2">
@@ -151,11 +146,16 @@ if (validar()) {
                                         onChange={(e) => setPaginaWeb(e.target.value)} />
                                 </div>
 
-                                {/* CAMBIAR A OPCIONES DE MONEDA, ¿USE STATE?*/}
+                                {/* opciones de monedas, se pueden agregar nuevas si lo prefieren*/}
                                 <div className="mb-3">
-                                    <label className="form-label">moneda de pago</label>
-                                    <input type="text" className={`form-control ${error.monedaPago ? "border border-danger" : ""}`} placeholder="selecciona moneda" value={monedaPago} maxLength={15}
-                                        onChange={(e) => setMonedaPago(e.target.value)} />
+                                    <label className="form-label">Moneda de pago</label>
+                                    <select className={`form-control ${error.monedaPago ? "border border-danger" : ""}`} placeholder="selecciona moneda" value={monedaPago} 
+                                        onChange={(e) => setMonedaPago(e.target.value)} >
+                                        <option value="USD">$ USD - Dólar Estadounidense</option>
+                                        <option value="EUR">€ EUR - Euro</option>
+                                        <option value="MXN">$ MXN - Peso Mexicano</option>
+                                        <option value="CLP">$ CLP - Peso Chileno</option>
+                                        </select>
                                 </div>
                                 <div className="mb-3">
                                     <label className="form-label">Nombres</label>
@@ -170,7 +170,7 @@ if (validar()) {
                                 </div>
                                 <div className="mb-3">
                                     <label className="form-label">Teléfono</label>
-                                    <input type="text" className={`form-control ${error.telefono ? "border border-danger" : ""}`} placeholder="+56 9 1234 5678" value={telefono} maxLength={15}
+                                    <input type="telefono" className={`form-control ${error.telefono ? "border border-danger" : ""}`} placeholder="+56 9 1234 5678" value={telefono} maxLength={15}
                                         onChange={(e) => setTelefono(e.target.value)} />
                                 </div>
 
@@ -183,8 +183,16 @@ if (validar()) {
                                     <label className="form-label">Contraseña</label>
                                     <input type="password" className={`form-control ${error.contraseña ? "border border-danger" : ""}`} placeholder="Ingresa tu contraseña" value={contraseña} maxLength={15}
                                         onChange={(e) => setContraseña(e.target.value)} />
-                                </div>
 
+                                         <div className="mb-3">
+                                    <label className="form-label">Confirma tu nueva contraseña</label>
+                                    <input type="password" className={`form-control ${error.confirmarContraseña ? "border border-danger" : ""}`} placeholder="Confirma tu contraseña" value={confirmarContraseña} maxLength={15}
+                                        onChange={(e) => setConfirmarContraseña(e.target.value)} />
+                                        {/* validación contraseñas identicas*/}
+                                        {error.confirmarContraseña && (<div className="text-danger mt-1">Las contraseñas no coinciden</div>
+    )}
+                                </div>
+                                </div>
                             </form>
 
                             {/* botones de acción */}
