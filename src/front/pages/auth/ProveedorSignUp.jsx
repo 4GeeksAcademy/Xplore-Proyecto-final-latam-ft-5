@@ -131,7 +131,7 @@ export default function ProveedorSignUp() {
                         <>
                             <div className="m-2">
                                 <h3>Completa la información</h3>
-                                <p>Llena los siguientes campos:</p>d
+                                <p>Llena los siguientes campos para registrarte:</p>
                             </div>
 
                             <form className="m-2">
@@ -148,13 +148,13 @@ export default function ProveedorSignUp() {
 
                                 {/* opciones de monedas, se pueden agregar nuevas si lo prefieren*/}
                                 <div className="mb-3">
-                                    <label className="form-label">moneda de pago</label>
+                                    <label className="form-label">Moneda de pago</label>
                                     <select className={`form-control ${error.monedaPago ? "border border-danger" : ""}`} placeholder="selecciona moneda" value={monedaPago} 
                                         onChange={(e) => setMonedaPago(e.target.value)} >
-                                        <option value="USD">USD - Dólar estadounidense</option>
-                                        <option value="EUR">EUR - Euro</option>
-                                        <option value="MXN">MXN - Peso mexicano</option>
-                                        <option value="CLP">CLP - Peso chileno</option>
+                                        <option value="USD">$ USD - Dólar Estadounidense</option>
+                                        <option value="EUR">€ EUR - Euro</option>
+                                        <option value="MXN">$ MXN - Peso Mexicano</option>
+                                        <option value="CLP">$ CLP - Peso Chileno</option>
                                         </select>
                                 </div>
                                 <div className="mb-3">
