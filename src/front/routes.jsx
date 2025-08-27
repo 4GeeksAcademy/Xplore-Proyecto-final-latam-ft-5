@@ -41,6 +41,7 @@ import PanelSettings from "./pages/PanelSettings.jsx";
 import PanelProfile from "./pages/PanelProfile.jsx";
 import ProtectedRoute from "./utils/auth/ProtectedRoute.jsx";
 import PanelNavbar from "./components/PanelNavbar.jsx";
+import CreateTour from "./pages/Xpertos/CreateTour.jsx";
 
 // Shell del panel
 function PanelShell() {
@@ -77,6 +78,7 @@ export const router = createBrowserRouter(
       {/* Otros */}
       <Route path="xpertos" element={<HomeXpertos />} />
       <Route path="profile" element={<Profile />} />
+      <Route path="create-tour" element={<CreateTour />} />
 
       {/* ===== PANEL (protegido) ===== */}
       <Route
