@@ -33,7 +33,7 @@ import ProveedorAceptado from "./pages/ProveedorAceptado.jsx";
 // Otros
 import HomeXpertos from "./pages/Xpertos/HomeXpertos";
 import Profile from "./pages/touristUser/Profile.jsx";
-
+import PerfilProveedor from "./pages/PerfilProveedor.jsx";
 // Panel
 import Panel from "./pages/Panel.jsx";
 import PanelFavorites from "./pages/PanelFavorites.jsx";
@@ -77,6 +77,8 @@ export const router = createBrowserRouter(
       {/* Otros */}
       <Route path="xpertos" element={<HomeXpertos />} />
       <Route path="profile" element={<Profile />} />
+      <Route path="PerfilProveedor" element={<PerfilProveedor />} />
+
 
       {/* ===== PANEL (protegido) ===== */}
       <Route

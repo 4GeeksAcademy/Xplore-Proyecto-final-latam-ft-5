@@ -17,7 +17,8 @@ async function request(path, options = {}) {
   }
   return data;
 }
-
+export const apiGetTours = () =>
+  request("/api/tours", { method: "GET" });
 export const apiSignup = (payload) =>
   request("/api/signup", { method: "POST", body: JSON.stringify(payload) });
 
