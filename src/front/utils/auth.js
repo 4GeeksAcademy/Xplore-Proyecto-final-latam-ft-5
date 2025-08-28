@@ -1,23 +1,25 @@
-// src/front/utils/auth.js
-const TOKEN_KEY = "access_token"; // mismo nombre que devuelve tu backend
+// auth.js
+const KEY = "xplora_token";
 
 export function saveToken(token) {
-  localStorage.setItem(TOKEN_KEY, token);
+  localStorage.setItem(KEY, token);
 }
-
 export function getToken() {
-  return localStorage.getItem(TOKEN_KEY);
+  return localStorage.getItem(KEY) || "";
 }
-
 export function clearToken() {
-  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(KEY);
 }
-
 export function isLoggedIn() {
-  return !!getToken();
+  return Boolean(getToken());
 }
 
-export function authHeader() {
-  const t = getToken();
-  return t ? { Authorization: `Bearer ${t}` } : {};
+// Helper para llamadas autenticadas si luego conectan API real
+export async function authFetch(url, opts = {}) {
+  const token = getToken();
+  const headers = { ...(opts.headers || {}) };
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const res = await fetch(url, { ...opts, headers });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
 }

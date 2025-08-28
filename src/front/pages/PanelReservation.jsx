@@ -1,47 +1,50 @@
-// src/front/pages/PanelReservation.jsx
-import React from "react";
-import { Link, useParams } from "react-router-dom";
-import { getBookingById } from "../utils/bookings";
+import { useParams, Link } from "react-router-dom";
+import { getBookings, cancelBooking } from "../utils/bookings";
+import "../styles/panel.css";
 
 export default function PanelReservation() {
     const { bookingId } = useParams();
-    const b = getBookingById(bookingId);
+    const bk = getBookings().find(b => b.id === bookingId);
 
-    if (!b) {
+    if (!bk) {
         return (
-            <div className="alert alert-warning">
-                No encontramos esta reserva.
-                <div className="mt-2">
-                    <Link to="/panel" className="btn btn-outline-secondary">Volver al Panel</Link>
-                </div>
+            <div className="container py-4">
+                <p>No se encontró la reserva.</p>
+                <Link to="/panel" className="btn btn-outline-primary">Volver</Link>
             </div>
         );
     }
 
     return (
-        <div className="card-soft">
-            <h3 className="mb-2">Reserva #{b.confirmationCode || b.id}</h3>
-            <div className="text-muted mb-3">{new Date(b.createdAt).toLocaleString()}</div>
-
+        <div className="container py-4">
             <div className="row g-4">
-                <div className="col-md-6">
-                    <h6 className="text-muted">Tour</h6>
-                    <p className="mb-1">Título: <strong>{b.title || `Tour #${b.tourId}`}</strong></p>
-                    <p className="mb-1">Fecha: <strong>{new Date(b.date).toLocaleDateString()}</strong></p>
-                    <p className="mb-1">Pasajeros: <strong>{b.people}</strong></p>
-                    {b.notes && <p className="mb-1">Observaciones: <em>{b.notes}</em></p>}
+                <div className="col-lg-8">
+                    <div className="card-soft">
+                        <h3 className="mb-1">{bk.title}</h3>
+                        <div className="text-muted mb-2">
+                            {new Date(bk.date).toLocaleString()} • {bk.people || 1} pasajero(s)
+                        </div>
+                        <pre className="bg-light p-3 rounded small">{JSON.stringify(bk, null, 2)}</pre>
+                        <div className="d-flex gap-2">
+                            <button className="btn btn-outline-secondary" onClick={() => alert("Reprogramar (mock)")}>Reprogramar</button>
+                            <button className="btn btn-outline-danger" onClick={() => { cancelBooking(bk.id); location.href = "/panel"; }}>Cancelar</button>
+                        </div>
+                    </div>
                 </div>
-                <div className="col-md-6">
-                    <h6 className="text-muted">Pago</h6>
-                    <p className="mb-1">Método: <strong>{b.paymentMethod || "card"}</strong></p>
-                    <p className="fs-4 fw-bold mt-2">Total: ${b.total} USD</p>
+                <div className="col-lg-4">
+                    <div className="card-soft">
+                        <div className="fw-semibold mb-2">Resumen</div>
+                        <div className="d-flex justify-content-between">
+                            <span>Método</span><span className="fw-semibold">{bk.paymentMethod}</span>
+                        </div>
+                        <div className="d-flex justify-content-between">
+                            <span>Total</span><span className="fw-bold">${bk.total} USD</span>
+                        </div>
+                        <div className="d-flex justify-content-between">
+                            <span>Código</span><span className="badge-soft">{bk.confirmationCode}</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            <hr className="hr-soft" />
-            <div className="d-flex gap-2">
-                <Link className="btn btn-outline-secondary" to="/panel">Volver al Panel</Link>
-                <Link className="btn btn-primary" to={`/panel/booking/${b.tourId}/date`}>Reprogramar</Link>
             </div>
         </div>
     );

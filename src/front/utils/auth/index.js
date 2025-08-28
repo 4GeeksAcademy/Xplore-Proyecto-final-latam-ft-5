@@ -1,25 +1,46 @@
-const TOKEN_KEY = "access_token";
+const TOKEN_KEY = "xplora_token";
 
 export function saveToken(token) {
   try {
+    if (!token) {
+      console.error("Intento de guardar token vacío");
+      return false;
+    }
     localStorage.setItem(TOKEN_KEY, token);
-  } catch {}
+    console.log("Token guardado exitosamente");
+    return true;
+  } catch (error) {
+    console.error("Error al guardar token:", error);
+    return false;
+  }
 }
 
 export function getToken() {
   try {
-    return localStorage.getItem(TOKEN_KEY);
-  } catch {
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (!token) {
+      console.log("No hay token almacenado");
+      return null;
+    }
+    return token;
+  } catch (error) {
+    console.error("Error al obtener token:", error);
     return null;
   }
 }
 
 export function isLoggedIn() {
-  return !!getToken();
+  const token = getToken();
+  const isValid = !!token;
+  console.log("Estado de autenticación:", { isValid, hasToken: !!token });
+  return isValid;
 }
 
 export function clearToken() {
   try {
     localStorage.removeItem(TOKEN_KEY);
-  } catch {}
+    console.log("Token eliminado exitosamente");
+  } catch (error) {
+    console.error("Error al eliminar token:", error);
+  }
 }

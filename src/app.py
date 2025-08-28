@@ -33,8 +33,6 @@ app.url_map.strict_slashes = False
 
 
 
-
-
 # --- 2. Habilita CORS para toda la aplicación ---
 CORS(app)
 

@@ -1,33 +1,35 @@
-import { getToken } from "./auth";
+// api.js
+const BASE =
+  import.meta.env.VITE_BACKEND_URL?.replace(/\/+$/, "") ||
+  "http://127.0.0.1:3001";
 
-const BASE = import.meta.env.VITE_BACKEND_URL; // ej: http://127.0.0.1:3001 (sin /api)
-
-async function request(path, options = {}) {
-  const token = getToken();
-  const headers = {
-    "Content-Type": "application/json",
-    ...(options.headers || {}),
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  };
-  const res = await fetch(`${BASE}${path}`, { ...options, headers });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    const msg = data?.msg || data?.error || res.statusText;
-    throw new Error(msg);
-  }
-  return data;
-}
-export const apiGetTours = () =>
-  request("/api/tours", { method: "GET" });
-export const apiSignup = (payload) =>
-  request("/api/signup", { method: "POST", body: JSON.stringify(payload) });
-
-export const apiLogin = (email, password) =>
-  request("/api/login", {
+export async function apiLogin(email, password) {
+  const res = await fetch(`${BASE}/api/login`, {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
   });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.msg || "Login failed");
+  return data; // { access_token }
+}
 
-export const apiProfile = () => request("/api/profile", { method: "GET" });
+export async function apiSignup(payload) {
+  const res = await fetch(`${BASE}/api/signup`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.msg || "Signup failed");
+  return data;
+}
 
-export default { request, apiSignup, apiLogin, apiProfile };
+export async function apiProfile(token) {
+  const res = await fetch(`${BASE}/api/profile`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data?.msg || "Profile failed");
+  return data;
+}

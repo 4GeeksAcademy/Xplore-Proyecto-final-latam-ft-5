@@ -1,11 +1,12 @@
-import imagen1 from "/workspaces/Xplore-Proyecto-final-latam-ft-5/src/front/assets/img/pexels-fukajaz-9762762.jpg"
-import imagenTelefono from "/workspaces/Xplore-Proyecto-final-latam-ft-5/src/front/assets/img/Telefono-02.png"
-import imagen2 from "/workspaces/Xplore-Proyecto-final-latam-ft-5/src/front/assets/img/pexels-david-kooijman-1969435-3591326.jpg"
-import imagen3 from "/workspaces/Xplore-Proyecto-final-latam-ft-5/src/front/assets/img/pexels-marc-coenen-298185-3675393.jpg"
-import imagen4 from "/workspaces/Xplore-Proyecto-final-latam-ft-5/src/front/assets/img/pexels-mikhail-nilov-8322906.jpg"
-import imagen5 from "/workspaces/Xplore-Proyecto-final-latam-ft-5/src/front/assets/img/pexels-oscar-steiner-982093-33510678.jpg"
+import imagen1 from "@/assets/img/pexels-david-kooijman-1969435-3591326.jpg";
+import imagenTelefono from "@/assets/img/Telefono-02.png";
+import imagen2 from "@/assets/img/pexels-david-kooijman-1969435-3591326.jpg";
+import imagen3 from "@/assets/img/pexels-marc-coenen-298185-3675393.jpg";
+import imagen4 from "@/assets/img/pexels-mikhail-nilov-8322906.jpg";
+import imagen5 from "@/assets/img/pexels-oscar-steiner-982093-33510678.jpg";
 import './styles.css';
 import { Link } from 'react-router-dom';
+
 
 const Landing = () => {
     return (

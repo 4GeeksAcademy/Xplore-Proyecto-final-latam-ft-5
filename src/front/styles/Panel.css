@@ -1,147 +1,145 @@
-/* Tipos y tamaños compactos */
-.tiny {
-  font-size: 0.82rem;
-}
-.panel-container {
-  max-width: 1200px;
-}
-
-/* Banner próximo viaje */
-.next-trip {
-  border-radius: 12px;
-}
-
-/* Results bar */
-.results-bar {
-  margin-bottom: 10px;
+:root {
+  --brand: #2d7360;
+  --brand-2: #b9e3e1;
+  --ink: #1f2937;
+  --muted: #6b7280;
+  --soft: #eef8f6;
+  --line: #e5e7eb;
+  --card: #ffffff;
+  --danger: #ef4444;
+  --warning: #f59e0b;
 }
 
-/* Layout: sidebar + grid */
-.panel-grid {
-  display: grid;
-  grid-template-columns: 270px 1fr;
-  gap: 24px;
-}
-@media (max-width: 991px) {
-  .panel-grid {
-    grid-template-columns: 1fr;
-  }
+.panel-wrap {
+  padding: 1.25rem 0 2.5rem;
 }
 
-/* Card base */
-.card-elevated {
-  background: #fff;
-  border: 1px solid #e9edf2;
-  border-radius: 16px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+/* tarjetas suaves y detalles */
+.card-soft {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
 }
 
-/* Sidebar (sticky) */
-.filters-card {
-  padding: 14px;
-  position: sticky;
-  top: 84px; /* ajusta según tu navbar */
-  height: fit-content;
+/* FILTRO */
+.panel-filters .form-label {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.panel-filters .range-value {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.badge-soft {
+  background: var(--soft);
+  color: var(--brand);
+  border: 1px solid #d6eee9;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  font-weight: 600;
 }
 
-/* Tour Card */
+/* CARD de tour */
 .tour-card {
-  overflow: hidden;
+  border: 1px solid var(--line);
   border-radius: 16px;
+  overflow: hidden;
+  background: var(--card);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 .tour-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
 }
-.thumb-wrap {
+.tour-media {
   position: relative;
-  background: #f4f6f8;
+  aspect-ratio: 16/10;
+  background: #d1d5db;
 }
-.thumb {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  display: block;
-}
-
-/* Favorito */
-.fav-btn {
+.tour-heart {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 0;
-  background: #fff;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
-  line-height: 36px;
-  text-align: center;
-  font-size: 17px;
+  top: 0.6rem;
+  right: 0.6rem;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--line);
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
   cursor: pointer;
-  color: #9aa1ac;
 }
-.fav-btn.is-fav {
-  color: #e74c3c;
+.tour-heart.active {
+  color: #ff5a7a;
+  border-color: #ffd2db;
+  background: #fff5f7;
+}
+.tour-body {
+  padding: 0.9rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 220px;
+}
+.tour-title {
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: var(--ink);
+  line-height: 1.25;
+  margin: 0.2rem 0 0.25rem;
+}
+.tour-sub {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.tour-tags {
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+}
+.tour-price {
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+.tour-cta {
+  margin-top: auto;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* Cinta reservado (mucho más visible) */
+/* RIBBON reservado */
 .ribbon {
   position: absolute;
-  left: -6px;
+  left: -8px;
   top: 12px;
-  background: #1b8a5a;
+  background: var(--brand);
   color: #fff;
-  padding: 4px 10px;
   font-size: 0.78rem;
-  font-weight: 700;
-  border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
-  box-shadow: 0 6px 14px rgba(27, 138, 90, 0.25);
+  padding: 0.25rem 0.6rem;
+  border-radius: 0 10px 10px 0;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
 }
 
-/* Título más compacto */
-.card-title-trim {
-  font-size: 1.1rem;
-  font-weight: 800;
-  line-height: 1.2;
+/* Banner próximo viaje */
+.next-banner {
+  border: 1px solid var(--line);
+  background: #f3fbf9;
+  color: #16453b;
+  border-left: 6px solid var(--brand);
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
 }
 
-/* Meta y tags */
-.meta {
-  color: #6b7380;
+/* listita lateral de próximas reservas */
+.list-compact .item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.55rem 0;
+  border-bottom: 1px dashed var(--line);
 }
-.tag {
-  display: inline-block;
-  margin: 0 0.35rem 0.35rem 0;
-  padding: 0.18rem 0.6rem;
-  border-radius: 999px;
-  font-size: 0.73rem;
-  font-weight: 700;
-  background: #eef4ff;
-  color: #2a4bd7;
-}
-
-/* Precio */
-.price {
-  font-size: 1rem;
-  font-weight: 800;
-}
-
-/* Rating con máscara */
-.rating {
-  position: relative;
-  font-size: 0.9rem;
-  color: #f5a623;
-  line-height: 1;
-}
-.rating .rating-mask {
-  position: absolute;
-  right: 0;
-  top: 0;
-  bottom: 0;
-  background: #d4d7dd;
-  mix-blend-mode: multiply;
-  pointer-events: none;
+.list-compact .item:last-child {
+  border-bottom: 0;
 }

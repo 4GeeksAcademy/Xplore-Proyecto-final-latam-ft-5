@@ -1,260 +1,77 @@
-// src/front/pages/TourDetail.jsx
-import React, { useEffect, useMemo, useState } from "react";
 import { useParams, Link } from "react-router-dom";
+import { isFavorite, toggleFavorite } from "../utils/favorites";
 
-const FALLBACK = {
-    id: 1,
-    title: "Viaje de Escalada",
-    price: 500,
+const mock = id => ({
+    id,
+    title: id === "2" ? "Antropología Mística" : id === "3" ? "Viaje a Chile" : "Viaje de Escalada",
+    cover: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop",
+    gallery: [
+        "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1600&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1470770903676-69b98201ea1c?q=80&w=1600&auto=format&fit=crop",
+        "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=1600&auto=format&fit=crop"
+    ],
+    city: "Huaraz, Perú",
+    days: 3,
+    price: 450,
     rating: 4.7,
-    durationDays: 3,
-    location: "Huaraz, Perú",
+    organizer: { name: "Con Jennifer", avatar: "https://i.pravatar.cc/96" },
     description:
-        "Una emocionante aventura de escalada en las montañas más desafiantes. Apta para todos los niveles, desde principiantes hasta expertos. Incluye equipo y guías certificados.",
-    tags: ["aventura", "montaña"],
-    organizer: {
-        id: 11,
-        name: "Andes Pro Guides",
-        avatar: "https://i.pravatar.cc/80?img=12",
-        bio: "Guías certificados UIAGM con más de 10 años de experiencia.",
-    },
-    photos: [
-        "https://images.pexels.com/photos/314860/pexels-photo-314860.jpeg?auto=compress&cs=tinysrgb&w=1260",
-        "https://images.pexels.com/photos/314860/pexels-photo-314860.jpeg?auto=compress&cs=tinysrgb&w=1260",
-        "https://images.pexels.com/photos/314860/pexels-photo-314860.jpeg?auto=compress&cs=tinysrgb&w=1260",
-    ],
-    itinerary: [
-        { day: 1, title: "Llegada y aclimatación" },
-        { day: 2, title: "Ascenso y cumbre" },
-        { day: 3, title: "Regreso y celebración" },
-    ],
-    includes: ["Guía certificado", "Equipo técnico", "Transporte local"],
-    notIncluded: ["Vuelos", "Seguro de viaje", "Propinas"],
-    nextStartDate: "2025-10-12",
-    availableSpots: 8,
-};
+        "Una emocionante aventura por montañas icónicas. Incluye equipo, guías certificados y transporte local. Apta para distintos niveles con grupos reducidos."
+});
 
-function BadgeList({ items = [] }) {
-    return (
-        <div className="mb-2">
-            {items.map((t) => (
-                <span key={t} className="badge bg-light text-secondary border me-1">
-                    {t}
-                </span>
-            ))}
-        </div>
-    );
-}
-
-function Stars({ value = 0, max = 5 }) {
-    const full = Math.round(value);
-    return (
-        <div className="text-warning" aria-label={`rating ${full}/${max}`}>
-            {Array.from({ length: max }).map((_, i) => (
-                <span key={i}>{i < full ? "★" : "☆"}</span>
-            ))}
-        </div>
-    );
-}
-
-export const TourDetail = () => {
+export function TourDetail() {
     const { tourId } = useParams();
-    const [tour, setTour] = useState(null);
-    const [loading, setLoading] = useState(true);
-
-    // Cargar desde backend si existe, si no usar fallback
-    useEffect(() => {
-        const BASE = import.meta.env.VITE_BACKEND_URL;
-        const load = async () => {
-            setLoading(true);
-            if (!BASE) {
-                setTour({ ...FALLBACK, id: Number(tourId) || FALLBACK.id });
-                setLoading(false);
-                return;
-            }
-            try {
-                // Ajusta al endpoint real: GET /api/tours/:id
-                const res = await fetch(`${BASE}/api/tours/${tourId}`);
-                if (!res.ok) throw new Error("bad status");
-                const data = await res.json();
-                setTour(data || FALLBACK);
-            } catch {
-                setTour({ ...FALLBACK, id: Number(tourId) || FALLBACK.id });
-            } finally {
-                setLoading(false);
-            }
-        };
-        load();
-    }, [tourId]);
-
-    const cover = useMemo(
-        () =>
-            tour?.photos?.[0] ||
-            "https://images.pexels.com/photos/346885/pexels-photo-346885.jpeg?auto=compress&cs=tinysrgb&w=1260",
-        [tour]
-    );
-
-    if (loading) {
-        return (
-            <div className="container py-5 text-center text-muted">
-                Cargando tour…
-            </div>
-        );
-    }
-
-    if (!tour) {
-        return (
-            <div className="container py-5 text-center text-muted">
-                No encontramos este tour.
-            </div>
-        );
-    }
+    const data = mock(tourId);
+    const fav = isFavorite(tourId);
 
     return (
         <div className="container py-4">
-            {/* Encabezado */}
-            <div className="row g-4 align-items-center">
+            {/* HERO */}
+            <div className="row g-4">
                 <div className="col-lg-8">
-                    <h1 className="fw-bold mb-2">{tour.title}</h1>
-                    <div className="d-flex align-items-center gap-3 text-muted">
-                        <Stars value={tour.rating} />
-                        <span>· {tour.location}</span>
-                        <span>· {tour.durationDays} días</span>
-                    </div>
+                    <img className="img-fluid rounded-4 shadow-sm" src={data.cover} alt={data.title} />
                 </div>
-                <div className="col-lg-4 text-lg-end">
-                    <div className="fs-3 fw-bold">${tour.price} USD</div>
-                    <div className="text-muted">por persona</div>
+                <div className="col-lg-4">
+                    <div className="card-soft h-100">
+                        <h2 className="fw-bold">{data.title}</h2>
+                        <div className="text-muted">{data.city} • {data.days} días</div>
+                        <div className="d-flex align-items-center gap-1 text-warning my-2">
+                            {"★".repeat(5)} <small className="text-muted ms-1">{data.rating}</small>
+                        </div>
+                        <p className="mb-2">{data.description}</p>
+
+                        <div className="d-flex align-items-center gap-3 my-3">
+                            <img src={data.organizer.avatar} className="rounded-circle" width={44} height={44} />
+                            <div>
+                                <div className="fw-semibold">Organiza</div>
+                                <div className="text-muted small">{data.organizer.name}</div>
+                            </div>
+                        </div>
+
+                        <div className="d-flex justify-content-between align-items-center">
+                            <div className="fs-3 fw-bold">${data.price} USD</div>
+                            <div className="d-flex gap-2">
+                                <button
+                                    className={`btn ${fav ? "btn-warning" : "btn-outline-secondary"}`}
+                                    onClick={() => { toggleFavorite(tourId); location.reload(); }}
+                                >
+                                    {fav ? "✓ Favorito" : "♥ Favorito"}
+                                </button>
+                                <Link className="btn btn-primary" to={`/panel/booking/${tourId}/date`}>Reservar</Link>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            {/* Galería */}
+            {/* GALERÍA */}
             <div className="row g-3 mt-3">
-                <div className="col-lg-8">
-                    <img
-                        src={cover}
-                        alt={tour.title}
-                        className="img-fluid rounded shadow-sm w-100"
-                        style={{ maxHeight: 420, objectFit: "cover" }}
-                    />
-                </div>
-                <div className="col-lg-4">
-                    <div className="row g-3">
-                        {(tour.photos || []).slice(1, 3).map((src, i) => (
-                            <div className="col-6 col-lg-12" key={i}>
-                                <img
-                                    src={src}
-                                    alt={`${tour.title}-${i}`}
-                                    className="img-fluid rounded shadow-sm w-100"
-                                    style={{ height: 200, objectFit: "cover" }}
-                                />
-                            </div>
-                        ))}
+                {data.gallery.map((src, i) => (
+                    <div key={i} className="col-4">
+                        <img className="img-fluid rounded-3" src={src} alt={`gal-${i}`} />
                     </div>
-                </div>
-            </div>
-
-            {/* Info principal */}
-            <div className="row g-4 mt-3">
-                <div className="col-lg-8">
-                    <BadgeList items={tour.tags || []} />
-                    <p className="lead">{tour.description}</p>
-
-                    <div className="row g-3">
-                        <div className="col-md-6">
-                            <div className="card border-0 shadow-sm">
-                                <div className="card-body">
-                                    <h5 className="card-title">Itinerario</h5>
-                                    <ul className="mb-0">
-                                        {(tour.itinerary || []).map((it) => (
-                                            <li key={it.day}>
-                                                <strong>Día {it.day}:</strong> {it.title}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="col-md-6">
-                            <div className="card border-0 shadow-sm">
-                                <div className="card-body">
-                                    <h5 className="card-title">Incluye</h5>
-                                    <ul className="mb-3">
-                                        {(tour.includes || []).map((x) => (
-                                            <li key={x}>{x}</li>
-                                        ))}
-                                    </ul>
-
-                                    <h6 className="card-subtitle mb-2 text-muted">No incluye</h6>
-                                    <ul className="mb-0">
-                                        {(tour.notIncluded || []).map((x) => (
-                                            <li key={x}>{x}</li>
-                                        ))}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* TODO: mapa/ubicación (dejar placeholder) */}
-                    <div className="card border-0 shadow-sm mt-3">
-                        <div className="card-body">
-                            <h5 className="card-title mb-2">Ubicación</h5>
-                            <div className="text-muted">
-                                {tour.location} — (Mapa embebido aquí más adelante)
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Sidebar reserva / organizador */}
-                <div className="col-lg-4">
-                    <div className="card border-0 shadow-sm p-3">
-                        <div className="d-flex align-items-center gap-3">
-                            <img
-                                src={tour.organizer?.avatar || "https://i.pravatar.cc/80"}
-                                alt="organizer"
-                                className="rounded-circle"
-                                width="56"
-                                height="56"
-                            />
-                            <div>
-                                <div className="fw-bold">{tour.organizer?.name || "Organizador"}</div>
-                                <div className="small text-muted">{tour.organizer?.bio || "…"}</div>
-                            </div>
-                        </div>
-
-                        <hr />
-
-                        <div className="d-flex align-items-center justify-content-between">
-                            <div>
-                                <div className="fw-bold fs-5">${tour.price} USD</div>
-                                <div className="small text-muted">por persona</div>
-                            </div>
-                            <div className="text-end small">
-                                <div className="text-success">
-                                    {tour.availableSpots} lugares disp.
-                                </div>
-                                <div className="text-muted">
-                                    Próxima salida: {tour.nextStartDate}
-                                </div>
-                            </div>
-                        </div>
-
-                        <Link
-                            to={`/panel/booking/${tour.id}/date`}
-                            className="btn btn-success btn-lg w-100 mt-3"
-                        >
-                            Elegir fecha
-                        </Link>
-
-                        <button className="btn btn-outline-secondary w-100 mt-2">
-                            Agregar a favoritos
-                        </button>
-                    </div>
-                </div>
+                ))}
             </div>
         </div>
     );
-};
+}
