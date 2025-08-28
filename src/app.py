@@ -6,9 +6,8 @@ from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from flask_jwt_extended import JWTManager
-from flask_cors import CORS
 
-# ✅ IMPORTS RELATIVOS (porque el app es src.app)
+# IMPORTS RELATIVOS (porque el app es src.app)
 from flask_cors import CORS  # <-- 1. Importa CORS
 
 # --- Imports del proyecto (relativos al paquete src) ---
