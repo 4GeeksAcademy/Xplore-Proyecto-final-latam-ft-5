@@ -7,6 +7,7 @@ export default function Login() {
     const nav = useNavigate();
     const [input, setInput] = useState({ email: "", password: "" });
     const [msg, setMsg] = useState("");
+    const [loading, setLoading] = useState(false);
 
     const onChange = (e) =>
         setInput({ ...input, [e.target.name]: e.target.value });
@@ -14,12 +15,19 @@ export default function Login() {
     async function onSubmit(e) {
         e.preventDefault();
         setMsg("");
+        setLoading(true);
         try {
-            const { access_token } = await apiLogin(input.email, input.password);
+            // ⬇️ apiLogin espera un objeto { email, password }
+            const { access_token } = await apiLogin({
+                email: input.email,
+                password: input.password,
+            });
             saveToken(access_token);
             nav("/panel", { replace: true });
         } catch (err) {
             setMsg(err.message || "Error al iniciar sesión");
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -43,6 +51,7 @@ export default function Login() {
                             value={input.email}
                             onChange={onChange}
                             required
+                            autoComplete="email"
                         />
                     </div>
 
@@ -55,11 +64,16 @@ export default function Login() {
                             value={input.password}
                             onChange={onChange}
                             required
+                            autoComplete="current-password"
                         />
                     </div>
 
-                    <button className="p-2 mb-3 col-12 btn bg-success text-white" type="submit">
-                        Entrar
+                    <button
+                        className="p-2 mb-3 col-12 btn bg-success text-white"
+                        type="submit"
+                        disabled={loading}
+                    >
+                        {loading ? "Entrando..." : "Entrar"}
                     </button>
 
                     <button

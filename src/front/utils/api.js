@@ -1,35 +1,64 @@
-// api.js
-const BASE =
-  import.meta.env.VITE_BACKEND_URL?.replace(/\/+$/, "") ||
-  "http://127.0.0.1:3001";
+// src/front/utils/api.js
 
-export async function apiLogin(email, password) {
-  const res = await fetch(`${BASE}/api/login`, {
+// Usa el puerto donde corre tu backend (5000 en tu caso actual)
+const API_URL = (
+  import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5000"
+).replace(/\/+$/, "");
+
+// Helper común para manejar respuestas JSON/errores
+async function handleResponse(res) {
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) {
+    const msg = data?.msg || `HTTP ${res.status}`;
+    throw new Error(msg);
+  }
+  return data;
+}
+
+// ---------- NO TOCAR PABLO ----------
+// utils/api.js
+export async function apiLogin(emailOrObj, passwordMaybe) {
+  const email = typeof emailOrObj === "object" ? emailOrObj.email : emailOrObj;
+  const password =
+    typeof emailOrObj === "object" ? emailOrObj.password : passwordMaybe;
+  const res = await fetch(`${API_URL}/api/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password }),
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data?.msg || "Login failed");
-  return data; // { access_token }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data?.msg || `HTTP ${res.status}`);
+  return data;
 }
+// ---------- ------------ ----------
 
 export async function apiSignup(payload) {
-  const res = await fetch(`${BASE}/api/signup`, {
+  const res = await fetch(`${API_URL}/api/signup`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data?.msg || "Signup failed");
-  return data;
+  return handleResponse(res);
 }
 
 export async function apiProfile(token) {
-  const res = await fetch(`${BASE}/api/profile`, {
+  const res = await fetch(`${API_URL}/api/profile`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data?.msg || "Profile failed");
-  return data;
+  return handleResponse(res);
 }
+
+export async function apiUpdateProfile(token, payload) {
+  const res = await fetch(`${API_URL}/api/profile`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+  return handleResponse(res);
+}
+
+// (Opcional) expón API_URL por si lo necesitas en otros módulos
+export { API_URL };

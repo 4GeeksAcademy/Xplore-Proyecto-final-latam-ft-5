@@ -1,3 +1,4 @@
+// src/front/pages/auth/SignUp.jsx
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { apiSignup, apiLogin } from "../../utils/api";
@@ -6,7 +7,6 @@ import { saveToken } from "../../utils/auth";
 export default function SignUp() {
   const nav = useNavigate();
 
-  // estado del formulario (nombres que espera el backend)
   const [form, setForm] = useState({
     name: "",
     last_name: "",
@@ -17,18 +17,15 @@ export default function SignUp() {
 
   const [errors, setErrors] = useState({});
   const [msg, setMsg] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
-    // limpiar error del campo si el usuario escribe algo
-    if (value.trim() !== "") {
-      setErrors((er) => ({ ...er, [name]: "" }));
-    }
+    if (value.trim() !== "") setErrors((er) => ({ ...er, [name]: "" }));
   };
 
-  const validateEmail = (email) =>
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const validate = () => {
     const er = {};
@@ -56,9 +53,10 @@ export default function SignUp() {
     setErrors(er);
     if (Object.keys(er).length > 0) return;
 
+    setLoading(true);
     try {
-      // 1) crear cuenta
-      await apiSignup({
+      // 1) Crear cuenta
+      const signupResp = await apiSignup({
         name: form.name,
         last_name: form.last_name,
         email: form.email,
@@ -66,14 +64,24 @@ export default function SignUp() {
         role: "traveler",
       });
 
-      // 2) auto-login
-      const { access_token } = await apiLogin(form.email, form.password);
-      saveToken(access_token);
+      // 2) Guardar token si la API lo envía (nuestro backend lo envía)
+      if (signupResp?.access_token) {
+        saveToken(signupResp.access_token);
+      } else {
+        // Fallback: auto-login si el signup no trajo token
+        const { access_token } = await apiLogin({
+          email: form.email,
+          password: form.password,
+        });
+        saveToken(access_token);
+      }
 
-      // 3) ir al panel
+      // 3) Ir al panel
       nav("/panel", { replace: true });
     } catch (error) {
       setMsg(error.message || "Error al crear la cuenta");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -109,9 +117,7 @@ export default function SignUp() {
                 value={form.last_name}
                 onChange={handleChange}
               />
-              {errors.last_name && (
-                <div className="invalid-feedback">{errors.last_name}</div>
-              )}
+              {errors.last_name && <div className="invalid-feedback">{errors.last_name}</div>}
             </div>
           </div>
 
@@ -136,9 +142,7 @@ export default function SignUp() {
               value={form.password}
               onChange={handleChange}
             />
-            {errors.password && (
-              <div className="invalid-feedback">{errors.password}</div>
-            )}
+            {errors.password && <div className="invalid-feedback">{errors.password}</div>}
           </div>
 
           <div className="mb-3">
@@ -150,16 +154,17 @@ export default function SignUp() {
               value={form.confirmPassword}
               onChange={handleChange}
             />
-            {errors.confirmPassword && (
-              <div className="invalid-feedback">{errors.confirmPassword}</div>
-            )}
+            {errors.confirmPassword && <div className="invalid-feedback">{errors.confirmPassword}</div>}
           </div>
 
-          <button className="p-2 m-2 col-12 btn bg-success text-white" type="submit">
-            Registrarse
+          <button
+            className="p-2 m-2 col-12 btn bg-success text-white"
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? "Creando cuenta..." : "Registrarse"}
           </button>
 
-          {/* Placeholder OAuth */}
           <button
             className="btn border border-danger text-danger p-2 m-2 col-12"
             type="button"
