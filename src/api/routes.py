@@ -43,34 +43,54 @@ def signup():
 
 @api.route("/proveedor/signup", methods=["POST"])
 def proveedor_signup():
-    data = request.json
-    return jsonify({
-        "msg": "Proveedor registrado con éxito",
-        "data": data
-    }), 201
-    return jsonify({"msg": "Usuario creado exitosamente", "user": user.serialize()}), 201
+    try:
+        data = request.get_json(silent=True) or {}
+        # TODO: Agregar validación de datos
+        
+        return jsonify({
+            "msg": "Proveedor registrado con éxito",
+            "data": data
+        }), 201
+    except Exception as e:
+        return jsonify({"msg": f"Error al registrar proveedor: {str(e)}"}), 400
 
 
 # ---------- LOGIN ----------
 @api.route("/login", methods=["POST"])
 def login():
-    body = request.get_json(silent=True) or {}
-    email = (body.get("email") or "").strip().lower()
-    password = body.get("password") or ""
+    try:
+        # Obtener y validar datos
+        body = request.get_json(silent=True)
+        if not body:
+            raise APIException("No se recibieron datos", status_code=400)
 
-    if not email or not password:
-        return jsonify({"msg": "Email y contraseña son requeridos"}), 400
+        email = (body.get("email") or "").strip().lower()
+        password = body.get("password") or ""
 
-    user = User.query.filter_by(email=email).first()
-    if not user or not user.check_password(password):
-        return jsonify({"msg": "Credenciales inválidas"}), 401
+        if not email or not password:
+            raise APIException("Email y contraseña son requeridos", status_code=400)
 
-    # payload mínimo: id del usuario
-    access_token = create_access_token(identity=user.id)
-    return jsonify({
-        "access_token": access_token,
-        "user": user.serialize()
-    }), 200
+        # Buscar usuario y validar contraseña
+        user = User.query.filter_by(email=email).first()
+        if not user or not user.check_password(password):
+            raise APIException("Credenciales inválidas", status_code=401)
+
+        # Generar token
+        access_token = create_access_token(identity=user.id)
+        
+        # Log de acceso exitoso
+        print(f"Login exitoso para {email}")
+        
+        return jsonify({
+            "access_token": access_token,
+            "user": user.serialize()
+        }), 200
+
+    except APIException as e:
+        return jsonify(e.to_dict()), e.status_code
+    except Exception as e:
+        print(f"Error inesperado en login: {str(e)}")
+        return jsonify({"msg": "Error interno del servidor"}), 500
 
 
 # ---------- PROFILE (PROTEGIDO) ----------
