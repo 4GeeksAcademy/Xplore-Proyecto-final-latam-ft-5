@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-export default function CreateTour() {
+export default function EditTour() {
     const [inputValue, setInputValue] = useState({
         title: "",
         country: "",
@@ -71,7 +71,7 @@ export default function CreateTour() {
             <div className="border p-2">
                 <form onSubmit={handleSubmit}>
                     <div className="mb-3 text-center">
-                        <h3>Crear Tour</h3>
+                        <h3>Editar este Tour</h3>
                     </div>
                     <div className="d-md-flex">
                         <div className="col-md-6 col-12 p-2">
@@ -79,7 +79,6 @@ export default function CreateTour() {
                                 <label>Titulo del tour</label>
                                 <input
                                     className={`form-control ${errors.title ? 'is-invalid' : ""}`}
-                                    placeholder="Ej. Tour a zona arqueológica"
                                     name="title"
                                     type="text"
                                     value={inputValue.title}
@@ -97,7 +96,6 @@ export default function CreateTour() {
                                     name="country"
                                     onChange={handleChange}
                                     value={inputValue.country}
-                                    placeholder="Ej.Mexico"
                                 />
                                 {errors.country && (
                                     <div className="invalid-feedback" >{errors.country}</div>
@@ -111,7 +109,6 @@ export default function CreateTour() {
                                     name="city"
                                     onChange={handleChange}
                                     value={inputValue.city}
-                                    placeholder="Ej. Tulum"
                                 />
                                 {errors.city && (
                                     <div className="invalid-feedback" >{errors.city}</div>
@@ -125,7 +122,6 @@ export default function CreateTour() {
                                     name="price"
                                     onChange={handleChange}
                                     value={inputValue.price}
-                                    placeholder='$0'
                                 />
                                 {errors.price && (
                                     <div className="invalid-feedback" >{errors.price}</div>
@@ -139,7 +135,6 @@ export default function CreateTour() {
                                     name="description"
                                     onChange={handleChange}
                                     value={inputValue.description}
-                                    placeholder="Paseo por las ruinas y playa ..."
                                     rows={5} cols={50} />
                                 {errors.description && (
                                     <div className="invalid-feedback" >{errors.description}</div>
@@ -262,7 +257,7 @@ export default function CreateTour() {
                     </div>
 
 
-                    <button className="btn convierte-experto text-white col-12 rounded-pill" type="submit">Crear Tour</button>
+                    <button className="btn convierte-experto text-white col-12 rounded-pill" type="submit">Guardar cambios</button>
 
                 </form>
             </div>

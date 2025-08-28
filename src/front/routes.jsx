@@ -42,6 +42,10 @@ import PanelProfile from "./pages/PanelProfile.jsx";
 import ProtectedRoute from "./utils/auth/ProtectedRoute.jsx";
 import PanelNavbar from "./components/PanelNavbar.jsx";
 import CreateTour from "./pages/Xpertos/CreateTour.jsx";
+import MyToursXperts from "./pages/Xpertos/MyToursXperts.jsx";
+import TourDetailXpert from "./pages/Xpertos/TourDetailXpert.jsx";
+import EditTour from "./pages/Xpertos/EditTour.jsx";
+
 
 // Shell del panel
 function PanelShell() {
@@ -79,6 +83,9 @@ export const router = createBrowserRouter(
       <Route path="xpertos" element={<HomeXpertos />} />
       <Route path="profile" element={<Profile />} />
       <Route path="create-tour" element={<CreateTour />} />
+      <Route path="my-tours" element={<MyToursXperts />} />
+      <Route path="tour-detail/:tourId" element={<TourDetailXpert />} />
+      <Route path="edit-tour" element={<EditTour />} />
 
       {/* ===== PANEL (protegido) ===== */}
       <Route
