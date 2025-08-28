@@ -190,7 +190,6 @@ class Country(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "tours": self.tours,
         }
 
 
