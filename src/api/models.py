@@ -31,8 +31,8 @@ tour_images = db.Table(
 # --- Tablas principales ---
 
 class User(db.Model):
-    __tablename__ = "users"
 
+    __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password_hash = db.Column(db.String(120), nullable=False)
@@ -70,7 +70,6 @@ class User(db.Model):
 
 class Role(db.Model):
     __tablename__ = 'role'
-
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=False)
 
@@ -99,7 +98,6 @@ class Tour(db.Model):
     bookings = db.relationship('Booking', backref='tour', lazy=True)
     categories = db.relationship('Category', secondary=tour_categories, backref='tours', lazy='dynamic')
     images = db.relationship('Image', secondary=tour_images, backref='tours', lazy='dynamic')
-
     def serialize(self):
         return {
             "id": self.id,
@@ -195,7 +193,6 @@ class Country(db.Model):
 
 class Category(db.Model):
     __tablename__ = 'category'
-
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), unique=True, nullable=False)
 
@@ -208,7 +205,6 @@ class Category(db.Model):
 
 class Image(db.Model):
     __tablename__ = 'image'
-
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.Text, nullable=False)
 
