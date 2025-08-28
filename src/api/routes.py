@@ -8,7 +8,7 @@ from flask import request, jsonify, Blueprint
 from flask_jwt_extended import (
     create_access_token, jwt_required, get_jwt_identity
 )
-from .models import db, User, UserRole
+from .models import db, User
 from .utils import APIException
 
 api = Blueprint("api", __name__)
@@ -27,50 +27,71 @@ def signup():
         return jsonify({"msg": "Email y contraseña son requeridos"}), 400
 
     try:
-        role = UserRole(role_str)
+        #role = UserRole(role_str)
+        pass
     except ValueError:
         return jsonify({"msg": "El rol debe ser 'traveler' o 'provider'"}), 400
 
     if User.query.filter_by(email=email).first():
         return jsonify({"msg": "Este email ya está registrado"}), 409
 
-    user = User(email=email, role=role, name=name, last_name=last_name)
+    user = User(email=email, role=role_str, name=name, last_name=last_name)
     user.set_password(password)
     db.session.add(user)
     db.session.commit()
 
-    return jsonify({"msg": "Usuario creado exitosamente", "user": new_user.serialize()}), 201
+    return jsonify({"msg": "Usuario creado exitosamente", "user": user.serialize()}), 201
 
 @api.route("/proveedor/signup", methods=["POST"])
 def proveedor_signup():
-    data = request.json
-    return jsonify({
-        "msg": "Proveedor registrado con éxito",
-        "data": data
-    }), 201
-    return jsonify({"msg": "Usuario creado exitosamente", "user": user.serialize()}), 201
+    try:
+        data = request.get_json(silent=True) or {}
+        # TODO: Agregar validación de datos
+        
+        return jsonify({
+            "msg": "Proveedor registrado con éxito",
+            "data": data
+        }), 201
+    except Exception as e:
+        return jsonify({"msg": f"Error al registrar proveedor: {str(e)}"}), 400
 
 
 # ---------- LOGIN ----------
 @api.route("/login", methods=["POST"])
 def login():
-    body = request.get_json(silent=True) or {}
-    email = (body.get("email") or "").strip().lower()
-    password = body.get("password") or ""
+    try:
+        # Obtener y validar datos
+        body = request.get_json(silent=True)
+        if not body:
+            raise APIException("No se recibieron datos", status_code=400)
 
-    if not email or not password:
-        return jsonify({"msg": "Email y contraseña son requeridos"}), 400
+        email = (body.get("email") or "").strip().lower()
+        password = body.get("password") or ""
 
-    user = User.query.filter_by(email=email).first()
-    if not user or not user.check_password(password):
-        return jsonify({"msg": "Credenciales inválidas"}), 401
+        if not email or not password:
+            raise APIException("Email y contraseña son requeridos", status_code=400)
 
-    # payload mínimo: id del usuario
-    access_token = create_access_token(identity=user.id)
-    return jsonify({
-        "access_token": access_token,
-        "user": user.serialize()
-    }), 200
+        # Buscar usuario y validar contraseña
+        user = User.query.filter_by(email=email).first()
+        if not user or not user.check_password(password):
+            raise APIException("Credenciales inválidas", status_code=401)
+
+        # Generar token
+        access_token = create_access_token(identity=user.id)
+        
+        # Log de acceso exitoso
+        print(f"Login exitoso para {email}")
+        
+        return jsonify({
+            "access_token": access_token,
+            "user": user.serialize()
+        }), 200
+
+    except APIException as e:
+        return jsonify(e.to_dict()), e.status_code
+    except Exception as e:
+        print(f"Error inesperado en login: {str(e)}")
+        return jsonify({"msg": "Error interno del servidor"}), 500
 
 
 # ---------- PROFILE (PROTEGIDO) ----------

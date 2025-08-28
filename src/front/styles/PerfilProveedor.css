@@ -1,0 +1,130 @@
+.perfil-container {
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 20px;
+  max-width: 1000px;
+  margin: auto;
+  font-family: sans-serif;
+}
+
+.perfil-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.perfil-foto {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 1.5rem;
+}
+
+.perfil-info {
+  color: #333;
+}
+
+.tour-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.tour-card {
+  width: 300px;
+  background: white;
+  border-radius: 12px;
+}
+
+.tour-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.tour-content {
+  padding: 1rem;
+}
+
+.categories {
+  display: flex;
+  gap: 1rem;
+  margin: 3px ;
+}
+
+.category {
+  background: #d3f9d8;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+}
+
+.price {
+  font-weight: bold;
+  margin: 0.5rem 0;
+}
+
+.buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.buttons button {
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-conectar {
+  background: #f6bd00;
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-reservar {
+  background: #07e13a;
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.botones{
+  display: flex;
+  justify-content: flex-start;
+  gap: 5rem;
+  margin-top: 2rem;
+  
+
+}
+
+@media screen and(max-width: 768px) {
+  .perfil-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .perfil-foto {
+    margin-bottom: 2rem;
+  }
+
+  .tour-list {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .tour-card {
+    width: 80%;
+  }
+
+  .botones {
+    flex-direction: column;
+    align-items: center;
+  }
+}
