@@ -12,6 +12,7 @@ from .models import (
     Country, Category, Image, Role
 )
 from .utils import APIException
+from datetime import datetime, date
 
 # ============================================================================
 # 🔧 Blueprint
@@ -45,7 +46,7 @@ def _parse_role(role_raw: str | None) -> UserRole:
 # 🔐 AUTH (signup / proveedor signup / login)
 #   * Importante: el JWT debe tener identity como string
 # ============================================================================
-@api.post("/signup")
+@api.route("/signup", methods=["POST"])
 def signup():
     body = request.get_json(silent=True) or {}
     email = (body.get("email") or "").strip().lower()
@@ -75,7 +76,7 @@ def signup():
     return jsonify({"access_token": access_token, "user": user.serialize()}), 201
 
 
-@api.post("/proveedor/signup")
+@api.route("/proveedor/signup", methods=["POST"])
 def proveedor_signup():
     """
     Alias para registro de proveedor; fuerza rol 'provider'.
@@ -109,49 +110,52 @@ def proveedor_signup():
     return jsonify({"msg": "Usuario creado exitosamente", "user": user.serialize()}), 201
 
 
-@api.route("/proveedor/signup", methods=["POST"])
-def proveedor_signup():
-    try:
-        data = request.get_json(silent=True) or {}
-        # TODO: Agregar validación de datos
+# @api.route("/proveedor/signup", methods=["POST"])
+# def proveedor_signup():
+#     try:
+#         data = request.get_json(silent=True) or {}
+#         # TODO: Agregar validación de datos
 
-        return jsonify({
-            "msg": "Proveedor registrado con éxito",
-            "data": data
-        }), 201
-    except Exception as e:
-        return jsonify({"msg": f"Error al registrar proveedor: {str(e)}"}), 400
+#         return jsonify({
+#             "msg": "Proveedor registrado con éxito",
+#             "data": data
+#         }), 201
+#     except Exception as e:
+#         return jsonify({"msg": f"Error al registrar proveedor: {str(e)}"}), 400
 
 
 # ---------- LOGIN ----------
 @api.route("/login", methods=["POST"])
 def login():
     try:
+        print("Hola")
         # Obtener y validar datos
         body = request.get_json(silent=True)
         if not body:
             raise APIException("No se recibieron datos", status_code=400)
 
-    email = (body.get("email") or "").strip().lower()
-    password = body.get("password") or ""
+        email = (body.get("email") or "").strip().lower()
+        password = body.get("password") or ""
 
-    if not email or not password:
-        raise APIException("Email y contraseña son requeridos", 400)
+        if not email or not password:
+            raise APIException("Email y contraseña son requeridos", 400)
 
-    user = User.query.filter_by(email=email).first()
-    if not user or not user.check_password(password):
-        raise APIException("Credenciales inválidas", 401)
+        user = User.query.filter_by(email=email).first()
+        if not user or not user.check_password(password):
+            raise APIException("Credenciales inválidas", 401)
 
-    # 🔑 FIX: identity como string
-    access_token = create_access_token(identity=str(user.id))
-    return jsonify({"access_token": access_token, "user": user.serialize()}), 200
+        # 🔑 FIX: identity como string
+        access_token = create_access_token(identity=str(user.id))
+        return jsonify({"access_token": access_token, "user": user.serialize()}), 200
+    except Exception as e:
+        print(e.message)
 
 
 # ============================================================================
 # 👤 PROFILE (GET / PUT/PATCH)
 #   * Al leer el JWT, convertir la identity a int antes de consultar DB
 # ============================================================================
-@api.get("/profile")
+@api.route("/profile", methods=["GET"])
 @jwt_required()
 def profile_me():
     user_id = int(get_jwt_identity())  # ← FIX: castear a int
@@ -188,7 +192,7 @@ def update_profile():
 # ============================================================================
 # ❤️ Healthcheck + handler de errores
 # ============================================================================
-@api.get("/health")
+@api.route("/health", methods=["GET"])
 def health():
     return jsonify({"status": "ok"}), 200
 
@@ -201,17 +205,15 @@ def handle_api_exception(err: APIException):
 # ============================================================================
 # 🧭 TOURS (listar / crear / por id)
 # ============================================================================
-@api.get("/tours")
+@api.route("/tours", methods=["GET"])
 def get_tours():
-    """
-    Devuelve todos los tours.
-    (Cuando agreguen filtros/paginado: usen querystring aquí)
-    """
     tours = Tour.query.all()
+    if tours == []: 
+        return jsonify({"msg": "Nohay tours"}), 404
     return jsonify([t.serialize() for t in tours]), 200
 
 
-@api.post("/tours")
+@api.route("/tours", methods=["POST"])
 @jwt_required()
 def create_tour():
     """
@@ -256,6 +258,7 @@ def create_tour():
         print(f"[create_tour] Error: {e}")
         return jsonify({"msg": "Error interno del servidor"}), 500
 
+
 @api.route("/tours/<int:tour_id>", methods=["GET"])
 def get_tour(tour_id):
     tour = Tour.query.get(tour_id)
@@ -267,7 +270,7 @@ def get_tour(tour_id):
 # ============================================================================
 # 📆 BOOKINGS (crear)
 # ============================================================================
-@api.post("/bookings")
+@api.route("/bookings", methods=["POST"])
 @jwt_required()
 def create_booking():
     try:
@@ -325,7 +328,7 @@ def create_booking():
 # ============================================================================
 # ⭐ REVIEWS (agregar)
 # ============================================================================
-@api.post("/tours/<int:tour_id>/reviews")
+@api.route("/tours/<int:tour_id>/reviews", methods=["POST"])
 @jwt_required()
 def add_review(tour_id):
     try:
