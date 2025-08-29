@@ -9,7 +9,7 @@ with youy database, for example: Import the price of bitcoin every night as 12am
 """
 def setup_commands(app):
     
-    """ 
+    """
     This is an example command "insert-test-users" that you can run from the command line
     by typing: $ flask insert-test-users 5
     Note: 5 is the number of users to add
