@@ -14,14 +14,8 @@ from .models import (
 from .utils import APIException
 from datetime import datetime, date
 
-# ============================================================================
-# 🔧 Blueprint
-# ============================================================================
 api = Blueprint("api", __name__)
 
-# ============================================================================
-# 🧩 Helpers
-# ============================================================================
 def _parse_role(role_raw: str | None) -> UserRole:
     """
     Convierte un string a UserRole (Enum), aceptando alias comunes.
@@ -42,10 +36,8 @@ def _parse_role(role_raw: str | None) -> UserRole:
         return UserRole.TRAVELER
 
 
-# ============================================================================
-# 🔐 AUTH (signup / proveedor signup / login)
-#   * Importante: el JWT debe tener identity como string
-# ============================================================================
+# ================================Auth============================================
+
 @api.route("/signup", methods=["POST"])
 def signup():
     body = request.get_json(silent=True) or {}
@@ -78,9 +70,7 @@ def signup():
 
 @api.route("/proveedor/signup", methods=["POST"])
 def proveedor_signup():
-    """
-    Alias para registro de proveedor; fuerza rol 'provider'.
-    """
+   
     body = request.get_json(silent=True) or {}
     body["role"] = "provider"
 
@@ -110,21 +100,8 @@ def proveedor_signup():
     return jsonify({"msg": "Usuario creado exitosamente", "user": user.serialize()}), 201
 
 
-# @api.route("/proveedor/signup", methods=["POST"])
-# def proveedor_signup():
-#     try:
-#         data = request.get_json(silent=True) or {}
-#         # TODO: Agregar validación de datos
+# ===================================Login=========================================
 
-#         return jsonify({
-#             "msg": "Proveedor registrado con éxito",
-#             "data": data
-#         }), 201
-#     except Exception as e:
-#         return jsonify({"msg": f"Error al registrar proveedor: {str(e)}"}), 400
-
-
-# ---------- LOGIN ----------
 @api.route("/login", methods=["POST"])
 def login():
     try:
@@ -151,10 +128,8 @@ def login():
         print(e.message)
 
 
-# ============================================================================
-# 👤 PROFILE (GET / PUT/PATCH)
-#   * Al leer el JWT, convertir la identity a int antes de consultar DB
-# ============================================================================
+# ===================================Profile=========================================
+
 @api.route("/profile", methods=["GET"])
 @jwt_required()
 def profile_me():
@@ -189,9 +164,8 @@ def update_profile():
     return jsonify({"msg": "Perfil actualizado", "user": user.serialize()}), 200
 
 
-# ============================================================================
-# ❤️ Healthcheck + handler de errores
-# ============================================================================
+# ===============================Health=============================================
+
 @api.route("/health", methods=["GET"])
 def health():
     return jsonify({"status": "ok"}), 200
@@ -202,9 +176,8 @@ def handle_api_exception(err: APIException):
     return jsonify(err.to_dict()), err.status_code
 
 
-# ============================================================================
-# 🧭 TOURS (listar / crear / por id)
-# ============================================================================
+# ==============================Tours==============================================
+
 @api.route("/tours", methods=["GET"])
 def get_tours():
     tours = Tour.query.all()
@@ -267,9 +240,8 @@ def get_tour(tour_id):
     return jsonify(tour.serialize()), 200
 
 
-# ============================================================================
-# 📆 BOOKINGS (crear)
-# ============================================================================
+# ==================================Bookings==========================================
+
 @api.route("/bookings", methods=["POST"])
 @jwt_required()
 def create_booking():
@@ -325,9 +297,8 @@ def create_booking():
         return jsonify({"msg": "Error interno del servidor"}), 500
 
 
-# ============================================================================
-# ⭐ REVIEWS (agregar)
-# ============================================================================
+# ======================================Review======================================
+
 @api.route("/tours/<int:tour_id>/reviews", methods=["POST"])
 @jwt_required()
 def add_review(tour_id):
