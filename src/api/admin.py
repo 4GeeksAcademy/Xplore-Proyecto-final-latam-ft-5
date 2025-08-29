@@ -1,4 +1,4 @@
-  
+
 import os
 from flask_admin import Admin
 from .models import db, User, Role, Tour, TourSchedule, Booking, Review, Country, Category, Image
