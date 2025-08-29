@@ -1,9 +1,5 @@
 # src/api/routes.py
 from __future__ import annotations
-
-# ============================================================================
-# 📦 Imports
-# ============================================================================
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
@@ -15,6 +11,7 @@ from .utils import APIException
 from datetime import datetime, date
 
 api = Blueprint("api", __name__)
+
 
 def _parse_role(role_raw: str | None) -> UserRole:
     """
@@ -70,7 +67,7 @@ def signup():
 
 @api.route("/proveedor/signup", methods=["POST"])
 def proveedor_signup():
-   
+
     body = request.get_json(silent=True) or {}
     body["role"] = "provider"
 
@@ -84,7 +81,7 @@ def proveedor_signup():
 
     if User.query.filter_by(email=email).first():
         return jsonify({"msg": "Este email ya está registrado"}), 409
-    
+
     role_obj = Role.query.filter_by(name=role_str).first()
     if not role_obj:
         return jsonify({"msg": f"El rol '{role_str}' no existe en la base de datos"}), 500
@@ -181,7 +178,7 @@ def handle_api_exception(err: APIException):
 @api.route("/tours", methods=["GET"])
 def get_tours():
     tours = Tour.query.all()
-    if tours == []: 
+    if tours == []:
         return jsonify({"msg": "Nohay tours"}), 404
     return jsonify([t.serialize() for t in tours]), 200
 
@@ -189,37 +186,44 @@ def get_tours():
 @api.route("/tours", methods=["POST"])
 @jwt_required()
 def create_tour():
-    """
-    Crea un tour. Si tienen M2M de roles y quieren restringir,
-    descomenten la parte de permisos.
-    """
     try:
         current_user_id = int(get_jwt_identity())  # ← FIX
         user = User.query.get(current_user_id)
 
-        # --- Permiso opcional con M2M (tolerante si no existe) ---
+        # --- Permiso opcional con M2M ---
         try:
             roles = [r.name.lower() for r in getattr(user, "roles", [])]
             if roles and "provider" not in roles and "admin" not in roles:
                 raise APIException("No tiene permiso para crear tours", 403)
         except Exception:
             pass
-        # ----------------------------------------------------------
+        # -------------------------------
 
         data = request.get_json(silent=True) or {}
         required = ("title", "city", "base_price", "country_id")
         if not all(k in data and str(data[k]).strip() for k in required):
             raise APIException("Faltan campos requeridos", 400)
 
+        # Crear el nuevo tour
         new_tour = Tour(
             title=str(data["title"]),
             description=str(data.get("description") or ""),
             city=str(data["city"]),
-            base_price=data["base_price"],  # Numeric en modelo
+            base_price=data["base_price"],
             user_id=current_user_id,
             country_id=int(data["country_id"]),
         )
         db.session.add(new_tour)
+
+        # Manejar imágenes (si se enviaron)
+        image_urls = data.get("images", [])
+        if image_urls and isinstance(image_urls, list):
+            for url in image_urls:
+                url = str(url).strip()
+                if url:
+                    image = Image(url=url)
+                    new_tour.images.append(image)
+
         db.session.commit()
         return jsonify(new_tour.serialize()), 201
 
@@ -330,3 +334,5 @@ def add_review(tour_id):
         db.session.rollback()
         print(f"[add_review] Error: {e}")
         return jsonify({"msg": "Error interno del servidor"}), 500
+
+    # =================================Images============================
