@@ -6,48 +6,90 @@ from __future__ import annotations
 # ============================================================================
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-from .models import db, User, Tour, TourSchedule, Booking, Review, Country, Category, Image, Role
+
+from .models import (
+    db, User, UserRole, Tour, TourSchedule, Booking, Review,
+    Country, Category, Image, Role
+)
 from .utils import APIException
-from datetime import date
 
 # ============================================================================
 # 🔧 Blueprint
 # ============================================================================
 api = Blueprint("api", __name__)
 
+# ============================================================================
+# 🧩 Helpers
+# ============================================================================
+def _parse_role(role_raw: str | None) -> UserRole:
+    """
+    Convierte un string a UserRole (Enum), aceptando alias comunes.
+    Si no viene o no coincide, retorna TRAVELER.
+    """
+    if not role_raw:
+        return UserRole.TRAVELER
+    t = str(role_raw).strip().lower()
+    if t in ("traveler", "user"):
+        return UserRole.TRAVELER
+    if t in ("provider", "proveedor"):
+        return UserRole.PROVIDER
+    if t == "admin":
+        return UserRole.ADMIN
+    try:
+        return UserRole(role_raw)
+    except Exception:
+        return UserRole.TRAVELER
 
-def create_app(test_config=None):
-    app = Flask(__name__)
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    db.init_app(app)
-    bcrypt.init_app(app)
-    global MIGRATE
-    MIGRATE = Migrate(app, db)
-
-
-# ---------- SIGNUP ----------
-@api.route("/signup", methods=["POST"])
+# ============================================================================
+# 🔐 AUTH (signup / proveedor signup / login)
+#   * Importante: el JWT debe tener identity como string
+# ============================================================================
+@api.post("/signup")
 def signup():
     body = request.get_json(silent=True) or {}
     email = (body.get("email") or "").strip().lower()
     password = body.get("password") or ""
-    role_str = (body.get("role") or "traveler").strip().lower()
+    name = (body.get("name") or "").strip()
+    last_name = (body.get("last_name") or "").strip()
+    role_raw = body.get("role")  # opcional
+
+    if not email or not password:
+        return jsonify({"msg": "Email y contraseña son requeridos"}), 400
+
+    if User.query.filter_by(email=email).first():
+        return jsonify({"msg": "Este email ya está registrado"}), 409
+
+    role = _parse_role(role_raw) if hasattr(User, "role") else None
+
+    user = User(email=email, name=name, last_name=last_name)
+    if role is not None:
+        setattr(user, "role", role)
+
+    user.set_password(password)  # guarda hash en password_hash
+    db.session.add(user)
+    db.session.commit()
+
+    # 🔑 FIX: identity como string
+    access_token = create_access_token(identity=str(user.id))
+    return jsonify({"access_token": access_token, "user": user.serialize()}), 201
+
+
+@api.post("/proveedor/signup")
+def proveedor_signup():
+    """
+    Alias para registro de proveedor; fuerza rol 'provider'.
+    """
+    body = request.get_json(silent=True) or {}
+    body["role"] = "provider"
+
+    email = (body.get("email") or "").strip().lower()
+    password = body.get("password") or ""
     name = (body.get("name") or "").strip()
     last_name = (body.get("last_name") or "").strip()
 
     if not email or not password:
         return jsonify({"msg": "Email y contraseña son requeridos"}), 400
-
-    if role_str not in ["traveler", "provider"]:
-        return jsonify({"msg": "El rol debe ser 'traveler' o 'provider'"}), 400
-    
-    try:
-        # role = UserRole(role_str)
-        pass
-    except ValueError:
-        return jsonify({"msg": "El rol debe ser 'traveler' o 'provider'"}), 400
 
     if User.query.filter_by(email=email).first():
         return jsonify({"msg": "Este email ya está registrado"}), 409
@@ -56,12 +98,11 @@ def signup():
     if not role_obj:
         return jsonify({"msg": f"El rol '{role_str}' no existe en la base de datos"}), 500
 
-    user = User(
-        email=email,
-        name=name,
-        last_name=last_name,
-        password_hash=password
-    )
+    user = User(email=email, name=name, last_name=last_name)
+    if role is not None:
+        setattr(user, "role", role)
+
+    user.set_password(password)
     db.session.add(user)
     db.session.commit()
 
@@ -97,42 +138,61 @@ def login():
     if not email or not password:
         raise APIException("Email y contraseña son requeridos", 400)
 
-        # Buscar usuario y validar contraseña
-        user = User.query.filter_by(email=email).first()
-        print(user)
-        # if not user or not user.check_password(password):
-        #     raise APIException("Credenciales inválidas", status_code=401)
+    user = User.query.filter_by(email=email).first()
+    if not user or not user.check_password(password):
+        raise APIException("Credenciales inválidas", 401)
 
-        # Generar token
-        access_token = create_access_token(identity=str(user.id))
-
-        # Log de acceso exitoso
-        print(f"Login exitoso para {email}")
-
-        return jsonify({
-            "access_token": access_token,
-            "user": user.serialize()
-        }), 200
-
-    except APIException as e:
-        return jsonify(e.to_dict()), e.status_code
-    except Exception as e:
-        print(f"Error inesperado en login: {str(e)}")
-        return jsonify({"msg": "Error interno del servidor"}), 500
+    # 🔑 FIX: identity como string
+    access_token = create_access_token(identity=str(user.id))
+    return jsonify({"access_token": access_token, "user": user.serialize()}), 200
 
 
-# ---------- PROFILE (PROTEGIDO) ----------
-@api.route("/profile", methods=["GET"])
+# ============================================================================
+# 👤 PROFILE (GET / PUT/PATCH)
+#   * Al leer el JWT, convertir la identity a int antes de consultar DB
+# ============================================================================
+@api.get("/profile")
 @jwt_required()
-def profile():
-    user_id = get_jwt_identity()
+def profile_me():
+    user_id = int(get_jwt_identity())  # ← FIX: castear a int
     user = User.query.get(user_id)
     if not user:
         return jsonify({"msg": "Usuario no encontrado"}), 404
     return jsonify(user.serialize()), 200
 
 
- # Manejo básico de errores si quieres usar APIException en tu app
+@api.route("/profile", methods=["PUT", "PATCH"])
+@jwt_required()
+def update_profile():
+    user_id = int(get_jwt_identity())  # ← FIX
+    user = User.query.get(user_id)
+    if not user:
+        raise APIException("Usuario no encontrado", 404)
+
+    body = request.get_json(silent=True) or {}
+    updated = False
+
+    # Permitimos actualizar estos campos si existen en el modelo
+    for field in ("name", "last_name", "phone"):
+        if field in body and hasattr(user, field):
+            setattr(user, field, (body.get(field) or "").strip())
+            updated = True
+
+    if not updated:
+        return jsonify({"msg": "Nada para actualizar", "user": user.serialize()}), 200
+
+    db.session.commit()
+    return jsonify({"msg": "Perfil actualizado", "user": user.serialize()}), 200
+
+
+# ============================================================================
+# ❤️ Healthcheck + handler de errores
+# ============================================================================
+@api.get("/health")
+def health():
+    return jsonify({"status": "ok"}), 200
+
+
 @api.errorhandler(APIException)
 def handle_api_exception(err: APIException):
     return jsonify(err.to_dict()), err.status_code
@@ -161,26 +221,21 @@ def create_tour():
     try:
         current_user_id = int(get_jwt_identity())  # ← FIX
         user = User.query.get(current_user_id)
-        # if "provider" not in [role.name for role in user.roles]:
-        #     raise APIException(
-        #         "No tiene permiso para crear tours", status_code=403)
 
-        data = request.get_json()
-        print(data)
-        if not data:
-            raise APIException("No se recibieron datos", status_code=400)
-        # required_fields = ['title', 'city',
-        #                    'base_price', 'country_id', 'description']
-        # if not all(field in data for field in required_fields):
-        #     raise APIException("Faltan campos requeridos.", status_code=400)
-        
-        title = str(data['title'])
-        description = str(data['description'])
-        city = str(data['city'])
-        base_price = float(data['base_price'])
-        country_id = int(data['country_id'])
+        # --- Permiso opcional con M2M (tolerante si no existe) ---
+        try:
+            roles = [r.name.lower() for r in getattr(user, "roles", [])]
+            if roles and "provider" not in roles and "admin" not in roles:
+                raise APIException("No tiene permiso para crear tours", 403)
+        except Exception:
+            pass
+        # ----------------------------------------------------------
 
-        # Crear tour
+        data = request.get_json(silent=True) or {}
+        required = ("title", "city", "base_price", "country_id")
+        if not all(k in data and str(data[k]).strip() for k in required):
+            raise APIException("Faltan campos requeridos", 400)
+
         new_tour = Tour(
             title=str(data["title"]),
             description=str(data.get("description") or ""),
@@ -209,9 +264,10 @@ def get_tour(tour_id):
     return jsonify(tour.serialize()), 200
 
 
-# --- Rutas para bookings --------------------------------------------
-
-@api.route("/bookings", methods=["POST"])
+# ============================================================================
+# 📆 BOOKINGS (crear)
+# ============================================================================
+@api.post("/bookings")
 @jwt_required()
 def create_booking():
     try:
