@@ -3,7 +3,7 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from .models import db, User, Tour, TourSchedule, Booking, Review, Country, Category, Image, Role
 from .utils import APIException
-from datetime import date
+from datetime import datetime, date
 
 api = Blueprint("api", __name__)
 
@@ -34,16 +34,14 @@ def signup():
 
     if role_str not in ["traveler", "provider"]:
         return jsonify({"msg": "El rol debe ser 'traveler' o 'provider'"}), 400
-    
-    try:
-        # role = UserRole(role_str)
-        pass
-    except ValueError:
+
+    role = Role.query.filter_by(name=role_str).first()
+    if not role or role.name not in ["traveler", "provider"]:
         return jsonify({"msg": "El rol debe ser 'traveler' o 'provider'"}), 400
 
     if User.query.filter_by(email=email).first():
         return jsonify({"msg": "Este email ya está registrado"}), 409
-    
+
     role_obj = Role.query.filter_by(name=role_str).first()
     if not role_obj:
         return jsonify({"msg": f"El rol '{role_str}' no existe en la base de datos"}), 500
@@ -54,6 +52,7 @@ def signup():
         last_name=last_name,
         password_hash=password
     )
+    user.roles.append(role)
     db.session.add(user)
     db.session.commit()
 
@@ -71,7 +70,7 @@ def proveedor_signup():
             "data": data
         }), 201
     except Exception as e:
-        return jsonify({"msg": f"Error al registrar proveedor: {str(e)}"}), 400
+        return jsonify({"msg": "Error al registrar proveedor: {str(e)}"}), 400
 
 
 # ---------- LOGIN ----------
@@ -124,8 +123,9 @@ def profile():
         return jsonify({"msg": "Usuario no encontrado"}), 404
     return jsonify(user.serialize()), 200
 
-
  # Manejo básico de errores si quieres usar APIException en tu app
+
+
 @api.errorhandler(APIException)
 def handle_api_exception(err):
     return jsonify(err.to_dict()), err.status_code
@@ -159,7 +159,7 @@ def create_experince():
         #                    'base_price', 'country_id', 'description']
         # if not all(field in data for field in required_fields):
         #     raise APIException("Faltan campos requeridos.", status_code=400)
-        
+
         title = str(data['title'])
         description = str(data['description'])
         city = str(data['city'])
@@ -188,6 +188,7 @@ def create_experince():
         print(f"Error inesperado al crear tour: {str(e)}")
         return jsonify({"msg": "Error interno del servidor"}), 500
 
+
 @api.route("/tours/<int:tour_id>", methods=["GET"])
 def get_tour(tour_id):
     tour = Tour.query.get(tour_id)
@@ -197,6 +198,84 @@ def get_tour(tour_id):
 
 
 # --- Rutas para bookings --------------------------------------------
+
+# # [GET] Obtener todos los horarios
+# @api.route("/tour_schedules", methods=['GET'])
+# def get_all_schedules():
+#     schedules = TourSchedule.query.all()
+#     result = [schedule.serialize() for schedule in schedules]
+#     return jsonify(result), 200
+
+# # [GET] Obtener un horario por ID
+
+
+# @api.route("/tour_schedules/<int:schedule_id>", methods=['GET'])
+# def get_schedule(schedule_id):
+#     schedule = TourSchedule.query.get_or_404(schedule_id)
+#     return jsonify(schedule.serialize()), 200
+
+# [POST] Crear un nuevo horario
+
+
+# @api.route("/tour_schedules", methods=['POST'])
+# def create_schedule():
+#     data = request.get_json()
+#     if not data or not 'tour_date' in data or not 'available_slots' in data or not 'tour_id' in data:
+#         return jsonify({"error": "Faltan datos requeridos"}), 400
+
+#     # Validar que el Tour asociado exista
+#     tour = Tour.query.get(all)
+#     # if not tour:
+#     #     return jsonify({"error": f"El tour con id {data['tour_id']} no existe"}), 404
+
+#     # Convertir la fecha de string a objeto date
+#     try:
+#         tour_date_obj = datetime.fromisoformat(data['tour_date']).date()
+#     except ValueError:
+#         return jsonify({"error": "Formato de fecha inválido. Usa YYYY-MM-DD"}), 400
+
+#     new_schedule = TourSchedule(
+#         tour_date=tour_date_obj,
+#         available_slots=data['available_slots'],
+#         tour_id=tour[data['tour_id']]
+#     )
+
+#     db.session.add(new_schedule)
+#     db.session.commit()
+
+#     return jsonify(new_schedule.serialize()), 201  # 201: Created
+
+# [PUT] Actualizar un horario existente
+
+
+# @api.route("/tour_schedules/<int:schedule_id>", methods=['PUT'])
+# def update_schedule(schedule_id):
+#     schedule = TourSchedule.query.get_or_404(schedule_id)
+#     data = request.get_json()
+
+#     if 'tour_date' in data:
+#         try:
+#             schedule.tour_date = datetime.fromisoformat(
+#                 data['tour_date']).date()
+#         except ValueError:
+#             return jsonify({"error": "Formato de fecha inválido. Usa YYYY-MM-DD"}), 400
+
+#     if 'available_slots' in data:
+#         schedule.available_slots = data['available_slots']
+
+#     db.session.commit()
+#     return jsonify(schedule.serialize()), 200
+
+# # [DELETE] Eliminar un horario
+
+
+# @api.route("/tour_schedules/<int:schedule_id>", methods=['DELETE'])
+# def delete_schedule(schedule_id):
+#     schedule = TourSchedule.query.get_or_404(schedule_id)
+#     db.session.delete(schedule)
+#     db.session.commit()
+#     return jsonify({"message": f"Horario con id {schedule_id} eliminado exitosamente"}), 200
+
 
 @api.route("/bookings", methods=["POST"])
 @jwt_required()

@@ -187,7 +187,6 @@ class Country(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "tours": [tour.serialize() for tour in self.tours] if self.tours else [],
         }
 
 
