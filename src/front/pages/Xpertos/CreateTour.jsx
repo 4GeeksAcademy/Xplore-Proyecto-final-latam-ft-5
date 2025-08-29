@@ -6,7 +6,7 @@ export default function CreateTour() {
         country: "",
         city: "",
         description: "",
-        price: "",
+        price: '',
         date: "",
         coverPhoto: null,
         image: null,
@@ -64,7 +64,23 @@ export default function CreateTour() {
 
         const requiredField = fieldValidation()
         setErrors(requiredField)
-        if (Object.keys(requiredField).length > 0) { console.log('perro') }
+        if (Object.keys(requiredField).length > 0) { console.log('faltan required') } else {
+            setInputValue({
+                title: "",
+                country: "",
+                city: "",
+                description: "",
+                price: '',
+                date: "",
+                coverPhoto: null,
+                image: null,
+                imageTwo: null,
+                imageThree: null,
+                imageFour: null
+
+            })
+            alert('tour creado correctamente')
+        }
     }
     return (
         <div className="d-flex justify-content-center align-items-center min-vh-100 m-2">
