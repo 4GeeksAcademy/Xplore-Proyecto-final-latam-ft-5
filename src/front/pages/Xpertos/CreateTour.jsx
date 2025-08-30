@@ -3,10 +3,10 @@ import { useState } from "react"
 export default function CreateTour() {
     const [inputValue, setInputValue] = useState({
         title: "",
-        country: "",
-        city: "",
         description: "",
-        price: '',
+        city: "",
+        base_price: '',
+        country: "",
         date: "",
         coverPhoto: null,
         image: null,
@@ -59,12 +59,33 @@ export default function CreateTour() {
     }
 
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
+        const { name, value, files } = e.target
         e.preventDefault()
-
         const requiredField = fieldValidation()
         setErrors(requiredField)
-        if (Object.keys(requiredField).length > 0) { console.log('faltan required') } else {
+        if (Object.keys(requiredField).length > 0) {
+            console.log('faltan required')
+        } else {
+
+            const response = await fetch(
+                'http://localhost:3001/tour',
+                {
+                    method: 'POST',
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(inputValue),
+                }
+            )
+            console.log(response)
+
+            if ((value && value.trim() !== '') && files?.length > 0 && response.status === 201) {
+                const newTour = await response.json();
+
+            }
+
+
+
+
             setInputValue({
                 title: "",
                 country: "",
