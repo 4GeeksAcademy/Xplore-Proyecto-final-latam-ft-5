@@ -87,7 +87,6 @@ const TOURS = [
 
 
 
-
 export default function Panel() {
     const [favoritesVersion, setFavoritesVersion] = useState(0); // para refrescar favoritos sin recargar
     const [bookings, setBookings] = useState([]);
@@ -107,6 +106,15 @@ export default function Panel() {
             .forEach((b) => set.add(String(b.tourId)));
         return set;
     }, [bookings]);
+
+    /* =================================================================== */
+
+    // refrescar si cambian favoritos en otra parte de la app
+    useEffect(() => {
+        const onFav = () => setFavoritesVersion((v) => v + 1);
+        window.addEventListener("xplora:favorites:updated", onFav);
+        return () => window.removeEventListener("xplora:favorites:updated", onFav);
+    }, []);
 
     function FavBtn({ tour }) {
         const active = isFavorite(tour.id);
