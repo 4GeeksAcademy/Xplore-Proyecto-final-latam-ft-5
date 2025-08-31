@@ -14,6 +14,14 @@ export function isLoggedIn() {
   return Boolean(getToken());
 }
 
+//USUARIO
+export function setUserLocal(user){
+  localStorage.setItem("usr",JSON.stringify(user))
+}
+export function getUserLocal(){
+ return localStorage.getItem('usr')
+}
+
 // Helper para llamadas autenticadas si luego conectan API real
 export async function authFetch(url, opts = {}) {
   const token = getToken();

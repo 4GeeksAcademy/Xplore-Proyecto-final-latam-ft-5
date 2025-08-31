@@ -25,15 +25,16 @@ from .api.commands import setup_commands
 
 # --- Inicialización de la App ---
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
-static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "../dist/")
+static_file_dir = os.path.join(os.path.dirname(
+    os.path.realpath(__file__)), "../dist/")
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
 
-
 # --- 2. Habilita CORS para toda la aplicación ---
-CORS(app, resources={r"/*": {"origins": ["http://localhost:3000","https://animated-telegram-xggv7g9jpw936wv-3000.app.github.dev"]}})
+CORS(app, resources={r"/*": {"origins": ["http://localhost:3000",
+     "https://animated-telegram-xggv7g9jpw936wv-3000.app.github.dev"]}})
 
 # ---- Configuración de Flask/DB/JWT ----
 app.config["SECRET_KEY"] = SECRET_KEY
@@ -53,15 +54,19 @@ setup_commands(app)
 app.register_blueprint(api, url_prefix="/api")
 
 # ---- Manejadores de Errores y Rutas Estáticas ----
+
+
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
     return jsonify(error.to_dict()), error.status_code
+
 
 @app.route("/")
 def sitemap():
     if ENV == "development":
         return generate_sitemap(app)
     return send_from_directory(static_file_dir, "index.html")
+
 
 @app.route("/<path:path>", methods=["GET"])
 def serve_any_other_file(path):

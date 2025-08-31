@@ -1,5 +1,7 @@
 // src/front/utils/api.js
 
+import { getToken } from "./auth";
+
 // Usa el puerto donde corre tu backend (5000 en tu caso actual)
 const API_URL = (
   import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5000"
@@ -61,5 +63,19 @@ export async function apiUpdateProfile(token, payload) {
   return handleResponse(res);
 }
 
+export async function createTour(payload) {
+  const token = getToken();
+  console.log("")
+  const response = await fetch(`${API_URL}/api/tours`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  return handleResponse(response);
+}
 // (Opcional) expón API_URL por si lo necesitas en otros módulos
 export { API_URL };

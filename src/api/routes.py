@@ -2,17 +2,18 @@
 from __future__ import annotations
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-
+import random
 
 
 from .models import (
-    db, User, UserRole, Tour, TourSchedule, Booking, Review,
-    Country, Category, Image, Role
+    db, User, UserRole, Tour, Review,
 )
 from .utils import APIException
 from datetime import datetime, date
+from faker import Faker
 
 api = Blueprint("api", __name__)
+fake = Faker()
 
 
 def _parse_role(role_raw: str | None) -> UserRole:
@@ -101,19 +102,35 @@ def signup():
 
 @api.route("/proveedor/signup", methods=["POST"])
 def proveedor_signup():
-    try:
-        data = request.get_json(silent=True) or {}
-        # TODO: Agregar validación de datos
+    body = request.get_json(silent=True) or {}
+    email = (body.get("email") or "").strip().lower()
+    password = body.get("password") or ""
+    name = (body.get("name") or "").strip()
+    last_name = (body.get("last_name") or "").strip()
+    role_raw = "PROVIDER"
 
-        return jsonify({
-            "msg": "Proveedor registrado con éxito",
-            "data": data
-        }), 201
-    except Exception as e:
-        return jsonify({"msg": "Error al registrar proveedor: {str(e)}"}), 400
+    if not email or not password:
+        return jsonify({"msg": "Email y contraseña son requeridos"}), 400
 
+    if User.query.filter_by(email=email).first():
+        return jsonify({"msg": "Este email ya está registrado"}), 409
+
+    role = _parse_role(role_raw) if hasattr(User, "role") else None
+
+    user = User(email=email, name=name, last_name=last_name)
+    if role is not None:
+        setattr(user, "role", role)
+
+    user.set_password(password)  # guarda hash en password_hash
+    db.session.add(user)
+    db.session.commit()
+
+    # 🔑 FIX: identity como string
+    access_token = create_access_token(identity=str(user.id))
+    return jsonify({"access_token": access_token, "user": user.serialize()}), 201
 
 # ===================================Login=========================================
+
 
 @api.route("/login", methods=["POST"])
 def login():
@@ -200,47 +217,33 @@ def get_tours():
 
 
 @api.route("/tours", methods=["POST"])
-@jwt_required()
 def create_tour():
     try:
-        current_user_id = int(get_jwt_identity())  # ← FIX
-        user = User.query.get(current_user_id)
-
-        # --- Permiso opcional con M2M ---
-        try:
-            roles = [r.name.lower() for r in getattr(user, "roles", [])]
-            if roles and "provider" not in roles and "admin" not in roles:
-                raise APIException("No tiene permiso para crear tours", 403)
-        except Exception:
-            pass
-        # -------------------------------
-
         data = request.get_json(silent=True) or {}
-        required = ("title", "city", "base_price", "country_id")
+        required = ("title", "location", "base_price")
         if not all(k in data and str(data[k]).strip() for k in required):
             raise APIException("Faltan campos requeridos", 400)
 
-        # Crear el nuevo tour
+        # Crear tour
         new_tour = Tour(
             title=str(data["title"]),
             description=str(data.get("description") or ""),
-            city=str(data["city"]),
-            base_price=data["base_price"],
-            user_id=current_user_id,
-            country_id=int(data["country_id"]),
+            location=str(data["location"]),
+            base_price=float(data["base_price"]),
+            duration=str(data.get("duration") or ""),
+            popular=data.get("popular") if isinstance(
+                data.get("popular"), list) else [],
+            tour_includes=data.get("tour_includes") if isinstance(
+                data.get("tour_includes"), list) else [],
+            tour_not_includes=data.get("tour_not_includes") if isinstance(
+                data.get("tour_not_includes"), list) else [],
+            images=data.get("images") if isinstance(
+                data.get("images"), list) else [],
+            rate=float(data.get("rate") or 0.0),
         )
         db.session.add(new_tour)
-
-        # Manejar imágenes (si se enviaron)
-        image_urls = data.get("images", [])
-        if image_urls and isinstance(image_urls, list):
-            for url in image_urls:
-                url = str(url).strip()
-                if url:
-                    image = Image(url=url)
-                    new_tour.images.append(image)
-
         db.session.commit()
+
         return jsonify(new_tour.serialize()), 201
 
     except APIException as e:
@@ -352,3 +355,41 @@ def add_review(tour_id):
         return jsonify({"msg": "Error interno del servidor"}), 500
 
     # =================================Images============================
+
+
+@api.route("/seed_tours", methods=["GET"])
+def seed_tours():
+    try:
+        # Cantidad de tours a crear
+        n = request.args.get("n", default=10, type=int)
+        created = []
+
+        for _ in range(n):
+            tour = Tour(
+                title=fake.sentence(nb_words=5),
+                description=fake.paragraph(nb_sentences=3),
+                location=fake.city(),
+                base_price=round(random.uniform(50, 500), 2),
+                duration=f"{random.randint(1, 14)} days",
+                popular=[fake.word() for _ in range(random.randint(1, 5))],
+                tour_includes=[fake.word()
+                               for _ in range(random.randint(1, 5))],
+                tour_not_includes=[fake.word()
+                                   for _ in range(random.randint(0, 3))],
+                images=[fake.image_url() for _ in range(random.randint(1, 5))],
+                rate=round(random.uniform(0, 5), 1),
+            )
+            db.session.add(tour)
+            created.append({
+                "title": tour.title,
+                "location": tour.location,
+                "base_price": tour.base_price
+            })
+
+        db.session.commit()
+        return jsonify({"msg": f"{n} tours creados exitosamente", "tours": created}), 201
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"[seed_tours] Error: {e}")
+        return jsonify({"msg": "Error interno del servidor"}), 500

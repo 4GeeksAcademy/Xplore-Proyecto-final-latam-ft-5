@@ -68,14 +68,12 @@ export default function ProveedorSignUp() {
 
         try {
             setEnviando(true);
-            const r = await apiProveedorSignup(payload);
-            const token = r?.access_token || r?.data?.access_token;
-            if (token) {
-                saveToken(token);
-                navigate("/panel/tours/create", { replace: true });
-            } else {
-                navigate("/proveedor-aceptado", { replace: true });
-            }
+            const response = await apiProveedorSignup(payload);
+            const token = response?.access_token || response?.data?.access_token;
+            saveToken(token);
+            //porque no hay tiempo para mas aCCIONES
+            navigate("/proveedor-aceptado", { replace: true });
+
         } catch (err) {
             const apiMsg = err?.response?.data?.msg || err?.response?.data?.error || err?.message || "Error al registrar";
             setError((prev) => ({ ...prev, _global: apiMsg }));
@@ -221,6 +219,5 @@ export default function ProveedorSignUp() {
         </div>
     );
 }
- 
 
-	
+

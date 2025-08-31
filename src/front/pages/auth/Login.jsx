@@ -18,10 +18,11 @@ export default function Login() {
         setLoading(true);
         try {
             // ⬇️ apiLogin espera un objeto { email, password }
-            const { access_token } = await apiLogin({
+            const { access_token, ...rest } = await apiLogin({
                 email: input.email,
                 password: input.password,
             });
+            console.log("El rest", rest)
             saveToken(access_token);
             nav("/panel", { replace: true });
         } catch (err) {

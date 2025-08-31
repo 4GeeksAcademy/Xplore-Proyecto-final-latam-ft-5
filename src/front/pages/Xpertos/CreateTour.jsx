@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { createTour } from "../../utils/api";
 
 export default function CreateTour() {
     const [inputValue, setInputValue] = useState({
@@ -8,11 +9,11 @@ export default function CreateTour() {
         base_price: '',
         country: "",
         date: "",
-        coverPhoto: null,
-        image: null,
-        imageTwo: null,
-        imageThree: null,
-        imageFour: null
+        // coverPhoto: null,
+        // image: null,
+        // imageTwo: null,
+        // imageThree: null,
+        // imageFour: null
 
     });
 
@@ -34,7 +35,7 @@ export default function CreateTour() {
         if (inputValue.base_price.trim() == '') { required.base_price = 'Por favor ingresa el precio' }
         if (inputValue.description.trim() == '') { required.description = 'Por favor agrega una descripción' }
         if (!inputValue.date.trim()) { required.date = "Asigna fecha del tour" }
-        if (!inputValue.coverPhoto) { required.coverPhoto = 'Agrega una foto de portada al tour ' }
+        //if (!inputValue.coverPhoto) { required.coverPhoto = 'Agrega una foto de portada al tour ' }
         return required
     }
 
@@ -60,18 +61,33 @@ export default function CreateTour() {
 
 
     const handleSubmit = async (e) => {
-        const { name, value, files } = e.target
-        e.preventDefault()
-        const requiredField = fieldValidation()
-        setErrors(requiredField)
-        if (Object.keys(requiredField).length > 0) {
-            console.log('faltan required')
-        } else {
+        try {
+            const { name, value, files } = e.target
+            e.preventDefault()
+            const requiredField = fieldValidation()
+            setErrors(requiredField)
+            if (Object.keys(requiredField).length > 0) {
+                console.log('faltan required')
+                //rompemos funcion para terminar ejecución
+                return
+            } else {
+                const payloadTour = {
+                    title: inputValue.title,
+                    description: inputValue.description,
+                    city: inputValue.city,
+                    base_price: inputValue.base_price,
+                    country: inputValue.country,
+                    date: inputValue.date,
+                }
+                const response = await createTour(payloadTour)
+                console.log("Perro====>", response)
+                alert('tour creado correctamente')
+            }
 
-
-
-
-
+        } catch (error) {
+            console.log("Error CreateTour=====>", error)
+            alert("Error al crear Tour")
+        } finally {
             setInputValue({
                 title: "",
                 country: "",
@@ -79,16 +95,15 @@ export default function CreateTour() {
                 description: "",
                 base_price: '',
                 date: "",
-                coverPhoto: null,
-                image: null,
-                imageTwo: null,
-                imageThree: null,
-                imageFour: null
-
+                // coverPhoto: null,
+                // image: null,
+                // imageTwo: null,
+                // imageThree: null,
+                // imageFour: null
             })
-            alert('tour creado correctamente')
         }
     }
+
     return (
         <div className="d-flex justify-content-center align-items-center min-vh-100 m-2">
             <div className="border p-2">
@@ -97,7 +112,7 @@ export default function CreateTour() {
                         <h3>Crear Tour</h3>
                     </div>
                     <div className="d-md-flex">
-                        <div className="col-md-6 col-12 p-2">
+                        <div className="col-12 p-2">
                             <div className="d-flex flex-column mb-3">
                                 <label>Titulo del tour</label>
                                 <input
@@ -180,7 +195,7 @@ export default function CreateTour() {
                                 )}
                             </div>
                         </div>
-                        {/* comienza seccion de imagenes */}
+                        {/* comienza seccion de imagenes 
                         <div className="col-md-6 col-12 p-2">
                             <div className="d-flex flex-column mb-3">
                                 <label>Imagen de portada</label>
@@ -188,7 +203,7 @@ export default function CreateTour() {
                                     name="coverPhoto"
                                     onChange={handleChange}
                                 />
-                                {/* sig linea muestra la img antes de enviar form */}
+                               
                                 {inputValue.coverPhoto && (
                                     <>
                                         <img
@@ -280,7 +295,7 @@ export default function CreateTour() {
 
                                 )}
                             </div>
-                        </div>
+                        </div> */}
 
                     </div>
 
