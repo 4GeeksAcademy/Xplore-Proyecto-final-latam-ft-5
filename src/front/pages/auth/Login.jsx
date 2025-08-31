@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { apiLogin } from "../../utils/api";
-import { saveToken } from "../../utils/auth";
+import { saveToken, setUserLocal } from "../../utils/auth";
 
 export default function Login() {
     const nav = useNavigate();
@@ -18,10 +18,11 @@ export default function Login() {
         setLoading(true);
         try {
             // ⬇️ apiLogin espera un objeto { email, password }
-            const { access_token, ...rest } = await apiLogin({
+            const { access_token, user } = await apiLogin({
                 email: input.email,
                 password: input.password,
             });
+            setUserLocal(user)
             saveToken(access_token);
             nav("/panel", { replace: true });
         } catch (err) {

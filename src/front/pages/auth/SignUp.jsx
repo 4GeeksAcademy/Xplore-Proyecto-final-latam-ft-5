@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { apiSignup, apiLogin } from "../../utils/api";
-import { saveToken } from "../../utils/auth";
+import { saveToken, setUserLocal } from "../../utils/auth";
 
 export default function SignUp() {
   const nav = useNavigate();
@@ -63,17 +63,18 @@ export default function SignUp() {
         password: form.password,
         role: "traveler",
       });
-
       // 2) Guardar token si la API lo envía (nuestro backend lo envía)
       if (signupResp?.access_token) {
         saveToken(signupResp.access_token);
+        setUserLocal(signupResp.user)
       } else {
         // Fallback: auto-login si el signup no trajo token
-        const { access_token } = await apiLogin({
+        const { access_token, user } = await apiLogin({
           email: form.email,
           password: form.password,
         });
         saveToken(access_token);
+        setUserLocal(user)
       }
 
       // 3) Ir al panel

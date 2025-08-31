@@ -162,6 +162,8 @@ class Review(db.Model):
 
     rating = db.Column(db.Float, nullable=False)  # ej: 4.5
     comment = db.Column(db.Text, nullable=True)
+    user = db.relationship("User", backref="reviews",
+                           lazy=True)  # relación con User
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -170,6 +172,7 @@ class Review(db.Model):
             "id": self.id,
             "tour_id": self.tour_id,
             "user_id": self.user_id,
+            "user_name": self.user.name if self.user else "Anónimo",
             "rating": self.rating,
             "comment": self.comment,
             "created_at": self.created_at.isoformat()

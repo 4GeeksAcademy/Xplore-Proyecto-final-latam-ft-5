@@ -65,7 +65,6 @@ export async function apiUpdateProfile(token, payload) {
 
 export async function createTour(payload) {
   const token = getToken();
-  console.log("");
   const response = await fetch(`${API_URL}/api/tours`, {
     method: "POST",
     headers: {
@@ -94,6 +93,34 @@ export async function getDetailTour(id) {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
+    },
+  });
+
+  return handleResponse(response);
+}
+
+export async function createReview(payload) {
+  const token = getToken();
+  const { id, ...review } = payload;
+  const response = await fetch(`${API_URL}/api/tours/${id}/reviews`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(review),
+  });
+
+  return handleResponse(response);
+}
+
+export async function deleteReview(id) {
+  const token = getToken();
+  const response = await fetch(`${API_URL}/api/reviews/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
 

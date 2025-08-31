@@ -1,31 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { getDetailTour } from "../utils/api";
+import { deleteReview, getDetailTour } from "../utils/api";
 import ErrorPage from "./ErrorPage";
 import Loading from "../components/Loading";
-
-/** ------- Mock adaptado a tus nuevos datos ------- */
-const mock = (id) => ({
-    id,
-    title: "Throw reality simply.",
-    description:
-        "Budget several treat discover. Else bed certainly why spring security even. Development plant any it past reduce. Final wind test two late.",
-    location: "Port Gregorytown",
-    duration: "4 days",
-    base_price: "63.90",
-    rate: 0.9,
-    popular: ["pay", "since", "accept"],
-    tour_includes: ["computer", "floor"],
-    tour_not_includes: ["likely"],
-    images: [
-        "https://static.wixstatic.com/media/a07b19_d0a8804022454b2689ee1b780e93867a~mv2.jpg/v1/fill/w_703,h_396,al_c,lg_1,q_80/a07b19_d0a8804022454b2689ee1b780e93867a~mv2.jpg",
-        "https://placekitten.com/658/579",
-        "https://dummyimage.com/72x954",
-        "https://dummyimage.com/488x456",
-        "https://picsum.photos/371/737",
-        "https://picsum.photos/645/494",
-    ],
-});
+import { ReviewForm } from "../components/ReviewForm";
+import { getUserLocal } from "../utils/auth";
 
 function StarRating({ value = 0 }) {
     const full = Math.floor(value);
@@ -105,10 +84,12 @@ export function TourDetail() {
     const { tourId } = useParams();
     const [loading, setLoading] = useState(true)
     const [tourDetail, setTourDetail] = useState(null)
-
+    const [reviews, setReviews] = useState([])
+    const user = getUserLocal()
     const getFetchDetail = async () => {
         try {
             const response = await getDetailTour(tourId)
+            setReviews(response.reviews ?? [])
             setTourDetail(response)
         } catch (error) {
             console.log("error", error)
@@ -116,7 +97,14 @@ export function TourDetail() {
             setLoading(false)
         }
     }
-
+    const handleDeleteReview = async (id) => {
+        try {
+            await deleteReview(id)
+            setReviews(prev => prev.filter((item) => item.id !== id))
+        } catch (error) {
+            console.log("error borrando", error)
+        }
+    }
     useEffect(() => {
         getFetchDetail()
     }, [])
@@ -193,14 +181,46 @@ export function TourDetail() {
                         <h5 className="mb-2">Galería</h5>
                         <GalleryCarousel images={tourDetail.images} />
                     </div>
+
+                    {reviews.length > 0 && (
+                        <div className="card border-0 shadow-sm rounded-4 p-3 mb-3">
+                            <h5 className="mb-3">Reviews de viajeros ({reviews.length})</h5>
+                            <div className="list-group list-group-flush">
+                                {reviews.map((r) => (
+                                    <div key={r.id} className="list-group-item border-0 p-2 mb-2 shadow-sm rounded-3">
+                                        <div className="d-flex justify-content-between align-items-center mb-1">
+                                            <strong>{r.user_name || "Anonimo"}</strong>
+                                            <span className="text-warning">
+                                                {"★".repeat(Math.floor(r.rating))}
+                                                <span className="text-secondary">
+                                                    {"★".repeat(5 - Math.floor(r.rating))}
+                                                </span>
+                                                <small className="ms-1 text-muted">{r.rating.toFixed(1)}</small>
+                                            </span>
+                                        </div>
+                                        {r.comment && <p className="mb-0">{r.comment}</p>}
+                                        <small className="text-muted">{new Date(r.created_at).toLocaleDateString()}</small>
+                                        {r.user_id === user.id && (
+                                            <div className="mt-2">
+                                                <button
+                                                    className="btn btn-sm btn-outline-danger"
+                                                    onClick={() => handleDeleteReview(r.id)}
+                                                >
+                                                    Eliminar
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Col derecha */}
                 <div className="col-lg-4">
                     <div className="card border-0 shadow-sm rounded-4 p-3 position-sticky" style={{ top: 24 }}>
-                        <div className="d-flex justify-content-between align-items-center mb-2">
-                            <div className="fs-4 fw-bold">${tourDetail.base_price} USD</div>
-                        </div>
+                        <ReviewForm tourId={tourId} onReviewAdded={(newReview) => setReviews((prev) => [newReview, ...prev])} />
                     </div>
                 </div>
             </div>

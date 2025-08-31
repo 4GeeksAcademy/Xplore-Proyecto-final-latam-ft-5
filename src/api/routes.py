@@ -262,85 +262,28 @@ def get_tour(tour_id):
         raise APIException("Tour no encontrado", 404)
     return jsonify(tour.serialize()), 200
 
-
-# ==================================Bookings==========================================
-
-@api.route("/bookings", methods=["POST"])
-@jwt_required()
-def create_booking():
-    try:
-        current_user_id = int(get_jwt_identity())  # ← FIX
-        user = User.query.get(current_user_id)
-
-        # --- Permiso opcional con M2M (tolerante si no existe) ---
-        try:
-            roles = [r.name.lower() for r in getattr(user, "roles", [])]
-            if roles and "traveler" not in roles and "admin" not in roles:
-                raise APIException("No tiene permiso para crear reservas", 403)
-        except Exception:
-            pass
-        # ----------------------------------------------------------
-
-        data = request.get_json(silent=True) or {}
-        required = ("tour_id", "schedule_id", "num_guests")
-        if not all(k in data for k in required):
-            raise APIException("Faltan campos requeridos", 400)
-
-        tour = Tour.query.get(int(data["tour_id"]))
-        schedule = TourSchedule.query.get(int(data["schedule_id"]))
-        if not tour or not schedule:
-            raise APIException("Tour o horario no encontrado", 404)
-
-        guests = int(data["num_guests"])
-        if guests <= 0 or guests > int(schedule.available_slots):
-            raise APIException("Número de invitados no válido o sin cupo", 400)
-
-        total_price = tour.base_price * guests
-
-        new_booking = Booking(
-            user_id=current_user_id,
-            tour_id=tour.id,
-            schedule_id=schedule.id,
-            num_guests=guests,
-            total_price=total_price,
-            status="confirmed",
-        )
-        schedule.available_slots = int(schedule.available_slots) - guests
-
-        db.session.add(new_booking)
-        db.session.commit()
-        return jsonify(new_booking.serialize()), 201
-
-    except APIException as e:
-        db.session.rollback()
-        return jsonify(e.to_dict()), e.status_code
-    except Exception as e:
-        db.session.rollback()
-        print(f"[create_booking] Error: {e}")
-        return jsonify({"msg": "Error interno del servidor"}), 500
-
-
 # ======================================Review======================================
 
 @api.route("/tours/<int:tour_id>/reviews", methods=["POST"])
 @jwt_required()
 def add_review(tour_id):
     try:
-        current_user_id = int(get_jwt_identity())  # ← FIX
+        current_user_id = int(get_jwt_identity())
         data = request.get_json(silent=True) or {}
 
         tour = Tour.query.get(tour_id)
         if not tour:
             raise APIException("Tour no encontrado", 404)
 
-        if "rating" not in data:
-            raise APIException("Falta la calificación ('rating')", 400)
+        rating = data.get("rating")
+        if rating is None or not (0 <= float(rating) <= 5):
+            raise APIException("Rating inválido, debe estar entre 0 y 5", 400)
 
         new_review = Review(
             tour_id=tour_id,
             user_id=current_user_id,
             comment=data.get("comment"),
-            rating=data["rating"],
+            rating=float(rating),
         )
         db.session.add(new_review)
         db.session.commit()
@@ -354,9 +297,35 @@ def add_review(tour_id):
         print(f"[add_review] Error: {e}")
         return jsonify({"msg": "Error interno del servidor"}), 500
 
-    # =================================Images============================
 
+@api.route("/reviews/<int:review_id>", methods=["DELETE"])
+@jwt_required()
+def delete_review(review_id):
+    try:
+        current_user_id = int(get_jwt_identity())
+        review = Review.query.get(review_id)
 
+        if not review:
+            raise APIException("Review no encontrada", 404)
+
+        # Solo el usuario que creó el review puede eliminarlo
+        if review.user_id != current_user_id:
+            raise APIException("No tienes permiso para eliminar este review", 403)
+
+        db.session.delete(review)
+        db.session.commit()
+        return jsonify({"msg": "Review eliminada correctamente"}), 200
+
+    except APIException as e:
+        db.session.rollback()
+        return jsonify(e.to_dict()), e.status_code
+    except Exception as e:
+        db.session.rollback()
+        print(f"[delete_review] Error: {e}")
+        return jsonify({"msg": "Error interno del servidor"}), 500
+    
+# ==================================Seeds===========================================
+# warning no volver a ejecutar mas que una sola vez para cear 10 tours fakes
 @api.route("/seed_tours", methods=["GET"])
 def seed_tours():
     try:

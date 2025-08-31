@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../../styles/ProveedorSignUp.css";
 import { apiProveedorSignup } from "../../utils/apiGuias";
-import { saveToken } from "../../utils/auth";
+import { getUserLocal, saveToken } from "../../utils/auth";
 
 export default function ProveedorSignUp() {
     const navigate = useNavigate();
@@ -71,6 +71,7 @@ export default function ProveedorSignUp() {
             const response = await apiProveedorSignup(payload);
             const token = response?.access_token || response?.data?.access_token;
             saveToken(token);
+            getUserLocal(response.user)
             //porque no hay tiempo para mas aCCIONES
             navigate("/proveedor-aceptado", { replace: true });
 

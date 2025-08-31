@@ -15,11 +15,11 @@ export function isLoggedIn() {
 }
 
 //USUARIO
-export function setUserLocal(user){
-  localStorage.setItem("usr",JSON.stringify(user))
+export function setUserLocal(user) {
+  localStorage.setItem("usr", JSON.stringify(user));
 }
-export function getUserLocal(){
- return localStorage.getItem('usr')
+export function getUserLocal() {
+  return JSON.parse(localStorage.getItem("usr"));
 }
 
 // Helper para llamadas autenticadas si luego conectan API real
