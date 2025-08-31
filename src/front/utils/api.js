@@ -79,17 +79,26 @@ export async function createTour(payload) {
 }
 
 export async function getTours() {
-  const token = getToken();
-  console.log("");
   const response = await fetch(`${API_URL}/api/tours`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
     },
   });
 
   return handleResponse(response);
 }
+
+export async function getDetailTour(id) {
+  const response = await fetch(`${API_URL}/api/tours/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  return handleResponse(response);
+}
+
 // (Opcional) expón API_URL por si lo necesitas en otros módulos
 export { API_URL };
