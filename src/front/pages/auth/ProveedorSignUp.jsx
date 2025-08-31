@@ -220,5 +220,3 @@ export default function ProveedorSignUp() {
         </div>
     );
 }
-
-
