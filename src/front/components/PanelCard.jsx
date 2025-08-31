@@ -1,7 +1,19 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+function renderStars(rate) {
+    const fullStars = Math.floor(rate); // estrellas completas
+    const halfStar = rate - fullStars >= 0.5 ? 1 : 0; // estrella media
+    const emptyStars = 5 - fullStars - halfStar; // estrellas vacías
 
+    return (
+        <>
+            {"★".repeat(fullStars)}
+            {halfStar ? "☆" : ""}
+            {"☆".repeat(emptyStars)}
+        </>
+    );
+}
 
 const PanelCard = ({ tour }) => {
     const img = tour.images?.[0] || ""; // tomamos la primera imagen
@@ -33,7 +45,7 @@ const PanelCard = ({ tour }) => {
                         title={`${tour.rate} / 5`}
                         aria-label={`Calificación ${tour.rate} de 5`}
                     >
-                        {"★".repeat(5)}{" "}
+                        {renderStars(tour.rate)}
                         <small className="text-muted ms-1">{tour.rate}</small>
                     </div>
 
