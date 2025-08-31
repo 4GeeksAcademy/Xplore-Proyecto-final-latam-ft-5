@@ -31,7 +31,7 @@ export default function CreateTour() {
         if (inputValue.title.trim() == '') { required.title = 'Asigna un nombre al tour' }
         if (inputValue.country.trim() == '') { required.country = 'Indica el país' }
         if (inputValue.city.trim() == '') { required.city = 'Destino del tour requerido' }
-        if (inputValue.price.trim() == '') { required.price = 'Por favor ingresa el precio' }
+        if (inputValue.base_price.trim() == '') { required.base_price = 'Por favor ingresa el precio' }
         if (inputValue.description.trim() == '') { required.description = 'Por favor agrega una descripción' }
         if (!inputValue.date.trim()) { required.date = "Asigna fecha del tour" }
         if (!inputValue.coverPhoto) { required.coverPhoto = 'Agrega una foto de portada al tour ' }
@@ -68,20 +68,6 @@ export default function CreateTour() {
             console.log('faltan required')
         } else {
 
-            const response = await fetch(
-                'http://localhost:3001/tour',
-                {
-                    method: 'POST',
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(inputValue),
-                }
-            )
-            console.log(response)
-
-            if ((value && value.trim() !== '') && files?.length > 0 && response.status === 201) {
-                const newTour = await response.json();
-
-            }
 
 
 
@@ -91,7 +77,7 @@ export default function CreateTour() {
                 country: "",
                 city: "",
                 description: "",
-                price: '',
+                base_price: '',
                 date: "",
                 coverPhoto: null,
                 image: null,
@@ -157,15 +143,15 @@ export default function CreateTour() {
                             <div className="d-flex flex-column mb-3">
                                 <label>Precio</label>
                                 <input
-                                    className={`form-control ${errors.price ? 'is-invalid' : ""}`}
+                                    className={`form-control ${errors.base_price ? 'is-invalid' : ""}`}
                                     type="number"
-                                    name="price"
+                                    name="base_price"
                                     onChange={handleChange}
-                                    value={inputValue.price}
+                                    value={inputValue.base_price}
                                     placeholder='$0'
                                 />
-                                {errors.price && (
-                                    <div className="invalid-feedback" >{errors.price}</div>
+                                {errors.base_price && (
+                                    <div className="invalid-feedback" >{errors.base_price}</div>
                                 )}
 
                             </div>
