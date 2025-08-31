@@ -65,7 +65,7 @@ export async function apiUpdateProfile(token, payload) {
 
 export async function createTour(payload) {
   const token = getToken();
-  console.log("")
+  console.log("");
   const response = await fetch(`${API_URL}/api/tours`, {
     method: "POST",
     headers: {
@@ -73,6 +73,20 @@ export async function createTour(payload) {
       Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(payload),
+  });
+
+  return handleResponse(response);
+}
+
+export async function getTours() {
+  const token = getToken();
+  console.log("");
+  const response = await fetch(`${API_URL}/api/tours`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   return handleResponse(response);

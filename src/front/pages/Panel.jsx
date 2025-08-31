@@ -1,139 +1,35 @@
-// src/front/pages/Panel.jsx
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { getBookings, nextBooking } from "../utils/bookings";
-import { isFavorite, toggleFavorite } from "../utils/favorites";
 import "../styles/Panel.css";
-
-const TOURS = [
-    {
-        id: 1,
-        title: "Viaje de Escalada",
-        city: "Huaraz, Perú",
-        days: 3,
-        price: 450,
-        rating: 4.7,
-        tags: ["aventura", "montaña"],
-        img: "https://images.unsplash.com/photo-1549880338-65ddcdfd017b?q=80&w=1600&auto=format&fit=crop",
-    },
-    {
-        id: 2,
-        title: "Antropología Mística",
-        city: "San Juan Chamula, MX",
-        days: 2,
-        price: 380,
-        rating: 4.5,
-        tags: ["cultura"],
-        img: "https://images.unsplash.com/photo-1526772662000-3f88f10405ff?q=80&w=1600&auto=format&fit=crop",
-    },
-    {
-        id: 3,
-        title: "Viaje a Chile",
-        city: "Santiago, Chile",
-        days: 5,
-        price: 520,
-        rating: 4.8,
-        tags: ["montaña", "cultura"],
-        img: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1600&auto=format&fit=crop",
-    },
-];
-
-
-/* ================================
-     Carga desde API (comentada)
-     ================================
-  useEffect(() => {
-    let abort = false;
-    (async () => {
-      try {
-        setLoading(true);
-        setError("");
-        const params = {
-          q: filters.q || undefined,
-          max_price: filters.max_price || undefined,
-          tags: Array.from(filters.tags),
-          page: 1,
-          page_size: 12,
-          sort: "rating_desc",
-        };
-        const data = await apiTours(params);
-        if (!abort) setItems(data.items || []);
-      } catch (e) {
-        if (!abort) {
-          setError(e.message || "No se pudieron cargar los tours");
-          // fallback al mock para no romper la UI
-          setItems(MOCK_TOURS);
-        }
-      } finally {
-        if (!abort) setLoading(false);
-      }
-    })();
-    return () => { abort = true; };
-  }, [filters]);
-  */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import { getTours } from "../utils/api";
+import PanelCard from "../components/PanelCard";
+import Loading from "../components/Loading";
 
 export default function Panel() {
-    const [favoritesVersion, setFavoritesVersion] = useState(0); // para refrescar favoritos sin recargar
-    const [bookings, setBookings] = useState([]);
     const [next, setNext] = useState(null);
+    const [tours, setTours] = useState([])
+    const [loading, setLoading] = useState(true)
 
+    const getData = async () => {
+        try {
+            const response = await getTours()
+            setTours(response)
+            console.log("que pasa", response)
+        } catch (error) {
+            setTours([])
+            console.log("error", error)
+        } finally {
+            setLoading(false)
+        }
+    }
     useEffect(() => {
         // Carga segura de reservas
-        const bks = getBookings?.() || [];
-        setBookings(Array.isArray(bks) ? bks : []);
-        setNext(nextBooking?.() || null);
+        getData()
     }, []);
-
-    const bookedIds = useMemo(() => {
-        const set = new Set();
-        (bookings || [])
-            .filter((b) => b && b.status === "reserved")
-            .forEach((b) => set.add(String(b.tourId)));
-        return set;
-    }, [bookings]);
-
-    function FavBtn({ tour }) {
-        const active = isFavorite(tour.id);
-        return (
-            <button
-                className={`tour-heart ${active ? "active" : ""}`}
-                onClick={() => {
-                    // pasa el objeto completo (tiene img/city/tags)
-                    toggleFavorite({
-                        id: tour.id,
-                        title: tour.title,
-                        img: tour.img,          // será normalizado a image
-                        city: tour.city,        // será normalizado a location
-                        tags: tour.tags,
-                        price: tour.price,
-                    });
-                }}
-                title={active ? "Quitar de favoritos" : "Agregar a favoritos"}
-            >
-                ♥
-            </button>
-        );
-    }
-
+    if (loading) return <Loading message="Cargando tours..." />;
 
     return (
-        <div className="panel-wrap" data-fv={favoritesVersion}>
+        <div className="panel-wrap">
             {next && (
                 <div className="next-banner mb-3 d-flex justify-content-between align-items-center">
                     <div>
@@ -161,8 +57,8 @@ export default function Panel() {
             )}
 
             <div className="row g-4">
-                {/* FILTROS */}
-                <aside className="col-lg-3">
+                {/* FILTROS no se muestra porque no tiene funcionalidad */}
+                {/* <aside className="col-lg-3">
                     <div className="card-soft panel-filters">
                         <h6 className="mb-3">Filtros</h6>
 
@@ -238,80 +134,18 @@ export default function Panel() {
                             </div>
                         ))}
                     </div>
-                </aside>
+                </aside> */}
 
                 {/* CARDS */}
-                <section className="col-lg-9">
+                <section className="">
                     <h2 className="mb-3">Destacados</h2>
                     <div className="row g-4">
-                        {TOURS.map((t) => {
-                            const reserved = bookedIds.has(String(t.id));
-                            return (
-                                <div key={t.id} className="col-12 col-md-6 col-xl-4">
-                                    <div className="tour-card h-100">
-                                        <div
-                                            className="tour-media"
-                                            style={{
-                                                backgroundImage: `url(${t.img})`,
-                                                backgroundSize: "cover",
-                                                backgroundPosition: "center",
-                                            }}
-                                            role="img"
-                                            aria-label={`${t.title} en ${t.city}`}
-                                        >
-                                            <FavBtn tour={t} />
 
-                                            {reserved && <div className="ribbon">Reservado</div>}
-                                        </div>
-                                        <div className="tour-body">
-                                            <div className="tour-sub">
-                                                {t.city} • {t.days} días
-                                            </div>
-                                            <h3 className="tour-title">{t.title}</h3>
-                                            <div
-                                                className="d-flex align-items-center gap-1 text-warning"
-                                                title={`${t.rating} / 5`}
-                                                aria-label={`Calificación ${t.rating} de 5`}
-                                            >
-                                                {"★".repeat(5)}{" "}
-                                                <small className="text-muted ms-1">{t.rating}</small>
-                                            </div>
-                                            <div className="d-flex flex-wrap tour-tags mt-2">
-                                                {t.tags.map((tag) => (
-                                                    <span key={`${t.id}-${tag}`} className="badge-soft">
-                                                        {tag}
-                                                    </span>
-                                                ))}
-                                            </div>
 
-                                            <div className="tour-cta">
-                                                <div className="tour-price">${t.price} USD</div>
-                                                <div className="d-flex gap-2">
-                                                    <Link
-                                                        className="btn btn-outline-primary btn-sm"
-                                                        to={`/tour/${t.id}`}
-                                                    >
-                                                        Ver detalles
-                                                    </Link>
-                                                    {reserved ? (
-                                                        <span className="btn btn-secondary btn-sm disabled">
-                                                            Ya reservado
-                                                        </span>
-                                                    ) : (
-                                                        <Link
-                                                            className="btn btn-primary btn-sm"
-                                                            to={`/panel/booking/${t.id}/date`}
-                                                        >
-                                                            Reservar
-                                                        </Link>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            );
-                        })}
+                        {tours.map((tour) => (
+                            <PanelCard key={tour.id} tour={tour} />
+                        ))}
+
                     </div>
                 </section>
             </div>
