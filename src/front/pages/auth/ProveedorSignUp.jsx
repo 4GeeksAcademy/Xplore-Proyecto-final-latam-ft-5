@@ -38,7 +38,7 @@ export default function ProveedorSignUp() {
         if (!contraseña) fillError.contraseña = true;
 
 
-        if (contraseña !== confirmarContraseña){ fillError.confirmarContraseña=true;}
+        if (contraseña !== confirmarContraseña) { fillError.confirmarContraseña = true; }
         setError(fillError);
 
         return Object.keys(fillError).length === 0;
@@ -149,13 +149,13 @@ export default function ProveedorSignUp() {
                                 {/* opciones de monedas, se pueden agregar nuevas si lo prefieren*/}
                                 <div className="mb-3">
                                     <label className="form-label">Moneda de pago</label>
-                                    <select className={`form-control ${error.monedaPago ? "border border-danger" : ""}`} placeholder="selecciona moneda" value={monedaPago} 
+                                    <select className={`form-control ${error.monedaPago ? "border border-danger" : ""}`} placeholder="selecciona moneda" value={monedaPago}
                                         onChange={(e) => setMonedaPago(e.target.value)} >
                                         <option value="USD">$ USD - Dólar Estadounidense</option>
                                         <option value="EUR">€ EUR - Euro</option>
                                         <option value="MXN">$ MXN - Peso Mexicano</option>
                                         <option value="CLP">$ CLP - Peso Chileno</option>
-                                        </select>
+                                    </select>
                                 </div>
                                 <div className="mb-3">
                                     <label className="form-label">Nombres</label>
@@ -184,14 +184,14 @@ export default function ProveedorSignUp() {
                                     <input type="password" className={`form-control ${error.contraseña ? "border border-danger" : ""}`} placeholder="Ingresa tu contraseña" value={contraseña} maxLength={15}
                                         onChange={(e) => setContraseña(e.target.value)} />
 
-                                         <div className="mb-3">
-                                    <label className="form-label">Confirma tu nueva contraseña</label>
-                                    <input type="password" className={`form-control ${error.confirmarContraseña ? "border border-danger" : ""}`} placeholder="Confirma tu contraseña" value={confirmarContraseña} maxLength={15}
-                                        onChange={(e) => setConfirmarContraseña(e.target.value)} />
+                                    <div className="mb-3">
+                                        <label className="form-label">Confirma tu nueva contraseña</label>
+                                        <input type="password" className={`form-control ${error.confirmarContraseña ? "border border-danger" : ""}`} placeholder="Confirma tu contraseña" value={confirmarContraseña} maxLength={15}
+                                            onChange={(e) => setConfirmarContraseña(e.target.value)} />
                                         {/* validación contraseñas identicas*/}
                                         {error.confirmarContraseña && (<div className="text-danger mt-1">Las contraseñas no coinciden</div>
-    )}
-                                </div>
+                                        )}
+                                    </div>
                                 </div>
                             </form>
 
