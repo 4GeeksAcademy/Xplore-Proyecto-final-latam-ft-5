@@ -166,14 +166,6 @@ export default function SignUp() {
             {loading ? "Creando cuenta..." : "Registrarse"}
           </button>
 
-          <button
-            className="btn border border-danger text-danger p-2 m-2 col-12"
-            type="button"
-            onClick={() => alert("OAuth pendiente")}
-          >
-            Iniciar con Google
-          </button>
-
           {msg && <p className="text-danger mt-2">{msg}</p>}
         </form>
       </div>

@@ -77,14 +77,6 @@ export default function Login() {
                         {loading ? "Entrando..." : "Entrar"}
                     </button>
 
-                    <button
-                        className="btn border border-danger text-danger p-2 mb-2 col-12"
-                        type="button"
-                        onClick={() => alert("OAuth pendiente")}
-                    >
-                        Iniciar con Google
-                    </button>
-
                     {msg && <p className="text-danger mt-2">{msg}</p>}
 
                     <div className="mt-2 text-end">
