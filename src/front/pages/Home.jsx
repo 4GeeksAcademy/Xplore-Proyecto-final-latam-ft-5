@@ -6,6 +6,8 @@ import { WhyUs } from '../components/WhyUs.jsx';
 import { Testimonials } from '../components/Testimonials.jsx';
 import '../styles/Home.css';
 import { Jumbotron } from "../components/Jumbotron.jsx";
+import HomeDiscover from './../components/HomeDiscover';
+
 
 export const Home = () => {
 	return (
@@ -14,6 +16,7 @@ export const Home = () => {
 
 			{/* Aquí puede ir tu Jumbotron u otras secciones */}
 			<Jumbotron />
+			<HomeDiscover />
 			<Testimonials />
 			<WhyUs />
 

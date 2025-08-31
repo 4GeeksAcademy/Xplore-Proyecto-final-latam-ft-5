@@ -74,19 +74,6 @@ const TOURS = [
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 export default function Panel() {
     const [favoritesVersion, setFavoritesVersion] = useState(0); // para refrescar favoritos sin recargar
     const [bookings, setBookings] = useState([]);
@@ -138,7 +125,6 @@ export default function Panel() {
             </button>
         );
     }
-
 
     return (
         <div className="panel-wrap" data-fv={favoritesVersion}>
