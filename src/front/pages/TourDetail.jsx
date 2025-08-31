@@ -110,7 +110,6 @@ export function TourDetail() {
         try {
             const response = await getDetailTour(tourId)
             setTourDetail(response)
-            console.log("response====>", response)
         } catch (error) {
             console.log("error", error)
         } finally {

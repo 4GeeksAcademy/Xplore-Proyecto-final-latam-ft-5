@@ -14,7 +14,6 @@ export default function Panel() {
         try {
             const response = await getTours()
             setTours(response)
-            console.log("que pasa", response)
         } catch (error) {
             setTours([])
             console.log("error", error)

@@ -80,7 +80,6 @@ export default function CreateTour() {
                     date: inputValue.date,
                 }
                 const response = await createTour(payloadTour)
-                console.log("Perro====>", response)
                 alert('tour creado correctamente')
             }
 

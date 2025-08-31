@@ -22,7 +22,6 @@ export default function Login() {
                 email: input.email,
                 password: input.password,
             });
-            console.log("El rest", rest)
             saveToken(access_token);
             nav("/panel", { replace: true });
         } catch (err) {
