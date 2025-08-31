@@ -16,7 +16,7 @@ async function handleResponse(res) {
 }
 
 // ---------- NO TOCAR PABLO ----------
-// utils/api.js
+//utils / api.js;
 export async function apiLogin(emailOrObj, passwordMaybe) {
   const email = typeof emailOrObj === "object" ? emailOrObj.email : emailOrObj;
   const password =
@@ -30,6 +30,7 @@ export async function apiLogin(emailOrObj, passwordMaybe) {
   if (!res.ok) throw new Error(data?.msg || `HTTP ${res.status}`);
   return data;
 }
+
 // ---------- ------------ ----------
 
 export async function apiSignup(payload) {

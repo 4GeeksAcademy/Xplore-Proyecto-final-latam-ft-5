@@ -7,6 +7,7 @@ import { saveToken } from "../../utils/auth";
 export default function ProveedorSignUp() {
     const navigate = useNavigate();
 
+
     const [opcion, setOpcion] = useState("");
     const [paso, setPaso] = useState(1);
 
@@ -20,10 +21,12 @@ export default function ProveedorSignUp() {
     const [contraseña, setContraseña] = useState("");
     const [confirmarContraseña, setConfirmarContraseña] = useState("");
 
+
     const [error, setError] = useState({});
     const [enviando, setEnviando] = useState(false);
 
     const opciones = [
+        "Empresa de turismo registrada",
         "Empresa de turismo registrada",
         "Proveedor independiente/autónomo",
         "Organización sin fines de lucro",
@@ -52,7 +55,7 @@ export default function ProveedorSignUp() {
     const handleFinalizar = async (e) => {
         e.preventDefault();
         if (!validar()) return;
-
+        if (!validar()) return;
         const payload = {
             opcion,
             nombreEmpresa: nombreEmpresa.trim(),
@@ -108,6 +111,7 @@ export default function ProveedorSignUp() {
                                     </button>
                                 ))}
                                 {error.opcion && <div className="text-danger small">{error.opcion}</div>}
+                                {error.opcion && <div className="text-danger small">{error.opcion}</div>}
                             </div>
                             <div className="d-flex justify-content-between mt-4">
                                 <Link to="/" className="btn btn-secondary">Regresa al Home</Link>
@@ -124,6 +128,7 @@ export default function ProveedorSignUp() {
                                 <h3>Completa la información</h3>
                                 <p>Llena los siguientes campos para registrarte:</p>
                                 {error._global && <div className="alert alert-danger" role="alert">{error._global}</div>}
+                                {error._global && <div className="alert alert-danger" role="alert">{error._global}</div>}
                             </div>
 
                             <form className="m-2" onSubmit={handleFinalizar} noValidate>
@@ -132,9 +137,17 @@ export default function ProveedorSignUp() {
                                     <input className={cls("nombreEmpresa")} value={nombreEmpresa}
                                         onChange={(e) => setNombreEmpresa(e.target.value)} maxLength={60} />
                                     {error.nombreEmpresa && <div className="invalid-feedback">{error.nombreEmpresa}</div>}
+                                    <input className={cls("nombreEmpresa")} value={nombreEmpresa}
+                                        onChange={(e) => setNombreEmpresa(e.target.value)} maxLength={60} />
+                                    {error.nombreEmpresa && <div className="invalid-feedback">{error.nombreEmpresa}</div>}
                                 </div>
 
+
                                 <div className="mb-3">
+                                    <label className="form-label">Página web</label>
+                                    <input className={cls("paginaWeb")} type="url" placeholder="https://tusitio.com"
+                                        value={paginaWeb} onChange={(e) => setPaginaWeb(e.target.value)} maxLength={100} />
+                                    {error.paginaWeb && <div className="invalid-feedback">{error.paginaWeb}</div>}
                                     <label className="form-label">Página web</label>
                                     <input className={cls("paginaWeb")} type="url" placeholder="https://tusitio.com"
                                         value={paginaWeb} onChange={(e) => setPaginaWeb(e.target.value)} maxLength={100} />
@@ -153,22 +166,34 @@ export default function ProveedorSignUp() {
                                     {error.monedaPago && <div className="invalid-feedback">{error.monedaPago}</div>}
                                 </div>
 
+
                                 <div className="mb-3">
                                     <label className="form-label">Nombres</label>
                                     <input className={cls("nombres")} value={nombres}
                                         onChange={(e) => setNombres(e.target.value)} maxLength={40} />
                                     {error.nombres && <div className="invalid-feedback">{error.nombres}</div>}
+                                    <input className={cls("nombres")} value={nombres}
+                                        onChange={(e) => setNombres(e.target.value)} maxLength={40} />
+                                    {error.nombres && <div className="invalid-feedback">{error.nombres}</div>}
                                 </div>
+
 
                                 <div className="mb-3">
                                     <label className="form-label">Apellidos</label>
                                     <input className={cls("apellidos")} value={apellidos}
                                         onChange={(e) => setApellidos(e.target.value)} maxLength={40} />
                                     {error.apellidos && <div className="invalid-feedback">{error.apellidos}</div>}
+                                    <input className={cls("apellidos")} value={apellidos}
+                                        onChange={(e) => setApellidos(e.target.value)} maxLength={40} />
+                                    {error.apellidos && <div className="invalid-feedback">{error.apellidos}</div>}
                                 </div>
+
 
                                 <div className="mb-3">
                                     <label className="form-label">Teléfono</label>
+                                    <input className={cls("telefono")} type="tel" value={telefono}
+                                        onChange={(e) => setTelefono(e.target.value)} maxLength={20} />
+                                    {error.telefono && <div className="invalid-feedback">{error.telefono}</div>}
                                     <input className={cls("telefono")} type="tel" value={telefono}
                                         onChange={(e) => setTelefono(e.target.value)} maxLength={20} />
                                     {error.telefono && <div className="invalid-feedback">{error.telefono}</div>}
@@ -179,7 +204,11 @@ export default function ProveedorSignUp() {
                                     <input className={cls("email")} type="email" value={email}
                                         onChange={(e) => setEmail(e.target.value)} maxLength={80} />
                                     {error.email && <div className="invalid-feedback">{error.email}</div>}
+                                    <input className={cls("email")} type="email" value={email}
+                                        onChange={(e) => setEmail(e.target.value)} maxLength={80} />
+                                    {error.email && <div className="invalid-feedback">{error.email}</div>}
                                 </div>
+
 
                                 <div className="mb-3">
                                     <label className="form-label">Contraseña</label>
