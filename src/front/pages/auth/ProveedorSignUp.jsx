@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import '../../styles/ProveedorSignUp.css';
+import "../../styles/ProveedorSignUp.css";
 import { apiProveedorSignup } from "../../utils/apiGuias";
+import { saveToken } from "../../utils/auth";
+
 export default function ProveedorSignUp() {
     const navigate = useNavigate();
+
     const [opcion, setOpcion] = useState("");
     const [paso, setPaso] = useState(1);
 
@@ -16,199 +19,195 @@ export default function ProveedorSignUp() {
     const [email, setEmail] = useState("");
     const [contraseña, setContraseña] = useState("");
     const [confirmarContraseña, setConfirmarContraseña] = useState("");
-    const [error, setError] = useState({});
 
+    const [error, setError] = useState({});
+    const [enviando, setEnviando] = useState(false);
 
     const opciones = [
-        "Empresa  de turismo registrada",
+        "Empresa de turismo registrada",
         "Proveedor independiente/autónomo",
         "Organización sin fines de lucro",
         "Entidad gubernamental",
     ];
+
+    const emailOk = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    const urlOk = (v) => /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(:[0-9]+)?(\/.*)?$/.test(v);
+
     const validar = () => {
-        const fillError = {};
-
-        if (!nombreEmpresa) fillError.nombreEmpresa = true;
-        if (!paginaWeb) fillError.paginaWeb = true;
-        if (!monedaPago) fillError.monedaPago = true;
-        if (!nombres) fillError.nombres = true;
-        if (!apellidos) fillError.apellidos = true;
-        if (!telefono) fillError.telefono = true;
-        if (!email || !email.includes("@")) fillError.email = true;
-        if (!contraseña) fillError.contraseña = true;
-
-
-        if (contraseña !== confirmarContraseña){ fillError.confirmarContraseña=true;}
-        setError(fillError);
-
-        return Object.keys(fillError).length === 0;
+        const e = {};
+        if (!opcion) e.opcion = "Selecciona una opción";
+        if (!nombreEmpresa) e.nombreEmpresa = "Requerido";
+        if (!paginaWeb || !urlOk(paginaWeb)) e.paginaWeb = "URL inválida";
+        if (!monedaPago) e.monedaPago = "Selecciona una moneda";
+        if (!nombres) e.nombres = "Requerido";
+        if (!apellidos) e.apellidos = "Requerido";
+        if (!telefono) e.telefono = "Requerido";
+        if (!email || !emailOk(email)) e.email = "Correo inválido";
+        if (!contraseña || contraseña.length < 8) e.contraseña = "Mínimo 8 caracteres";
+        if (contraseña !== confirmarContraseña) e.confirmarContraseña = "Las contraseñas no coinciden";
+        setError(e);
+        return Object.keys(e).length === 0;
     };
-
 
     const handleFinalizar = async (e) => {
         e.preventDefault();
+        if (!validar()) return;
 
-        if (validar()) {
-            const data = {
-                opcion,
-                nombreEmpresa,
-                paginaWeb,
-                monedaPago,
-                nombres,
-                apellidos,
-                telefono,
-                email,
-                contraseña,
-                confirmarContraseña,
-            };
+        const payload = {
+            opcion,
+            nombreEmpresa: nombreEmpresa.trim(),
+            paginaWeb: paginaWeb.trim(),
+            monedaPago,
+            telefono: telefono.trim(),
+            name: nombres.trim(),
+            last_name: apellidos.trim(),
+            email: email.trim().toLowerCase(),
+            password: contraseña,
+        };
 
-            try {
-                const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/proveedor/signup`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify(data),
-                });
-
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    alert(`Error: ${errorData.message || 'error'}`);
-                    return;
-                }
-
-
-                navigate("/proveedor-aceptado");
-
-            } catch (error) {
-                alert(`error: ${error.message}`);
+        try {
+            setEnviando(true);
+            const r = await apiProveedorSignup(payload);
+            const token = r?.access_token || r?.data?.access_token;
+            if (token) {
+                saveToken(token);
+                navigate("/panel/tours/create", { replace: true });
+            } else {
+                navigate("/proveedor-aceptado", { replace: true });
             }
+        } catch (err) {
+            const apiMsg = err?.response?.data?.msg || err?.response?.data?.error || err?.message || "Error al registrar";
+            setError((prev) => ({ ...prev, _global: apiMsg }));
+        } finally {
+            setEnviando(false);
         }
     };
+
+    const cls = (key) => `form-control ${error[key] ? "is-invalid" : ""}`;
 
     return (
         <div className="container">
             <div className="row justify-content-center">
                 <div className="col-12 col-md-8 col-lg-6 proveedor-sign rounded p-4">
-
                     {paso === 1 && (
                         <>
                             <div className="m-2">
                                 <h3>Únete como proveedor de actividades</h3>
                                 <p>¿Cómo gestionas tu empresa?</p>
                             </div>
-
-                            {/* botones de selección */}
                             <div className="d-flex flex-column gap-3 m-2">
-                                {opciones.map((texto, index) => (
+                                {opciones.map((texto, i) => (
                                     <button
-                                        key={index}
+                                        key={i}
+                                        type="button"
                                         className={`btn btn-opcion ${opcion === texto ? "btn-primary" : "btn-outline-primary"}`}
                                         onClick={() => setOpcion(texto)}
+                                        aria-pressed={opcion === texto}
                                     >
                                         {texto}
                                     </button>
                                 ))}
+                                {error.opcion && <div className="text-danger small">{error.opcion}</div>}
                             </div>
-
-                            {/* botones de acción */}
                             <div className="d-flex justify-content-between mt-4">
-                                <Link to="/" className="btn btn-secondary">
-                                    Regresa al Home
-                                </Link>
-                                <button
-                                    className="btn btn-success"
-                                    disabled={!opcion}
-                                    onClick={() => setPaso(2)}  /* PASAR A PASO 2, REV  */
-                                >
+                                <Link to="/" className="btn btn-secondary">Regresa al Home</Link>
+                                <button type="button" className="btn btn-success" disabled={!opcion} onClick={() => setPaso(2)}>
                                     Continuar
                                 </button>
                             </div>
                         </>
-                    )}  {/* CONTINUACIÖIN A FORMULARIO*/}
+                    )}
+
                     {paso === 2 && (
                         <>
                             <div className="m-2">
                                 <h3>Completa la información</h3>
                                 <p>Llena los siguientes campos para registrarte:</p>
+                                {error._global && <div className="alert alert-danger" role="alert">{error._global}</div>}
                             </div>
 
-                            <form className="m-2">
+                            <form className="m-2" onSubmit={handleFinalizar} noValidate>
                                 <div className="mb-3">
                                     <label className="form-label">Nombre Empresa</label>
-                                    <input type="text" className={`form-control ${error.nombreEmpresa ? "border border-danger" : ""}`} placeholder="Nombre empresa" value={nombreEmpresa} maxLength={30}
-                                        onChange={(e) => setNombreEmpresa(e.target.value)} />
-                                </div>
-                                <div className="mb-3">
-                                    <label className="form-label">Pagina web</label>
-                                    <input type="text" className={`form-control ${error.paginaWeb ? "border border-danger" : ""}`} placeholder="Ingresa tu Web" value={paginaWeb} maxLength={30}
-                                        onChange={(e) => setPaginaWeb(e.target.value)} />
+                                    <input className={cls("nombreEmpresa")} value={nombreEmpresa}
+                                        onChange={(e) => setNombreEmpresa(e.target.value)} maxLength={60} />
+                                    {error.nombreEmpresa && <div className="invalid-feedback">{error.nombreEmpresa}</div>}
                                 </div>
 
-                                {/* opciones de monedas, se pueden agregar nuevas si lo prefieren*/}
+                                <div className="mb-3">
+                                    <label className="form-label">Página web</label>
+                                    <input className={cls("paginaWeb")} type="url" placeholder="https://tusitio.com"
+                                        value={paginaWeb} onChange={(e) => setPaginaWeb(e.target.value)} maxLength={100} />
+                                    {error.paginaWeb && <div className="invalid-feedback">{error.paginaWeb}</div>}
+                                </div>
+
                                 <div className="mb-3">
                                     <label className="form-label">Moneda de pago</label>
-                                    <select className={`form-control ${error.monedaPago ? "border border-danger" : ""}`} placeholder="selecciona moneda" value={monedaPago} 
-                                        onChange={(e) => setMonedaPago(e.target.value)} >
-                                        <option value="USD">$ USD - Dólar Estadounidense</option>
+                                    <select className={cls("monedaPago")} value={monedaPago} onChange={(e) => setMonedaPago(e.target.value)}>
+                                        <option value="">— Selecciona moneda —</option>
+                                        <option value="USD">$ USD - Dólar estadounidense</option>
                                         <option value="EUR">€ EUR - Euro</option>
-                                        <option value="MXN">$ MXN - Peso Mexicano</option>
-                                        <option value="CLP">$ CLP - Peso Chileno</option>
-                                        </select>
+                                        <option value="MXN">$ MXN - Peso mexicano</option>
+                                        <option value="CLP">$ CLP - Peso chileno</option>
+                                    </select>
+                                    {error.monedaPago && <div className="invalid-feedback">{error.monedaPago}</div>}
                                 </div>
+
                                 <div className="mb-3">
                                     <label className="form-label">Nombres</label>
-                                    <input type="text" className={`form-control ${error.nombreEmpresa ? "border border-danger" : ""}`} maxLength={20}
-                                        placeholder="Ingresa tu nombre" value={nombres}
-                                        onChange={(e) => setNombres(e.target.value)} />
+                                    <input className={cls("nombres")} value={nombres}
+                                        onChange={(e) => setNombres(e.target.value)} maxLength={40} />
+                                    {error.nombres && <div className="invalid-feedback">{error.nombres}</div>}
                                 </div>
+
                                 <div className="mb-3">
                                     <label className="form-label">Apellidos</label>
-                                    <input type="text" className={`form-control ${error.apellidos ? "border border-danger" : ""}`} placeholder="Apellidos" value={apellidos} maxLength={20}
-                                        onChange={(e) => setApellidos(e.target.value)} />
+                                    <input className={cls("apellidos")} value={apellidos}
+                                        onChange={(e) => setApellidos(e.target.value)} maxLength={40} />
+                                    {error.apellidos && <div className="invalid-feedback">{error.apellidos}</div>}
                                 </div>
+
                                 <div className="mb-3">
                                     <label className="form-label">Teléfono</label>
-                                    <input type="telefono" className={`form-control ${error.telefono ? "border border-danger" : ""}`} placeholder="+56 9 1234 5678" value={telefono} maxLength={15}
-                                        onChange={(e) => setTelefono(e.target.value)} />
+                                    <input className={cls("telefono")} type="tel" value={telefono}
+                                        onChange={(e) => setTelefono(e.target.value)} maxLength={20} />
+                                    {error.telefono && <div className="invalid-feedback">{error.telefono}</div>}
                                 </div>
 
                                 <div className="mb-3">
                                     <label className="form-label">Correo electrónico</label>
-                                    <input type="email" className={`form-control ${error.email ? "border border-danger" : ""}`} placeholder="ejemplo@email.com" value={email} maxLength={30}
-                                        onChange={(e) => setEmail(e.target.value)} />
+                                    <input className={cls("email")} type="email" value={email}
+                                        onChange={(e) => setEmail(e.target.value)} maxLength={80} />
+                                    {error.email && <div className="invalid-feedback">{error.email}</div>}
                                 </div>
+
                                 <div className="mb-3">
                                     <label className="form-label">Contraseña</label>
-                                    <input type="password" className={`form-control ${error.contraseña ? "border border-danger" : ""}`} placeholder="Ingresa tu contraseña" value={contraseña} maxLength={15}
-                                        onChange={(e) => setContraseña(e.target.value)} />
-
-                                         <div className="mb-3">
-                                    <label className="form-label">Confirma tu nueva contraseña</label>
-                                    <input type="password" className={`form-control ${error.confirmarContraseña ? "border border-danger" : ""}`} placeholder="Confirma tu contraseña" value={confirmarContraseña} maxLength={15}
-                                        onChange={(e) => setConfirmarContraseña(e.target.value)} />
-                                        {/* validación contraseñas identicas*/}
-                                        {error.confirmarContraseña && (<div className="text-danger mt-1">Las contraseñas no coinciden</div>
-    )}
+                                    <input className={cls("contraseña")} type="password" value={contraseña}
+                                        onChange={(e) => setContraseña(e.target.value)} maxLength={64} />
+                                    {error.contraseña && <div className="invalid-feedback">{error.contraseña}</div>}
                                 </div>
+
+                                <div className="mb-3">
+                                    <label className="form-label">Confirma tu contraseña</label>
+                                    <input className={cls("confirmarContraseña")} type="password" value={confirmarContraseña}
+                                        onChange={(e) => setConfirmarContraseña(e.target.value)} maxLength={64} />
+                                    {error.confirmarContraseña && <div className="invalid-feedback">{error.confirmarContraseña}</div>}
+                                </div>
+
+                                <div className="d-flex justify-content-between mt-4">
+                                    <button type="button" className="btn btn-secondary" onClick={() => setPaso(1)} disabled={enviando}>
+                                        Volver
+                                    </button>
+                                    <button type="submit" className="btn btn-success" disabled={enviando}>
+                                        {enviando ? "Enviando..." : "Finalizar"}
+                                    </button>
+                                </div>
+
+                                <div className="mt-3 text-center">
+                                    <small>¿Ya tienes cuenta de proveedor? <Link to="/login-xpertos">Inicia sesión</Link></small>
                                 </div>
                             </form>
-
-                            {/* botones de acción */}
-                            <div className="d-flex justify-content-between mt-4">
-                                <button
-                                    className="btn btn-secondary"
-                                    onClick={() => setPaso(1)}
-                                >
-                                    Volver
-                                </button>
-                                <button className="btn btn-success"
-                                    onClick={handleFinalizar}>
-
-                                    Finalizar
-                                </button>
-                            </div>
                         </>
                     )}
                 </div>
@@ -216,3 +215,6 @@ export default function ProveedorSignUp() {
         </div>
     );
 }
+ 
+
+	

@@ -3,6 +3,8 @@ from __future__ import annotations
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 
+
+
 from .models import (
     db, User, UserRole, Tour, TourSchedule, Booking, Review,
     Country, Category, Image, Role
@@ -65,36 +67,50 @@ def signup():
     return jsonify({"access_token": access_token, "user": user.serialize()}), 201
 
 
+# @api.route("/proveedor/signup", methods=["POST"])
+# def proveedor_signup():
+
+#     body = request.get_json(silent=True) or {}
+#     body["role"] = "provider"
+
+#     email = (body.get("email") or "").strip().lower()
+#     password = body.get("password") or ""
+#     name = (body.get("name") or "").strip()
+#     last_name = (body.get("last_name") or "").strip()
+
+#     if not email or not password:
+#         return jsonify({"msg": "Email y contraseña son requeridos"}), 400
+
+#     if User.query.filter_by(email=email).first():
+#         return jsonify({"msg": "Este email ya está registrado"}), 409
+
+#     role_obj = Role.query.filter_by(name=role_str).first()
+#     if not role_obj:
+#         return jsonify({"msg": f"El rol '{role_str}' no existe en la base de datos"}), 500
+
+#     user = User(email=email, name=name, last_name=last_name)
+#     if role is not None:
+#         setattr(user, "role", role)
+
+#     user.set_password(password)
+#     db.session.add(user)
+#     db.session.commit()
+
+#     return jsonify({"msg": "Usuario creado exitosamente", "user": user.serialize()}), 201
+
+
 @api.route("/proveedor/signup", methods=["POST"])
 def proveedor_signup():
+    try:
+        data = request.get_json(silent=True) or {}
+        # TODO: Agregar validación de datos
 
-    body = request.get_json(silent=True) or {}
-    body["role"] = "provider"
-
-    email = (body.get("email") or "").strip().lower()
-    password = body.get("password") or ""
-    name = (body.get("name") or "").strip()
-    last_name = (body.get("last_name") or "").strip()
-
-    if not email or not password:
-        return jsonify({"msg": "Email y contraseña son requeridos"}), 400
-
-    if User.query.filter_by(email=email).first():
-        return jsonify({"msg": "Este email ya está registrado"}), 409
-
-    role_obj = Role.query.filter_by(name=role_str).first()
-    if not role_obj:
-        return jsonify({"msg": f"El rol '{role_str}' no existe en la base de datos"}), 500
-
-    user = User(email=email, name=name, last_name=last_name)
-    if role is not None:
-        setattr(user, "role", role)
-
-    user.set_password(password)
-    db.session.add(user)
-    db.session.commit()
-
-    return jsonify({"msg": "Usuario creado exitosamente", "user": user.serialize()}), 201
+        return jsonify({
+            "msg": "Proveedor registrado con éxito",
+            "data": data
+        }), 201
+    except Exception as e:
+        return jsonify({"msg": "Error al registrar proveedor: {str(e)}"}), 400
 
 
 # ===================================Login=========================================

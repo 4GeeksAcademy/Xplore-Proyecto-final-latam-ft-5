@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { getBookings, nextBooking } from "../utils/bookings";
 import { isFavorite, toggleFavorite } from "../utils/favorites";
-import "../styles/panel.css";
+import "../styles/Panel.css";
 
 const TOURS = [
     {

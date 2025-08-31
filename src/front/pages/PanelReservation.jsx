@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { getBookings, cancelBooking } from "../utils/bookings";
-import "../styles/panel.css";
+import "../styles/Panel.css";
 
 export default function PanelReservation() {
     const { bookingId } = useParams();

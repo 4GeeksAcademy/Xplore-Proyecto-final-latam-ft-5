@@ -33,7 +33,7 @@ app.url_map.strict_slashes = False
 
 
 # --- 2. Habilita CORS para toda la aplicación ---
-CORS(app)
+CORS(app, resources={r"/*": {"origins": ["http://localhost:3000","https://animated-telegram-xggv7g9jpw936wv-3000.app.github.dev"]}})
 
 # ---- Configuración de Flask/DB/JWT ----
 app.config["SECRET_KEY"] = SECRET_KEY
