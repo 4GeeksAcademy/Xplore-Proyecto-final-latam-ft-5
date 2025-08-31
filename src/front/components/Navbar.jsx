@@ -43,7 +43,7 @@ function Navbar() {
 
           <div className="d-flex flex-column flex-sm-row gap-2 ms-lg-auto">
             <Link
-              to="/xpertos"
+              to="/Login-xpertos"
               style={{ backgroundColor: '#2d7360', color: '#fff', border: 'none' }}
               className="btn btn-experto rounded-pill px-3"
             >

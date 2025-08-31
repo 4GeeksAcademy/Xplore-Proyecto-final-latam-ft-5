@@ -81,5 +81,5 @@ with app.app_context():
 
 # ---- Punto de Entrada Principal ----
 if __name__ == "__main__":
-    PORT = int(os.environ.get("PORT", 3001))
+    PORT = int(os.environ.get("PORT", 5000)) # <-- Pablo: Yo estoy usando el port 5000
     app.run(host="0.0.0.0", port=PORT, debug=True)

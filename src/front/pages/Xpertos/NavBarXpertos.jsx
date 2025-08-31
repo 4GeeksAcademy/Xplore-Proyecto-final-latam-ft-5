@@ -37,7 +37,7 @@ const NavBar = () => {
                 <div className="collapse navbar-collapse justify-content-end" id="navbarButtons">
                     <div className="d-flex gap-2 mt-3 mt-md-0">
 
-                        <Link to="/login">
+                        <Link to="/LoginXpertos">
                             <button
                                 className="btn"
                                 type="button"

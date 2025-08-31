@@ -1,271 +1,81 @@
-import { useState } from "react"
+// src/front/pages/Xpertos/CreateTour.jsx
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { isLoggedIn } from "../../utils/auth";
+import { createTour } from "../../utils/apiTours";
 
 export default function CreateTour() {
-    const [inputValue, setInputValue] = useState({
-        title: "",
-        country: "",
-        city: "",
-        description: "",
-        price: "",
-        date: "",
-        coverPhoto: null,
-        image: null,
-        imageTwo: null,
-        imageThree: null,
-        imageFour: null
+    const navigate = useNavigate();
 
-    });
-
-    const [errors, setErrors] = useState({})
-
-
-    const onDeleteImg = (field) => {
-        setInputValue((prev) => ({
-            ...prev,
-            [field]: null,
-        }))
-    }
-
-    const fieldValidation = () => {
-        const required = {}
-        if (inputValue.title.trim() == '') { required.title = 'Asigna un nombre al tour' }
-        if (inputValue.country.trim() == '') { required.country = 'Indica el país' }
-        if (inputValue.city.trim() == '') { required.city = 'Destino del tour requerido' }
-        if (inputValue.price.trim() == '') { required.price = 'Por favor ingresa el precio' }
-        if (inputValue.description.trim() == '') { required.description = 'Por favor agrega una descripción' }
-        if (!inputValue.date.trim()) { required.date = "Asigna fecha del tour" }
-        if (!inputValue.coverPhoto) { required.coverPhoto = 'Agrega una foto de portada al tour ' }
-        return required
-    }
-
-    const handleChange = (e) => {
-        const { name, value, files } = e.target
-
-        if (files && files.length > 0) {
-            setInputValue((prevValue) => ({
-                ...prevValue,
-                [name]: files[0]
-            }))
-            setErrors((prevErr) => ({ ...prevErr, [name]: "" }))
-        } else {
-            setInputValue((prevValue) => ({ ...prevValue, [name]: value, }))//<-primero valida si es un file y lo guarda, si no, guarda el value
-
+    useEffect(() => {
+        if (!isLoggedIn()) {
+            navigate("/login-xpertos", { replace: true, state: { from: "/panel/tours/create" } });
         }
+    }, [navigate]);
 
+    const [title, setTitle] = useState("");
+    const [location, setLocation] = useState("");
+    const [price, setPrice] = useState("");
+    const [description, setDescription] = useState("");
 
-        if ((value && value.trim() !== '') && files?.length > 0) {
-            setErrors((prevErr) => ({ ...prevErr, [name]: "" }))
+    const [sending, setSending] = useState(false);
+    const [err, setErr] = useState("");
+
+    const onSubmit = async (e) => {
+        e.preventDefault();
+        setErr("");
+        if (!title || !location || !price) {
+            setErr("Completa título, ubicación y precio.");
+            return;
         }
-    }
+        try {
+            setSending(true);
+            const data = await createTour({
+                title: title.trim(),
+                location: location.trim(),
+                price: Number(price),
+                description: description.trim(),
+            });
+            if (data?.id) {
+                navigate(`/panel/tours/${data.id}`, { replace: true });
+            } else {
+                navigate("/panel/tours", { replace: true });
+            }
+        } catch (e2) {
+            setErr(e2.message || "No se pudo crear el tour.");
+        } finally {
+            setSending(false);
+        }
+    };
 
-
-    const handleSubmit = (e) => {
-        e.preventDefault()
-
-        const requiredField = fieldValidation()
-        setErrors(requiredField)
-        if (Object.keys(requiredField).length > 0) { console.log('perro') }
-    }
     return (
-        <div className="d-flex justify-content-center align-items-center min-vh-100 m-2">
-            <div className="border p-2">
-                <form onSubmit={handleSubmit}>
-                    <div className="mb-3 text-center">
-                        <h3>Crear Tour</h3>
-                    </div>
-                    <div className="d-md-flex">
-                        <div className="col-md-6 col-12 p-2">
-                            <div className="d-flex flex-column mb-3">
-                                <label>Titulo del tour</label>
-                                <input
-                                    className={`form-control ${errors.title ? 'is-invalid' : ""}`}
-                                    placeholder="Ej. Tour a zona arqueológica"
-                                    name="title"
-                                    type="text"
-                                    value={inputValue.title}
-                                    onChange={handleChange}
-                                />
-                                {errors.title && (
-                                    <div className="invalid-feedback" >{errors.title}</div>
-                                )}
-                            </div>
-                            <div className="d-flex flex-column mb-3">
-                                <label>País</label>
-                                <input
-                                    className={`form-control ${errors.country ? 'is-invalid' : ""}`}
-                                    type="text"
-                                    name="country"
-                                    onChange={handleChange}
-                                    value={inputValue.country}
-                                    placeholder="Ej.Mexico"
-                                />
-                                {errors.country && (
-                                    <div className="invalid-feedback" >{errors.country}</div>
-                                )}
-                            </div>
-                            <div className="d-flex flex-column mb-3">
-                                <label>Ciudad o estado</label>
-                                <input
-                                    className={`form-control ${errors.city ? 'is-invalid' : ""}`}
-                                    type="text"
-                                    name="city"
-                                    onChange={handleChange}
-                                    value={inputValue.city}
-                                    placeholder="Ej. Tulum"
-                                />
-                                {errors.city && (
-                                    <div className="invalid-feedback" >{errors.city}</div>
-                                )}
-                            </div>
-                            <div className="d-flex flex-column mb-3">
-                                <label>Precio</label>
-                                <input
-                                    className={`form-control ${errors.price ? 'is-invalid' : ""}`}
-                                    type="number"
-                                    name="price"
-                                    onChange={handleChange}
-                                    value={inputValue.price}
-                                    placeholder='$0'
-                                />
-                                {errors.price && (
-                                    <div className="invalid-feedback" >{errors.price}</div>
-                                )}
+        <div className="container py-3">
+            <h3 className="mb-3">Crea tu primer tour</h3>
+            {err && <div className="alert alert-danger">{err}</div>}
 
-                            </div>
-                            <div className="d-flex flex-column mb-3">
-                                <label>Descripcion</label>
-                                <textarea className={`form-control ${errors.description ? 'is-invalid' : ""}`}
-                                    type="text"
-                                    name="description"
-                                    onChange={handleChange}
-                                    value={inputValue.description}
-                                    placeholder="Paseo por las ruinas y playa ..."
-                                    rows={5} cols={50} />
-                                {errors.description && (
-                                    <div className="invalid-feedback" >{errors.description}</div>
-                                )}
-                            </div>
-                            <div className="d-flex flex-column mb-3">
-                                <label>Fecha</label>
-                                <input className={`form-control ${errors.date ? 'is-invalid' : ""}`} type="date"
-                                    name="date"
-                                    onChange={handleChange}
-                                    value={inputValue.date}
-                                />
-                                {errors.date && (
-                                    <div className="invalid-feedback" >{errors.date}</div>
-                                )}
-                            </div>
-                        </div>
-                        {/* comienza seccion de imagenes */}
-                        <div className="col-md-6 col-12 p-2">
-                            <div className="d-flex flex-column mb-3">
-                                <label>Imagen de portada</label>
-                                <input className={`form-control ${errors.coverPhoto ? 'is-invalid' : ""}`} type="file" accept="image/*"
-                                    name="coverPhoto"
-                                    onChange={handleChange}
-                                />
-                                {/* sig linea muestra la img antes de enviar form */}
-                                {inputValue.coverPhoto && (
-                                    <>
-                                        <img
-                                            src={URL.createObjectURL(inputValue.coverPhoto)}
-                                            alt="preview"
-                                            style={{ width: "200px", marginTop: "10px" }}
-                                        />
-                                        <button className="btn btn-danger" onClick={() => onDeleteImg('coverPhoto')}>Cancelar</button>
-                                    </>
-
-                                )}
-                                {errors.coverPhoto && (
-                                    <div className="invalid-feedback" >{errors.coverPhoto}</div>
-                                )}
-                            </div>
-                            <div className="d-flex flex-column mb-3">
-                                <label>Imagen</label>
-                                <input className="form-control" type="file" accept="image/*"
-                                    name="image"
-                                    onChange={handleChange}
-
-                                />
-                                {inputValue.image && (
-                                    <>
-                                        <img
-                                            src={URL.createObjectURL(inputValue.image)}
-                                            alt="preview"
-                                            style={{ width: "200px", marginTop: "10px" }}
-                                        />
-                                        <button className="btn btn-danger" onClick={() => onDeleteImg('image')}>Cancelar</button>
-                                    </>
-
-                                )}
-                            </div>
-                            <div className="d-flex flex-column mb-3">
-                                <label>Imagen 2</label>
-                                <input className="form-control" type="file" accept="image/*"
-                                    name="imageTwo"
-                                    onChange={handleChange}
-
-                                />
-                                {inputValue.imageTwo && (
-                                    <>
-                                        <img
-                                            src={URL.createObjectURL(inputValue.imageTwo)}
-                                            alt="preview"
-                                            style={{ width: "200px", marginTop: "10px" }}
-                                        />
-                                        <button className="btn btn-danger" onClick={() => onDeleteImg('imageTwo')}>Cancelar</button>
-                                    </>
-
-                                )}
-                            </div>
-                            <div className="d-flex flex-column mb-3">
-                                <label>Imagen 3</label>
-                                <input className="form-control" type="file" accept="image/*"
-                                    name="imageThree"
-                                    onChange={handleChange}
-
-                                />
-                                {inputValue.imageThree && (
-                                    <>
-                                        <img
-                                            src={URL.createObjectURL(inputValue.imageThree)}
-                                            alt="preview"
-                                            style={{ width: "200px", marginTop: "10px" }}
-                                        />
-                                        <button className="btn btn-danger" onClick={() => onDeleteImg('imageThree')}>Cancelar</button>
-                                    </>
-
-                                )}
-                            </div>
-                            <div className="d-flex flex-column mb-3">
-                                <label>Imagen 4</label>
-                                <input className="form-control" type="file" accept="image/*"
-                                    name="imageFour"
-                                    onChange={handleChange}
-
-                                />
-                                {inputValue.imageFour && (
-                                    <>
-                                        <img
-                                            src={URL.createObjectURL(inputValue.imageFour)}
-                                            alt="preview"
-                                            style={{ width: "200px", marginTop: "10px" }}
-                                        />
-                                        <button className="btn btn-danger" onClick={() => onDeleteImg('imageFour')}>Cancelar</button>
-                                    </>
-
-                                )}
-                            </div>
-                        </div>
-
-                    </div>
-
-
-                    <button className="btn convierte-experto text-white col-12 rounded-pill" type="submit">Crear Tour</button>
-
-                </form>
-            </div>
+            <form onSubmit={onSubmit} noValidate>
+                <div className="mb-3">
+                    <label className="form-label">Título</label>
+                    <input className="form-control" value={title} onChange={(e) => setTitle(e.target.value)} required />
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Ubicación</label>
+                    <input className="form-control" value={location} onChange={(e) => setLocation(e.target.value)} required />
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Precio</label>
+                    <input type="number" min="0" step="0.01" className="form-control"
+                        value={price} onChange={(e) => setPrice(e.target.value)} required />
+                </div>
+                <div className="mb-3">
+                    <label className="form-label">Descripción</label>
+                    <textarea className="form-control" rows={4}
+                        value={description} onChange={(e) => setDescription(e.target.value)} />
+                </div>
+                <button className="btn btn-primary" disabled={sending}>
+                    {sending ? "Creando..." : "Crear tour"}
+                </button>
+            </form>
         </div>
-    )
+    );
 }

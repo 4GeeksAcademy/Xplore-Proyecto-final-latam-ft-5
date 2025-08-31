@@ -1,4 +1,3 @@
-# src/api/routes.py
 from __future__ import annotations
 
 # ============================================================================
@@ -6,10 +5,11 @@ from __future__ import annotations
 # ============================================================================
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
-
+from datetime import timedelta
 from .models import (
-    db, User, UserRole, Tour, TourSchedule, Booking, Review,
-    Country, Category, Image, Role
+    db, User, UserRole, Role, user_roles,
+    Tour, TourSchedule, Booking, Review,
+    Country, Category, Image
 )
 from .utils import APIException
 
@@ -21,11 +21,8 @@ api = Blueprint("api", __name__)
 # ============================================================================
 # 🧩 Helpers
 # ============================================================================
+"""
 def _parse_role(role_raw: str | None) -> UserRole:
-    """
-    Convierte un string a UserRole (Enum), aceptando alias comunes.
-    Si no viene o no coincide, retorna TRAVELER.
-    """
     if not role_raw:
         return UserRole.TRAVELER
     t = str(role_raw).strip().lower()
@@ -35,6 +32,76 @@ def _parse_role(role_raw: str | None) -> UserRole:
         return UserRole.PROVIDER
     if t == "admin":
         return UserRole.ADMIN
+    try:
+        return UserRole(role_raw)
+    except Exception:
+        return UserRole.TRAVELER
+"""
+def ensure_role(name: str) -> Role:
+    r = Role.query.filter_by(name=name).first()
+    if not r:
+        r = Role(name=name)
+        db.session.add(r); db.session.flush()
+    return r
+
+def attach_role(user: User, role_name: str) -> None:
+    role = ensure_role(role_name)
+    already = db.session.execute(
+        user_roles.select().where(
+            (user_roles.c.user_id == user.id) &
+            (user_roles.c.role_id == role.id)
+        )
+    ).first()
+    if not already:
+        db.session.execute(
+            user_roles.insert().values(user_id=user.id, role_id=role.id)
+        )
+
+def user_role_names(user: User) -> list[str]:
+    rel = getattr(user, "roles", [])
+    rows = rel.all() if hasattr(rel, "all") else rel
+    return [r.name.upper() for r in rows]
+
+# ==============================PABLO=======================================
+def ensure_role(name: str) -> Role:
+    """Garantiza la existencia del rol en DB y lo devuelve."""
+    r = Role.query.filter_by(name=name).first()
+    if not r:
+        r = Role(name=name)
+        db.session.add(r)
+        db.session.flush()
+    return r
+
+def user_role_names(user: User) -> list[str]:
+    """Devuelve los nombres de rol del usuario como lista en MAYÚSCULAS."""
+    rel = getattr(user, "roles", [])
+    roles = rel.all() if hasattr(rel, "all") else rel
+    return [r.name.upper() for r in roles]
+
+def attach_role(user: User, role_name: str) -> None:
+    """Asocia un rol al usuario si aún no lo tiene (no hace commit)."""
+    role = ensure_role(role_name)
+    # Evita duplicados
+    have = db.session.execute(
+        user_roles.select().where(
+            (user_roles.c.user_id == user.id) &
+            (user_roles.c.role_id == role.id)
+        )
+    ).first()
+    if not have:
+        db.session.execute(
+            user_roles.insert().values(user_id=user.id, role_id=role.id)
+        )
+
+# (Opcional) mantenemos el parser por compatibilidad si te llega "role" en /signup
+def _parse_role(role_raw: str | None) -> UserRole:
+    """Convierte un string a UserRole (Enum); por defecto TRAVELER."""
+    if not role_raw:
+        return UserRole.TRAVELER
+    t = str(role_raw).strip().lower()
+    if t in ("traveler", "user"): return UserRole.TRAVELER
+    if t in ("provider", "proveedor"): return UserRole.PROVIDER
+    if t == "admin": return UserRole.ADMIN
     try:
         return UserRole(role_raw)
     except Exception:
@@ -69,20 +136,57 @@ def signup():
     user.set_password(password)  # guarda hash en password_hash
     db.session.add(user)
     db.session.commit()
-
     # 🔑 FIX: identity como string
     access_token = create_access_token(identity=str(user.id))
     return jsonify({"access_token": access_token, "user": user.serialize()}), 201
 
 
+
+
+
+# ============================PABLO lo comente para probar ================================================
+
+# @api.post("/proveedor/signup")
+# def proveedor_signup():
+#     """
+#     Alias para registro de proveedor; fuerza rol 'provider'.
+#     """
+#     body = request.get_json(silent=True) or {}
+#     body["role"] = "provider"
+
+#     email = (body.get("email") or "").strip().lower()
+#     password = body.get("password") or ""
+#     name = (body.get("name") or "").strip()
+#     last_name = (body.get("last_name") or "").strip()
+
+#     if not email or not password:
+#         return jsonify({"msg": "Email y contraseña son requeridos"}), 400
+
+#     if User.query.filter_by(email=email).first():
+#         return jsonify({"msg": "Este email ya está registrado"}), 409
+
+#     role = _parse_role("provider") if hasattr(User, "role") else None
+
+#     user = User(email=email, name=name, last_name=last_name)
+#     if role is not None:
+#         setattr(user, "role", role)
+
+#     user.set_password(password)
+#     db.session.add(user)
+#     db.session.commit()
+
+#     # 🔑 FIX: identity como string
+#     access_token = create_access_token(identity=str(user.id))
+#     return jsonify({"access_token": access_token, "user": user.serialize()}), 201
+#     """"""
+
+
+
+
+# ---- PROVEEDOR SIGNUP (convierte si ya existe y la password coincide) ----
 @api.post("/proveedor/signup")
 def proveedor_signup():
-    """
-    Alias para registro de proveedor; fuerza rol 'provider'.
-    """
     body = request.get_json(silent=True) or {}
-    body["role"] = "provider"
-
     email = (body.get("email") or "").strip().lower()
     password = body.get("password") or ""
     name = (body.get("name") or "").strip()
@@ -91,47 +195,73 @@ def proveedor_signup():
     if not email or not password:
         return jsonify({"msg": "Email y contraseña son requeridos"}), 400
 
-    if User.query.filter_by(email=email).first():
-        return jsonify({"msg": "Este email ya está registrado"}), 409
+    existing = User.query.filter_by(email=email).first()
+    if existing:
+        if existing.check_password(password):
+            attach_role(existing, UserRole.PROVIDER.value)
+            attach_role(existing, UserRole.TRAVELER.value)  # opcional
+            db.session.commit()
+            token = create_access_token(identity=str(existing.id), expires_delta=timedelta(days=7))
+            return jsonify({"access_token": token, "user": existing.serialize()}), 200
+        else:
+            return jsonify({"msg": "El email ya existe. Inicia sesión o usa la misma contraseña para convertir tu cuenta."}), 409
 
-    role = _parse_role("provider") if hasattr(User, "role") else None
-
-    user = User(email=email, name=name, last_name=last_name)
-    if role is not None:
-        setattr(user, "role", role)
-
-    user.set_password(password)
-    db.session.add(user)
+    u = User(email=email, name=name, last_name=last_name)
+    u.set_password(password)
+    db.session.add(u); db.session.flush()
+    attach_role(u, UserRole.PROVIDER.value)
+    attach_role(u, UserRole.TRAVELER.value)  # opcional
     db.session.commit()
 
-    # 🔑 FIX: identity como string
-    access_token = create_access_token(identity=str(user.id))
-    return jsonify({"access_token": access_token, "user": user.serialize()}), 201
+    token = create_access_token(identity=str(u.id), expires_delta=timedelta(days=7))
+    return jsonify({"access_token": token, "user": u.serialize()}), 201
 
-
-@api.post("/login")
-def login():
-    """
-    Login por email/password.
-    Devuelve JWT + datos serializados del usuario.
-    """
-    body = request.get_json(silent=True)
-    if not body:
-        raise APIException("No se recibieron datos", 400)
-
+# ---- PROVEEDOR LOGIN (exige rol PROVIDER) ----
+@api.post("/proveedor/login")
+def proveedor_login():
+    body = request.get_json(silent=True) or {}
     email = (body.get("email") or "").strip().lower()
     password = body.get("password") or ""
 
     if not email or not password:
-        raise APIException("Email y contraseña son requeridos", 400)
+        return jsonify({"msg": "Email y contraseña son requeridos"}), 400
 
-    user = User.query.filter_by(email=email).first()
-    if not user or not user.check_password(password):
-        raise APIException("Credenciales inválidas", 401)
+    u = User.query.filter_by(email=email).first()
+    if not u or not u.check_password(password):
+        return jsonify({"msg": "Credenciales inválidas"}), 401
 
-    # 🔑 FIX: identity como string
-    access_token = create_access_token(identity=str(user.id))
-    return jsonify({"access_token": access_token, "user": user.serialize()}), 200
+    if "PROVIDER" not in user_role_names(u):
+        return jsonify({"msg": "Esta cuenta no es de proveedor"}), 403
+
+    token = create_access_token(identity=str(u.id), expires_delta=timedelta(days=7))
+    return jsonify({"access_token": token, "user": u.serialize()}), 200
+
+
+# ============================PABLO lo comente para probar ================================================
+# @api.post("/login")
+# def login():
+#     """
+#     Login por email/password.
+#     Devuelve JWT + datos serializados del usuario.
+#     """
+#     body = request.get_json(silent=True)
+#     if not body:
+#         raise APIException("No se recibieron datos", 400)
+
+#     email = (body.get("email") or "").strip().lower()
+#     password = body.get("password") or ""
+
+#     if not email or not password:
+#         raise APIException("Email y contraseña son requeridos", 400)
+
+#     user = User.query.filter_by(email=email).first()
+#     if not user or not user.check_password(password):
+#         raise APIException("Credenciales inválidas", 401)
+
+#     # 🔑 FIX: identity como string
+#     access_token = create_access_token(identity=str(user.id))
+#     return jsonify({"access_token": access_token, "user": user.serialize()}), 200
+
 
 
 # ============================================================================

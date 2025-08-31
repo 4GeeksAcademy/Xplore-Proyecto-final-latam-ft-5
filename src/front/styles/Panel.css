@@ -143,3 +143,119 @@
 .list-compact .item:last-child {
   border-bottom: 0;
 }
+
+/* Layout / utilidades */
+
+/* Banner próximo viaje */
+.next-banner {
+  padding: 0.75rem 1rem;
+  border-radius: 14px;
+  background: #f6faf8;
+  border: 1px solid #e4efe9;
+}
+.badge-soft {
+  background: #eef2ff;
+  color: #384cff;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+}
+
+/* Lista compacta lateral */
+.list-compact .item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.25rem;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.06);
+}
+.list-compact .item:last-child {
+  border-bottom: 0;
+}
+.text-truncate {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Cards de tours */
+.tour-card {
+  border: 1px solid #eee;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+}
+.tour-media {
+  height: 180px;
+  position: relative;
+}
+.tour-body {
+  padding: 12px;
+}
+.tour-title {
+  font-size: 1.05rem;
+  margin: 2px 0 0;
+}
+.tour-sub {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+.tour-tags .badge-soft {
+  margin: 0.125rem 0.25rem 0.125rem 0;
+}
+.tour-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.tour-price {
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+/* Favoritos / Ribbon */
+.tour-heart {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: rgba(255, 255, 255, 0.92);
+  cursor: pointer;
+}
+.tour-heart.active {
+  background: #ffe8a3;
+}
+.ribbon {
+  position: absolute;
+  left: 0;
+  bottom: 10px;
+  background: #ae1010;
+  color: #fff;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+/* Tarjeta genérica suave */
+.card-soft {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  background: #fff;
+}
+
+/* Panel filtros (solo estilos suaves) */
+.panel-filters label {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.range-value {
+  font-size: 0.9rem;
+  color: #6b7280;
+}

@@ -1,39 +1,26 @@
-const BASE = (
-  import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:3001"
-).replace(/\/+$/, "");
+// src/front/utils/apiGuias.js
+const API_URL = (
+  import.meta.env.VITE_BACKEND_URL || "http://127.0.0.1:5000"
+).replace(/\/+$/, ""); // quita / finales
 
-
-async function proveedorRequest(path, options = {}) {
-  const res = await fetch(`${BASE}${path}`, {
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-    ...options,
+async function postJSON(path, body) {
+  const resp = await fetch(`${API_URL}${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
   });
-
-  const isJson = res.headers.get("content-type")?.includes("application/json");
-  const data = isJson ? await res.json() : await res.text();
-
-  if (!res.ok) {
-    const msg = isJson ? data?.msg || data?.error : res.statusText;
-    throw new Error(msg || "Error en la petición de proveedor");
-  }
+  let data = {};
+  try {
+    data = await resp.json();
+  } catch {}
+  if (!resp.ok)
+    throw new Error(data?.msg || data?.error || `HTTP ${resp.status}`);
   return data;
 }
 
-// Registro proveedor
-export function apiProveedorSignup(payload) {
-  return proveedorRequest("/api/proveedor/signup", {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
-}
+// ⚠️ Aquí SÍ añadimos /api porque el blueprint está montado en /api en Flask
+export const apiProveedorSignup = (payload) =>
+  postJSON("/api/proveedor/signup", payload);
 
-//proximo login
-export function apiProveedorLogin(email, password) {
-  return proveedorRequest("/api/proveedor/login", {
-    method: "POST",
-    body: JSON.stringify({ email, password }),
-  });
-}
+export const apiProveedorLogin = (email, password) =>
+  postJSON("/api/proveedor/login", { email, password });

@@ -1,7 +1,6 @@
-// src/front/pages/Panel.jsx
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { getBookings, nextBooking } from "../utils/bookings";
+import { getBookings, nextBooking, BOOKINGS_UPDATED_EVENT } from "../utils/bookings";
 import { isFavorite, toggleFavorite } from "../utils/favorites";
 import "../styles/panel.css";
 
@@ -75,29 +74,53 @@ const TOURS = [
 
 
 
+/* ======================== HELPERS (reservas) ======================== */
+function normalizeBookings(raw = []) {
+    const today = new Date();
+    const seen = new Set();
 
+    return (raw || [])
+        .filter((b) => b && b.status === "reserved")
+        .map((b) => ({ ...b, _date: new Date(b.date) }))
+        .filter((b) => b._date.toString() !== "Invalid Date")
+        .filter((b) => b._date >= new Date(today.toDateString()))
+        .sort((a, b) => a._date - b._date)
+        .filter((b) => {
+            const key = `${b.tourId}-${b._date.toISOString().slice(0, 10)}`;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+        });
+}
 
-
-
-
-
-
-
-
-
-
+function computeNext(list) {
+    return list.length ? list[0] : null;
+}
+/* =================================================================== */
 
 
 export default function Panel() {
-    const [favoritesVersion, setFavoritesVersion] = useState(0); // para refrescar favoritos sin recargar
+    const [favoritesVersion, setFavoritesVersion] = useState(0);
     const [bookings, setBookings] = useState([]);
     const [next, setNext] = useState(null);
 
+
     useEffect(() => {
-        // Carga segura de reservas
-        const bks = getBookings?.() || [];
-        setBookings(Array.isArray(bks) ? bks : []);
-        setNext(nextBooking?.() || null);
+        const raw = getBookings() || [];
+        const clean = normalizeBookings(raw);
+        setBookings(clean);
+        setNext(computeNext(clean));
+    }, []);
+
+    useEffect(() => {
+        const onUpd = () => {
+            const raw = getBookings() || [];
+            const clean = normalizeBookings(raw);
+            setBookings(clean);
+            setNext(computeNext(clean));
+        };
+        window.addEventListener(BOOKINGS_UPDATED_EVENT, onUpd);
+        return () => window.removeEventListener(BOOKINGS_UPDATED_EVENT, onUpd);
     }, []);
 
     const bookedIds = useMemo(() => {
@@ -107,6 +130,20 @@ export default function Panel() {
             .forEach((b) => set.add(String(b.tourId)));
         return set;
     }, [bookings]);
+
+
+
+    /* =================================================================== */
+
+
+
+    // refrescar si cambian favoritos en otra parte de la app
+    useEffect(() => {
+        const onFav = () => setFavoritesVersion((v) => v + 1);
+        window.addEventListener("xplora:favorites:updated", onFav);
+        return () => window.removeEventListener("xplora:favorites:updated", onFav);
+    }, []);
+
 
     function FavBtn({ tour }) {
         const active = isFavorite(tour.id);
@@ -130,6 +167,9 @@ export default function Panel() {
             </button>
         );
     }
+
+
+    /* =================================WRAP DE PANEL================================== */
 
 
     return (
@@ -161,7 +201,12 @@ export default function Panel() {
             )}
 
             <div className="row g-4">
+
+
+
                 {/* FILTROS */}
+
+
                 <aside className="col-lg-3">
                     <div className="card-soft panel-filters">
                         <h6 className="mb-3">Filtros</h6>
@@ -216,17 +261,25 @@ export default function Panel() {
                         </div>
                     </div>
 
+
+
+                    {/* LISTAS DE RESERVAS */}
+
                     <div className="card-soft mt-3 list-compact">
                         <h6 className="mb-2">Tus próximas reservas</h6>
                         {(!bookings || bookings.length === 0) && (
                             <small className="text-muted">Aún no tienes reservas.</small>
                         )}
-                        {(bookings || []).map((b) => (
+
+
+                        {bookings.slice(0, 5).map((b) => (
                             <div key={b.id} className="item">
                                 <div>
-                                    <div className="fw-semibold">{b.title}</div>
+                                    <div className="fw-semibold text-truncate" title={b.title}>
+                                        {b.title}
+                                    </div>
                                     <small className="text-muted">
-                                        {new Date(b.date).toLocaleDateString()}
+                                        {new Date(b.date).toLocaleDateString()} • {b.people || 1} pax
                                     </small>
                                 </div>
                                 <Link
@@ -237,10 +290,25 @@ export default function Panel() {
                                 </Link>
                             </div>
                         ))}
+                        {bookings.length > 5 && (
+                            <div className="mt-2">
+                                <Link to="/panel/reservations" className="btn btn-sm btn-light w-100">
+                                    Ver todas
+                                </Link>
+                            </div>
+                        )}
                     </div>
                 </aside>
 
+
+
+
+
+
+
                 {/* CARDS */}
+
+
                 <section className="col-lg-9">
                     <h2 className="mb-3">Destacados</h2>
                     <div className="row g-4">

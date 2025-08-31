@@ -1,0 +1,16 @@
+/* src/styles/create-tour.css */
+:root {
+  --brand-blue: #2c73ff; /* ajusta al tono exacto de tu botón */
+}
+.btn-primary-brand {
+  background-color: var(--brand-blue);
+  border-color: var(--brand-blue);
+  color: #fff;
+}
+.btn-primary-brand:hover {
+  filter: brightness(0.95);
+}
+.card {
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
