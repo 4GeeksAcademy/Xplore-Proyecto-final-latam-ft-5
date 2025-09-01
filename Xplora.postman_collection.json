@@ -1,0 +1,139 @@
+{
+  "info": {
+    "name": "Xplora API Local",
+    "_postman_id": "8d3d0d3e-6f4b-4b30-9c3f-6f0f5a9a7abc",
+    "description": "Colección local para Xplora (signup, login, profile, tours, bookings, reviews). El login guarda el token en la variable de colección {{token}}.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{api_url}}/health"
+      }
+    },
+    {
+      "name": "Signup",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{api_url}}/signup",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Pablo\",\n  \"last_name\": \"Ezeta\",\n  \"email\": \"ideaswatts+demo2@gmail.com\",\n  \"password\": \"test123\",\n  \"role\": \"traveler\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Login (guarda token)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "  const data = pm.response.json();",
+              "  if (data && data.access_token) {",
+              "    pm.collectionVariables.set('token', data.access_token);",
+              "    console.log('Token guardado en {{token}}');",
+              "  }",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{api_url}}/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"ideaswatts+demo2@gmail.com\",\n  \"password\": \"test123\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Profile - Get me",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": "{{api_url}}/profile"
+      }
+    },
+    {
+      "name": "Profile - Update",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{api_url}}/profile",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Pablo\",\n  \"last_name\": \"Ezeta\",\n  \"phone\": \"+52 55 1234 5678\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Tours - List",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{api_url}}/tours"
+      }
+    },
+    {
+      "name": "Tours - Create (opcional)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{api_url}}/tours",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Viaje de Escalada\",\n  \"description\": \"Aventura en Huaraz con guías certificados\",\n  \"city\": \"Huaraz\",\n  \"base_price\": 450.00,\n  \"country_id\": 1\n}"
+        }
+      }
+    },
+    {
+      "name": "Bookings - Create",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{api_url}}/bookings",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"tour_id\": 1,\n  \"schedule_id\": 1,\n  \"num_guests\": 2\n}"
+        }
+      }
+    },
+    {
+      "name": "Reviews - Add to Tour 1",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" },
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{api_url}}/tours/1/reviews",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"rating\": 4.5,\n  \"comment\": \"Excelente experiencia\"\n}"
+        }
+      }
+    }
+  ],
+  "variable": [
+    { "key": "api_url", "value": "http://127.0.0.1:5000/api" },
+    { "key": "token", "value": "" }
+  ]
+}

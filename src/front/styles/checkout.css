@@ -1,0 +1,55 @@
+:root {
+  --brand: #2d7360;
+  --line: #e5e7eb;
+  --soft: #f5faf8;
+}
+.checkout-wrap {
+  padding: 1.25rem 0 2rem;
+}
+.card-soft {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
+}
+
+/* stepper */
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.stepper .dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  display: grid;
+  place-items: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #374151;
+}
+.stepper .dot.active {
+  background: var(--brand);
+  color: #fff;
+}
+.stepper .bar {
+  width: 48px;
+  height: 4px;
+  background: #e5e7eb;
+  border-radius: 999px;
+}
+.stepper .bar.active {
+  background: var(--brand);
+}
+
+.summary {
+  background: var(--soft);
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+  padding: 0.8rem;
+}

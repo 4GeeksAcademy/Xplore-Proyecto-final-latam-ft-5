@@ -1,0 +1,145 @@
+:root {
+  --brand: #2d7360;
+  --brand-2: #b9e3e1;
+  --ink: #1f2937;
+  --muted: #6b7280;
+  --soft: #eef8f6;
+  --line: #e5e7eb;
+  --card: #ffffff;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+}
+
+.panel-wrap {
+  padding: 1.25rem 0 2.5rem;
+}
+
+/* tarjetas suaves y detalles */
+.card-soft {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* FILTRO */
+.panel-filters .form-label {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.panel-filters .range-value {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.badge-soft {
+  background: var(--soft);
+  color: var(--brand);
+  border: 1px solid #d6eee9;
+  padding: 0.35rem 0.6rem;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+/* CARD de tour */
+.tour-card {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--card);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.tour-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
+}
+.tour-media {
+  position: relative;
+  aspect-ratio: 16/10;
+  background: #d1d5db;
+}
+.tour-heart {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--line);
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.tour-heart.active {
+  color: #ff5a7a;
+  border-color: #ffd2db;
+  background: #fff5f7;
+}
+.tour-body {
+  padding: 0.9rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 220px;
+}
+.tour-title {
+  font-weight: 800;
+  font-size: 1.15rem;
+  color: var(--ink);
+  line-height: 1.25;
+  margin: 0.2rem 0 0.25rem;
+}
+.tour-sub {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.tour-tags {
+  gap: 0.35rem;
+  margin-top: 0.35rem;
+}
+.tour-price {
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+.tour-cta {
+  margin-top: auto;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* RIBBON reservado */
+.ribbon {
+  position: absolute;
+  left: -8px;
+  top: 12px;
+  background: var(--brand);
+  color: #fff;
+  font-size: 0.78rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 0 10px 10px 0;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* Banner próximo viaje */
+.next-banner {
+  border: 1px solid var(--line);
+  background: #f3fbf9;
+  color: #16453b;
+  border-left: 6px solid var(--brand);
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+}
+
+/* listita lateral de próximas reservas */
+.list-compact .item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.55rem 0;
+  border-bottom: 1px dashed var(--line);
+}
+.list-compact .item:last-child {
+  border-bottom: 0;
+}

@@ -1,0 +1,36 @@
+// Mock centralizado para cards/favoritos/reservas
+export const TOURS = [
+  {
+    id: 1,
+    title: "Viaje de Escalada",
+    city: "Huaraz, Perú",
+    days: 3,
+    price: 450,
+    img: "https://images.pexels.com/photos/2693863/pexels-photo-2693863.jpeg",
+    tags: ["aventura", "montaña"],
+    rating: 4.8,
+    host: "Jennifer",
+  },
+  {
+    id: 2,
+    title: "Antropología Mística",
+    city: "San Juan Chamula, MX",
+    days: 2,
+    price: 380,
+    img: "https://images.pexels.com/photos/2693863/pexels-photo-2693863.jpeg",
+    tags: ["cultura"],
+    rating: 4.7,
+    host: "Dr. Armen",
+  },
+  {
+    id: 3,
+    title: "Viaje a Chile",
+    city: "Santiago, Chile",
+    days: 5,
+    price: 520,
+    img: "https://images.pexels.com/photos/2693863/pexels-photo-2693863.jpeg",
+    tags: ["montaña", "cultura"],
+    rating: 4.9,
+    host: "Consuelo",
+  },
+];
