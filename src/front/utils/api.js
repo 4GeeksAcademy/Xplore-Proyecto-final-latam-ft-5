@@ -64,12 +64,11 @@ export async function apiUpdateProfile(token, payload) {
 }
 
 export async function createTour(payload) {
-  const token = getToken();
+
   const response = await fetch(`${API_URL}/api/tours`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(payload),
   });

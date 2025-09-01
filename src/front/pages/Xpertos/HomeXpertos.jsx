@@ -8,7 +8,7 @@ export default function HomeXpertos() {
     return (
         <div>
             {/* Aquí puede ir tu Hero Section o Navbar */}
-            <NavBar />
+
             <BodyXpertos />
 
 
