@@ -78,11 +78,12 @@ def serve_any_other_file(path):
 
 
 # ---- Creación de Tablas ----
-with app.app_context():
-    try:
-        db.create_all()
-    except Exception as e:
-        print(f"[DB INIT] Error creando tablas: {e}")
+# Comentado porque usamos migraciones de Flask-Migrate
+# with app.app_context():
+#     try:
+#         db.create_all()
+#     except Exception as e:
+#         print(f"[DB INIT] Error creando tablas: {e}")
 
 # ---- Punto de Entrada Principal ----
 if __name__ == "__main__":

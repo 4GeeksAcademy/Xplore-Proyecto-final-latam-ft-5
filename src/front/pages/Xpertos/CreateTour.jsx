@@ -5,10 +5,13 @@ export default function CreateTour() {
     const [inputValue, setInputValue] = useState({
         title: "",
         description: "",
-        city: "",
+        location: "",
         base_price: '',
-        country: "",
-        date: "",
+        category: "General",
+        max_travelers: 10,
+        duration: "",
+        tour_includes: [],
+        tour_not_includes: [],
         // coverPhoto: null,
         // image: null,
         // imageTwo: null,
@@ -30,11 +33,10 @@ export default function CreateTour() {
     const fieldValidation = () => {
         const required = {}
         if (inputValue.title.trim() == '') { required.title = 'Asigna un nombre al tour' }
-        if (inputValue.country.trim() == '') { required.country = 'Indica el país' }
-        if (inputValue.city.trim() == '') { required.city = 'Destino del tour requerido' }
+        if (inputValue.location.trim() == '') { required.location = 'Destino del tour requerido' }
         if (inputValue.base_price.trim() == '') { required.base_price = 'Por favor ingresa el precio' }
         if (inputValue.description.trim() == '') { required.description = 'Por favor agrega una descripción' }
-        if (!inputValue.date.trim()) { required.date = "Asigna fecha del tour" }
+        if (inputValue.duration.trim() == '') { required.duration = 'Asigna la duración del tour' }
         //if (!inputValue.coverPhoto) { required.coverPhoto = 'Agrega una foto de portada al tour ' }
         return required
     }
@@ -74,10 +76,13 @@ export default function CreateTour() {
                 const payloadTour = {
                     title: inputValue.title,
                     description: inputValue.description,
-                    city: inputValue.city,
+                    location: inputValue.location,
                     base_price: inputValue.base_price,
-                    country: inputValue.country,
-                    date: inputValue.date,
+                    category: inputValue.category,
+                    max_travelers: inputValue.max_travelers,
+                    duration: inputValue.duration,
+                    tour_includes: inputValue.tour_includes,
+                    tour_not_includes: inputValue.tour_not_includes,
                 }
                 const response = await createTour(payloadTour)
                 alert('tour creado correctamente')
@@ -89,11 +94,14 @@ export default function CreateTour() {
         } finally {
             setInputValue({
                 title: "",
-                country: "",
-                city: "",
+                location: "",
                 description: "",
                 base_price: '',
-                date: "",
+                category: "General",
+                max_travelers: 10,
+                duration: "",
+                tour_includes: [],
+                tour_not_includes: [],
                 // coverPhoto: null,
                 // image: null,
                 // imageTwo: null,
@@ -127,31 +135,17 @@ export default function CreateTour() {
                                 )}
                             </div>
                             <div className="d-flex flex-column mb-3">
-                                <label>País</label>
+                                <label>Ubicación del tour</label>
                                 <input
-                                    className={`form-control ${errors.country ? 'is-invalid' : ""}`}
+                                    className={`form-control ${errors.location ? 'is-invalid' : ""}`}
                                     type="text"
-                                    name="country"
+                                    name="location"
                                     onChange={handleChange}
-                                    value={inputValue.country}
-                                    placeholder="Ej.Mexico"
+                                    value={inputValue.location}
+                                    placeholder="Ej. Tulum, Quintana Roo, México"
                                 />
-                                {errors.country && (
-                                    <div className="invalid-feedback" >{errors.country}</div>
-                                )}
-                            </div>
-                            <div className="d-flex flex-column mb-3">
-                                <label>Ciudad o estado</label>
-                                <input
-                                    className={`form-control ${errors.city ? 'is-invalid' : ""}`}
-                                    type="text"
-                                    name="city"
-                                    onChange={handleChange}
-                                    value={inputValue.city}
-                                    placeholder="Ej. Tulum"
-                                />
-                                {errors.city && (
-                                    <div className="invalid-feedback" >{errors.city}</div>
+                                {errors.location && (
+                                    <div className="invalid-feedback" >{errors.location}</div>
                                 )}
                             </div>
                             <div className="d-flex flex-column mb-3">
@@ -183,15 +177,41 @@ export default function CreateTour() {
                                 )}
                             </div>
                             <div className="d-flex flex-column mb-3">
-                                <label>Fecha</label>
-                                <input className={`form-control ${errors.date ? 'is-invalid' : ""}`} type="date"
-                                    name="date"
+                                <label>Duración del tour</label>
+                                <input className={`form-control ${errors.duration ? 'is-invalid' : ""}`} type="text"
+                                    name="duration"
                                     onChange={handleChange}
-                                    value={inputValue.date}
+                                    value={inputValue.duration}
+                                    placeholder="Ej. 1 día, 2 días, 4 horas"
                                 />
-                                {errors.date && (
-                                    <div className="invalid-feedback" >{errors.date}</div>
+                                {errors.duration && (
+                                    <div className="invalid-feedback" >{errors.duration}</div>
                                 )}
+                            </div>
+                            <div className="d-flex flex-column mb-3">
+                                <label>Categoría</label>
+                                <select
+                                    className="form-control"
+                                    name="category"
+                                    onChange={handleChange}
+                                    value={inputValue.category}
+                                >
+                                    <option value="General">General</option>
+                                    <option value="Cultural">Cultural</option>
+                                    <option value="Gastronómico">Gastronómico</option>
+                                    <option value="Naturaleza">Naturaleza</option>
+                                    <option value="Aventura">Aventura</option>
+                                </select>
+                            </div>
+                            <div className="d-flex flex-column mb-3">
+                                <label>Máximo de viajeros</label>
+                                <input className="form-control" type="number"
+                                    name="max_travelers"
+                                    onChange={handleChange}
+                                    value={inputValue.max_travelers}
+                                    min="1"
+                                    max="50"
+                                />
                             </div>
                         </div>
                         {/* comienza seccion de imagenes 

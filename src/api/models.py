@@ -129,6 +129,17 @@ class Tour(db.Model):
         "Review", backref="tour", lazy=True, cascade="all, delete-orphan"
     )
     images = db.Column(JSON, default=list)
+    
+    # Nuevo campo para el guía que crea el tour
+    guide_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    guide = db.relationship("User", backref="tours_created", lazy=True)
+    
+    # Campos adicionales para el MVP
+    max_travelers = db.Column(db.Integer, default=10)
+    available_dates = db.Column(JSON, default=list)  # Lista de fechas disponibles
+    category = db.Column(db.String(100), default="General")
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    is_active = db.Column(db.Boolean, default=True)
 
     def serialize(self) -> dict:
         return {
@@ -137,13 +148,20 @@ class Tour(db.Model):
             "description": self.description,
             "location": self.location,
             "popular": self.popular,
-            "base_price": self.base_price,
+            "base_price": float(self.base_price) if self.base_price else 0.0,
             "rate": self.rate,
             "tour_includes": self.tour_includes,
             "tour_not_includes":  self.tour_not_includes,
             "duration": self.duration,
             "reviews": [r.serialize() for r in self.reviews],
             "images": self.images,
+            "guide_id": self.guide_id,
+            "guide_name": f"{self.guide.name} {self.guide.last_name}" if self.guide else "Guía no disponible",
+            "max_travelers": self.max_travelers,
+            "available_dates": self.available_dates,
+            "category": self.category,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "is_active": self.is_active,
         }
 
 # ------------------------------ REVIEW ---------------------------------------
@@ -176,4 +194,49 @@ class Review(db.Model):
             "rating": self.rating,
             "comment": self.comment,
             "created_at": self.created_at.isoformat()
+        }
+
+# ------------------------------ BOOKING ---------------------------------------
+
+
+class Booking(db.Model):
+    __tablename__ = "bookings"
+
+    id = db.Column(db.Integer, primary_key=True)
+    
+    # Relaciones
+    tour_id = db.Column(db.Integer, db.ForeignKey("tours.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    
+    # Datos de la reserva
+    travel_date = db.Column(db.Date, nullable=False)
+    travelers_count = db.Column(db.Integer, nullable=False, default=1)
+    total_price = db.Column(db.Numeric(10, 2), nullable=False)
+    
+    # Estado de la reserva
+    status = db.Column(db.String(50), default="pending")  # pending, confirmed, cancelled, completed
+    
+    # Información adicional
+    special_requests = db.Column(db.Text, nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    # Relaciones
+    tour = db.relationship("Tour", backref="bookings", lazy=True)
+    user = db.relationship("User", backref="bookings", lazy=True)
+    
+    def serialize(self) -> dict:
+        return {
+            "id": self.id,
+            "tour_id": self.tour_id,
+            "tour_title": self.tour.title if self.tour else "Tour no disponible",
+            "user_id": self.user_id,
+            "user_name": f"{self.user.name} {self.user.last_name}" if self.user else "Usuario no disponible",
+            "travel_date": self.travel_date.isoformat() if self.travel_date else None,
+            "travelers_count": self.travelers_count,
+            "total_price": float(self.total_price) if self.total_price else 0.0,
+            "status": self.status,
+            "special_requests": self.special_requests,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }

@@ -9,7 +9,15 @@ load_dotenv()
 # Vamos a ignorar todas las variables del .env y a poner la URL directamente.
 # Esto nos ayudará a confirmar si el problema es el archivo .env.
 
-SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://gitpod:postgres@localhost:5432/example"
+# --- CONFIGURACIÓN DE BASE DE DATOS ---
+# Usar PostgreSQL para desarrollo local
+DB_USER = os.getenv("DB_USER", "gitpod")
+DB_PASS = quote_plus(os.getenv("DB_PASS", "postgres"))
+DB_HOST = os.getenv("DB_HOST", "localhost")
+DB_PORT = os.getenv("DB_PORT", "5432")
+DB_NAME = os.getenv("DB_NAME", "example")
+
+SQLALCHEMY_DATABASE_URI = f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 # -----------------------------
 

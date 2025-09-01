@@ -127,5 +127,59 @@ export async function deleteReview(id) {
   return handleResponse(response);
 }
 
+// ============================== BOOKINGS ==============================
+
+export async function createBooking(tourId, payload) {
+  const token = getToken();
+  const response = await fetch(`${API_URL}/api/tours/${tourId}/book`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  return handleResponse(response);
+}
+
+export async function getUserBookings() {
+  const token = getToken();
+  const response = await fetch(`${API_URL}/api/bookings`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return handleResponse(response);
+}
+
+// ============================== GUIDE TOURS ==============================
+
+export async function getGuideTours() {
+  const token = getToken();
+  const response = await fetch(`${API_URL}/api/guide/tours`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return handleResponse(response);
+}
+
+export async function getGuideBookings() {
+  const token = getToken();
+  const response = await fetch(`${API_URL}/api/guide/bookings`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return handleResponse(response);
+}
+
 // (Opcional) expón API_URL por si lo necesitas en otros módulos
 export { API_URL };
